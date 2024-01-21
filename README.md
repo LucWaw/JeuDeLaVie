@@ -1,10 +1,10 @@
 
 # Jeu de la vie
 
-Jeu de la vie en kotlin.
-Les cellules sont des objets distincts et non des case d'un tableau.
+Jeu de la vie en Kotlin. Les cellules sont des objets distincts et non des cases d'un tableau.
+
 
 
 ## Possibilité d'évolution :
-Test de EscapeCellulaire.
-Visuel javafx ou autre librairie ou coder moi meme.
+
+Test de EspaceCellulaire. Visuel JavaFX ou autre librairie ou le faire moi même.
