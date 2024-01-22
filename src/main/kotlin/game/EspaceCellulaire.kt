@@ -1,17 +1,30 @@
 package game
 
+import tdd.Cellule
+
 class EspaceCellulaire private constructor(
     private val tailleX: Int,
     private val tailleY: Int,
-    private val map: MutableMap<Pair<Int, Int>, Cellule>
-) : MutableMap<Pair<Int, Int>, Cellule> by map {
+    private val ignoredMap: MutableMap<Pair<Int, Int>, Cellule>
+) : MutableMap<Pair<Int, Int>, Cellule> by ignoredMap {
 
     /**
      * La taille de l'espace ne doit pas dépendre de 0 comme indice
      * Exemple tailleX = 5 et tailleY = 5.
      * Les indices vont de 0 à 4.
      */
-    constructor(tailleX: Int, tailleY: Int) : this(tailleX - 1, tailleY - 1, mutableMapOf())
+    constructor(tailleX: Int, tailleY: Int) : this(
+        requirePositive(tailleX, "tailleX"),
+        requirePositive(tailleY, "tailleY"),
+        mutableMapOf()
+    )
+
+    private companion object {
+        fun requirePositive(value: Int, paramName: String): Int {
+            require(value > 0) { "$paramName doit être positif." }
+            return value - 1
+        }
+    }
 
     init {
         for (i in 0..tailleX) {
@@ -45,6 +58,7 @@ class EspaceCellulaire private constructor(
     }
 
     fun evoluerUnNombreDeFois(nombreEvolution: Int) {
+        require(nombreEvolution >= 0) { "nombreEvolution doit être positif." }
         for (i in 1..nombreEvolution) {
             evoluer()
         }

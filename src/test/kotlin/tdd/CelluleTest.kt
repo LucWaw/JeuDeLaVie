@@ -1,4 +1,4 @@
-package game
+package tdd
 
 import assertk.assertThat
 import assertk.assertions.isFalse

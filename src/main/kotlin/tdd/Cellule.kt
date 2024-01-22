@@ -1,4 +1,4 @@
-package game
+package tdd
 
 class Cellule(var estVivante: Boolean = false) {
 
