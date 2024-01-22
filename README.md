@@ -7,4 +7,4 @@ Jeu de la vie en Kotlin. Les cellules sont des objets distincts et non des cases
 
 ## Possibilité d'évolution :
 
-Test de EspaceCellulaire. Visuel JavaFX ou autre librairie ou le faire moi même.
+Test de EspaceCellulaire. Visuel JavaFX ou autre librairie ou le faire moi-même.
