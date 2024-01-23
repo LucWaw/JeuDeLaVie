@@ -3,8 +3,8 @@ package game
 import tdd.Cellule
 
 class EspaceCellulaire private constructor(
-    private val tailleX: Int,
-    private val tailleY: Int,
+    val tailleX: Int,
+    val tailleY: Int,
     private val ignoredMap: MutableMap<Pair<Int, Int>, Cellule>
 ) : MutableMap<Pair<Int, Int>, Cellule> by ignoredMap {
 
@@ -64,7 +64,7 @@ class EspaceCellulaire private constructor(
         }
     }
 
-    private fun evoluer() {
+    fun evoluer() {
         val espaceCellulaireClone = this.clone() as EspaceCellulaire
 
         for (x in 0..tailleX) {
