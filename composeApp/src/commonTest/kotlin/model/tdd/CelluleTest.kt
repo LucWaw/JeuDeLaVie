@@ -1,9 +1,10 @@
-package tdd
+package model.tdd
 
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
+import tdd.Cellule
 
 class CelluleTest {
 
