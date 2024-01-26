@@ -1,11 +1,10 @@
-package game
+package model.game
 
+import game.EspaceCellulaire
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 class EspaceCellulaireTest {
-
 
 
     @Test
@@ -96,12 +95,6 @@ class EspaceCellulaireTest {
     }
 
 
-
-
-
-
-
-
     @Test
     fun evoluerUnNombreDeFois() {
         //Arrange
@@ -128,7 +121,10 @@ class EspaceCellulaireTest {
         plateau.evoluerUnNombreDeFois(2)
 
         //Assert
-        assertEquals("O O O O O \nO O X O O \nO O X O O \nO O X O O \nO O O O O \n", plateau.toString())
+        assertEquals(
+            "O O O O O \nO O X O O \nO O X O O \nO O X O O \nO O O O O \n",
+            plateau.toString()
+        )
     }
 
     @Test
@@ -145,7 +141,10 @@ class EspaceCellulaireTest {
         plateau.evoluerUnNombreDeFois(0)
 
         //Assert
-        assertEquals("O O O O O \nO X X O O \nO X X O O \nO O O O O \nO O O O O \n",plateau.toString())
+        assertEquals(
+            "O O O O O \nO X X O O \nO X X O O \nO O O O O \nO O O O O \n",
+            plateau.toString()
+        )
     }
 
     @Test
