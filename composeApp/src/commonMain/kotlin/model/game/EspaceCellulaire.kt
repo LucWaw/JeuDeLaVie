@@ -1,12 +1,12 @@
-package game
+package model.game
 
-import tdd.Cellule
+import model.tdd.Cellule
 
 class EspaceCellulaire private constructor(
-    val tailleX: Int,
-    val tailleY: Int,
-    private val ignoredMap: MutableMap<Pair<Int, Int>, Cellule>
-) : MutableMap<Pair<Int, Int>, Cellule> by ignoredMap {
+    private val tailleX: Int,
+    private val tailleY: Int,
+    val espace: MutableMap<Pair<Int, Int>, Cellule>
+) : MutableMap<Pair<Int, Int>, Cellule> by espace {
 
     /**
      * La taille de l'espace ne doit pas dépendre de 0 comme indice
@@ -18,6 +18,18 @@ class EspaceCellulaire private constructor(
         requirePositive(tailleY, "tailleY"),
         mutableMapOf()
     )
+
+    fun getVivantes(): List<Pair<Int, Int>> {
+        val vivantes = mutableListOf<Pair<Int, Int>>()
+        for (i in 0..tailleX) {
+            for (j in 0..tailleY) {
+                if (this[Pair(i, j)]?.estVivante == true) {
+                    vivantes.add(Pair(i, j))
+                }
+            }
+        }
+        return vivantes
+    }
 
     private companion object {
         fun requirePositive(value: Int, paramName: String): Int {
@@ -48,7 +60,7 @@ class EspaceCellulaire private constructor(
     }
 
     private fun clone(): Any {
-        val espaceCellulaire = EspaceCellulaire(this.tailleX, this.tailleY)
+        val espaceCellulaire = EspaceCellulaire(this.tailleX+1, this.tailleY+1)
         for (i in 0..tailleX) {
             for (j in 0..tailleY) {
                 espaceCellulaire[Pair(i, j)] = this[Pair(i, j)]?.let { Cellule(it.estVivante) } ?: Cellule()
@@ -61,6 +73,12 @@ class EspaceCellulaire private constructor(
         require(nombreEvolution >= 0) { "nombreEvolution doit être positif." }
         for (i in 1..nombreEvolution) {
             evoluer()
+        }
+    }
+
+    fun setVivantes(vararg vivantes: Pair<Int, Int>) {
+        for (cellule in vivantes) {
+            this[cellule]?.estVivante = true
         }
     }
 

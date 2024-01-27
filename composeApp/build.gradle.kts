@@ -32,6 +32,12 @@ kotlin {
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            //lifecycle
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            //viewmodel
+            api(libs.kmm.viewmodel.core)
+
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -40,8 +46,6 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.assertk)
             //junit api
-
-
 
         }
 
@@ -89,6 +93,10 @@ android {
         resources.excludes.add("META-INF/*")
     }
 }
+dependencies {
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+}
+
 
 
 
