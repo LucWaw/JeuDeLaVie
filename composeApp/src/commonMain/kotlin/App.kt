@@ -1,14 +1,15 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -21,7 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -131,10 +134,54 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
 
     //si le click est laisé appuyé mousemove
 
+    LazyVerticalGrid(GridCells.Fixed(20), Modifier.pointerInput(Unit) {
+        fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
+            val tileSize = size.width / 20
+            val x = (hitPoint.x / tileSize).toInt()
+            val y = (hitPoint.y / tileSize).toInt()
+            return Pair(y, x)
+        }
+        var currentCellCoord = Pair(0, 0)
+        detectDragGestures (
+            onDragStart = { offset ->
+                cellCoordAtOffset(offset).let {
+                    if (!state.colored.contains(it)) {
+                        currentCellCoord = it
+                        onCellClick(it)
+                    }
+                }
+            },
+
+
+            onDrag = { change, _ ->
+                cellCoordAtOffset(change.position).let { pointerCellCoord ->
+                    if (currentCellCoord != pointerCellCoord) {
+                        onCellClick(pointerCellCoord)
+
+                        currentCellCoord = pointerCellCoord
+                    }
+                }
+            }
+        )
+    }) {
+        items(400) {
+            val cellCoord = Pair(it / 20, it % 20)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f) // Assure que la boîte est un carré
+                    .background(
+                        if (state.colored.contains(cellCoord)) Color.Black else Color.White
+                    )
+                    .border(1.dp, Color.Gray)
+                    .clickable { onCellClick(cellCoord) }
+            )
+        }
+    }
 
 
 
-    BoxWithConstraints(Modifier.padding(16.dp)) {
+    /*BoxWithConstraints(Modifier.padding(16.dp)) {
         val tileSize = maxWidth / 20
 
         Box(
@@ -160,5 +207,5 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
                 )
             }
         }
-    }
+    }*/
 }
