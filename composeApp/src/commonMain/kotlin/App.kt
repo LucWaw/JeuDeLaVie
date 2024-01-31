@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -35,7 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import model.game.EspaceCellulaire
-
 
 @Composable
 fun App() {
@@ -131,17 +131,21 @@ fun GameOfLife(state: Flow<State>, gameViewModel: GameViewModel, onCellClick: (P
 @Composable
 fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
 
+    val scroll = rememberLazyGridState()
 
-    //si le click est laisé appuyé mousemove
 
-    LazyVerticalGrid(GridCells.Fixed(20), Modifier.pointerInput(Unit) {
+    LazyVerticalGrid(GridCells.Fixed(20),state = scroll, modifier = Modifier.pointerInput(Unit) {
         fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
+            //tilesize - scrollstate
+
+
             val tileSize = size.width / 20
             val x = (hitPoint.x / tileSize).toInt()
-            val y = (hitPoint.y / tileSize).toInt()
+            val y = (hitPoint.y / tileSize).toInt() + scroll.firstVisibleItemIndex / 20
             return Pair(y, x)
         }
         var currentCellCoord = Pair(0, 0)
+
         detectDragGestures (
             onDragStart = { offset ->
                 cellCoordAtOffset(offset).let {
