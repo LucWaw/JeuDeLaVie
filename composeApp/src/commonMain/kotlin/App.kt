@@ -20,8 +20,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -48,10 +52,13 @@ fun App() {
             MutableStateFlow(State(listOf()))
         val espace = EspaceCellulaire(20, 20)
         val gameViewModel = remember { GameViewModel() }
+
         val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoord ->
             espace[cellCoord]?.estVivante = !espace[cellCoord]?.estVivante!!
             mutableState.value = State(espace.getVivantes().map { Pair(it.first, it.second) })
+
         }
+
 
 
         espace.setVivantes(*mutableState.value.colored.toTypedArray())
@@ -66,7 +73,7 @@ fun App() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            GameOfLife(state, gameViewModel, onCellClick)
+            GameOfLife(state, gameViewModel, onCellClick, mutableState)
         }
     }
 }
@@ -130,23 +137,62 @@ fun game(
 
 
 @Composable
-fun GameOfLife(state: Flow<State>, gameViewModel: GameViewModel, onCellClick: (Pair<Int, Int>) -> Unit) {
+fun GameOfLife(
+    state: Flow<State>,
+    gameViewModel: GameViewModel,
+    onCellClick: (Pair<Int, Int>) -> Unit,
+    mutableState: MutableStateFlow<State>
+) {
     val stateElement = state.collectAsState(initial = null)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         stateElement.value?.let {
-            Board(it, onCellClick)
+            Board(mutableState, onCellClick)
         }
         Bouttons(gameViewModel)
     }
 
 }
 
+internal data class MiniState(val colored: List<Pair<Int, Int>>)
+internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
+
+internal class DragTargetInfo {
+    var isDragging: Boolean by mutableStateOf(false)
+    var dragPosition by mutableStateOf(Offset.Zero)
+    var dragOffset by mutableStateOf(Offset.Zero)
+    var draggableComposable by mutableStateOf<(@Composable () -> Unit)?>(null)
+    var dataToDrop by mutableStateOf<Any?>(null)
+}
+
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
+fun Board(mutableState: MutableStateFlow<State>,onCellClick: (Pair<Int, Int>) -> Unit) {
 
     val scroll = rememberLazyGridState()
+
+    var drag = false
+
+    val miniStateBundle = MiniState(listOf(Pair(0, 0), Pair(0, 1), Pair(1, 1), Pair(1,0)))
+
+    //when drag via https://blog.canopas.com/android-drag-and-drop-ui-element-in-jetpack-compose-14922073b3f1
+    //mettre le bundle dans l'autre grille
+
+    //small lazy 5*5 grid
+    LazyVerticalGrid(GridCells.Fixed(5)) {
+        items(25) {
+            val cellCoord = Pair(it / 5, it % 5)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f) // Assure que la boîte est un carré
+                    .background(
+                        if (miniStateBundle.colored.contains(cellCoord)) Color.Black else Color.White
+                    )
+                    .border(1.dp, Color.Gray)
+            )
+        }
+    }
 
 
     LazyVerticalGrid(GridCells.Fixed(20),state = scroll, modifier = Modifier.pointerInput(Unit) {
@@ -160,13 +206,18 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
             return Pair(y, x)
         }
         var currentCellCoord = Pair(0, 0)
+        var initCellCoord = Pair(0, 0)
 
         detectDragGestures (
             onDragStart = { offset ->
-                cellCoordAtOffset(offset).let {
-                    if (!state.colored.contains(it)) {
-                        currentCellCoord = it
-                        onCellClick(it)
+                cellCoordAtOffset(offset).let {pair ->
+                    if (!mutableState.value.colored.contains(pair)) {
+                        currentCellCoord = pair
+                        onCellClick(pair)
+                        drag = false
+                    }else{
+                        initCellCoord = pair
+                        drag = true
                     }
                 }
             },
@@ -175,13 +226,32 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
             onDrag = { change, _ ->
                 cellCoordAtOffset(change.position).let { pointerCellCoord ->
                     if (currentCellCoord != pointerCellCoord) {
-                        onCellClick(pointerCellCoord)
-
+                        if (!drag) {
+                            onCellClick(currentCellCoord)
+                        }
                         currentCellCoord = pointerCellCoord
                     }
                 }
+            },
+            onDragEnd = {
+                onCellClick(initCellCoord)
+
+
+                onCellClick(currentCellCoord)
+
             }
         )
+
+        /*detectDragGestures { change, dragAmount ->
+            change.consume()
+            cellCoordAtOffset(change.previousPosition).let {
+                onCellClick(it)
+            }
+
+            cellCoordAtOffset(change.position).let {
+                addCell(it)
+            }
+        }*/
     }) {
         items(400) {
             val cellCoord = Pair(it / 20, it % 20)
@@ -190,7 +260,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
                     .fillMaxSize()
                     .aspectRatio(1f) // Assure que la boîte est un carré
                     .background(
-                        if (state.colored.contains(cellCoord)) Color.Black else Color.White
+                        if (mutableState.value.colored.contains(cellCoord)) Color.Black else Color.White
                     )
                     .border(1.dp, Color.Gray)
                     .clickable { onCellClick(cellCoord) }

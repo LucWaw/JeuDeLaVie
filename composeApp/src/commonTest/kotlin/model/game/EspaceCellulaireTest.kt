@@ -106,7 +106,7 @@ class EspaceCellulaireTest {
         plateau.evoluerUnNombreDeFois(1)
 
         //Assert
-        assertEquals("X X \nX X \n", plateau.toString())
+        assertEquals("O X \nX O \n", plateau.toString())
     }
 
     @Test
@@ -175,7 +175,22 @@ class EspaceCellulaireTest {
         assertEquals("O \n", result)
     }
 
+    @Test
+    fun nullAutour2() {
+        //Arrange
+        val plateau = EspaceCellulaire(2, 1)
+        plateau.setVivantes(Pair(0, 0))
 
-   
+        //Act
+        plateau.evoluerUnNombreDeFois(1)
+        val result = plateau.toString()
+
+        //Assert
+        assertEquals("O \nO \n", result)
+    }
+
+
+
+
 
 }

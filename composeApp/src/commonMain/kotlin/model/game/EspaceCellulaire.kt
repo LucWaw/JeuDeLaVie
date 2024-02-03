@@ -5,7 +5,7 @@ import model.tdd.Cellule
 class EspaceCellulaire private constructor(
     private val tailleX: Int,
     private val tailleY: Int,
-    val espace: MutableMap<Pair<Int, Int>, Cellule>
+    private val espace: MutableMap<Pair<Int, Int>, Cellule>
 ) : MutableMap<Pair<Int, Int>, Cellule> by espace {
 
     /**
@@ -87,17 +87,32 @@ class EspaceCellulaire private constructor(
 
         for (x in 0..tailleX) {
             for (y in 0..tailleY) {
-                this[Pair(x, y)]?.changeEtat(
-                    //Changer l'état des 8 cellules voisines
-                    espaceCellulaireClone[Pair(x - 1, y - 1)],
-                    espaceCellulaireClone[Pair(x - 1, y)],
-                    espaceCellulaireClone[Pair(x - 1, y + 1)],
-                    espaceCellulaireClone[Pair(x, y - 1)],
-                    espaceCellulaireClone[Pair(x, y + 1)],
-                    espaceCellulaireClone[Pair(x + 1, y - 1)],
-                    espaceCellulaireClone[Pair(x + 1, y)],
-                    espaceCellulaireClone[Pair(x + 1, y + 1)]
-                )
+                if (tailleX > 0 && tailleY > 0) {
+                    this[Pair(x, y)]?.changeEtat(
+                        //Changer l'état des 8 cellules voisines, passer a droite fera arriver a gauche
+                        espaceCellulaireClone[Pair((x - 1 + tailleX) % tailleX, (y - 1 + tailleY) % tailleY)],
+                        espaceCellulaireClone[Pair((x - 1 + tailleX) % tailleX, y)],
+                        espaceCellulaireClone[Pair((x - 1 + tailleX) % tailleX, (y + 1) % tailleY)],
+                        espaceCellulaireClone[Pair(x, (y - 1 + tailleY) % tailleY)],
+                        espaceCellulaireClone[Pair(x, (y + 1) % tailleY)],
+                        espaceCellulaireClone[Pair((x + 1) % tailleX, (y - 1 + tailleY) % tailleY)],
+                        espaceCellulaireClone[Pair((x + 1) % tailleX, y)],
+                        espaceCellulaireClone[Pair((x + 1) % tailleX, (y + 1) % tailleY)]
+                    )
+                }else{
+                    this[Pair(x, y)]?.changeEtat(
+                        //Changer l'état des 8 cellules voisines
+                        espaceCellulaireClone[Pair(x - 1, y - 1)],
+                        espaceCellulaireClone[Pair(x - 1, y)],
+                        espaceCellulaireClone[Pair(x - 1, y + 1)],
+                        espaceCellulaireClone[Pair(x, y - 1)],
+                        espaceCellulaireClone[Pair(x, y + 1)],
+                        espaceCellulaireClone[Pair(x + 1, y - 1)],
+                        espaceCellulaireClone[Pair(x + 1, y)],
+                        espaceCellulaireClone[Pair(x + 1, y + 1)]
+                    )
+                }
+
             }
         }
 
