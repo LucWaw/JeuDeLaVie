@@ -83,7 +83,7 @@ data class State(val colored: List<Pair<Int, Int>>)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun Bouttons(gameViewModel: GameViewModel){
+fun Boutons(gameViewModel: GameViewModel){
     //play button with play icon
 
     Button(
@@ -149,7 +149,7 @@ fun GameOfLife(
         stateElement.value?.let {
             Board(mutableState, onCellClick)
         }
-        Bouttons(gameViewModel)
+        Boutons(gameViewModel)
     }
 
 }
@@ -176,7 +176,7 @@ fun Board(mutableState: MutableStateFlow<State>,onCellClick: (Pair<Int, Int>) ->
     val miniStateBundle = MiniState(listOf(Pair(0, 0), Pair(0, 1), Pair(1, 1), Pair(1,0)))
 
     //when drag via https://blog.canopas.com/android-drag-and-drop-ui-element-in-jetpack-compose-14922073b3f1
-    //mettre le bundle dans l'autre grille
+    //metre le bundle dans l'autre grille
 
     //small lazy 5*5 grid
     LazyVerticalGrid(GridCells.Fixed(5)) {
@@ -198,8 +198,6 @@ fun Board(mutableState: MutableStateFlow<State>,onCellClick: (Pair<Int, Int>) ->
     LazyVerticalGrid(GridCells.Fixed(20),state = scroll, modifier = Modifier.pointerInput(Unit) {
         fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
             //tilesize - scrollstate
-
-
             val tileSize = size.width / 20
             val x = (hitPoint.x / tileSize).toInt()
             val y = (hitPoint.y / tileSize).toInt() + scroll.firstVisibleItemIndex / 20
@@ -241,17 +239,6 @@ fun Board(mutableState: MutableStateFlow<State>,onCellClick: (Pair<Int, Int>) ->
 
             }
         )
-
-        /*detectDragGestures { change, dragAmount ->
-            change.consume()
-            cellCoordAtOffset(change.previousPosition).let {
-                onCellClick(it)
-            }
-
-            cellCoordAtOffset(change.position).let {
-                addCell(it)
-            }
-        }*/
     }) {
         items(400) {
             val cellCoord = Pair(it / 20, it % 20)
