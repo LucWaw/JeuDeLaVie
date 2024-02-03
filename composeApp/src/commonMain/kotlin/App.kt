@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,9 +37,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import model.game.EspaceCellulaire
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun App() {
+
     MaterialTheme {
         val mutableState =
             MutableStateFlow(State(listOf()))
@@ -55,7 +59,8 @@ fun App() {
             rememberCoroutineScope(),
             mutableState,
             espace,
-            gameViewModel)
+            gameViewModel
+        )
         val state: Flow<State> = mutableState
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -69,19 +74,29 @@ fun App() {
 data class State(val colored: List<Pair<Int, Int>>)
 
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Bouttons(gameViewModel: GameViewModel){
     //play button with play icon
+
     Button(
         onClick = { gameViewModel.togglePause() },
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Icon(
-            imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Play"
-        )
+        val painter = painterResource("baseline_pause_24.xml")
+        if (gameViewModel.isPaused.value) {
+            Icon(painter, contentDescription = "pause")
+        } else {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Play"
+            )
+        }
+
+
+
     }
 }
 
@@ -183,33 +198,4 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
         }
     }
 
-
-
-    /*BoxWithConstraints(Modifier.padding(16.dp)) {
-        val tileSize = maxWidth / 20
-
-        Box(
-            Modifier
-                .size(maxWidth)
-                .border(2.dp, Color.Black)
-        )
-
-
-        for (i in 0 until 20) {
-            for (j in 0 until 20) {
-                val cellCoord = Pair(i, j)
-                Box(
-                    modifier = Modifier
-                        .offset(x = tileSize * i, y = tileSize * j)
-                        .size(tileSize)
-                        .background(
-                            if (state.colored.contains(cellCoord)) Color.Black else Color.White
-                        )
-                        .border(1.dp, Color.Gray)
-                        .clickable { onCellClick(cellCoord) }
-
-                )
-            }
-        }
-    }*/
 }

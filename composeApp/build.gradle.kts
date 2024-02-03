@@ -95,6 +95,7 @@ android {
 }
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.foundation.android)
 }
 
 
