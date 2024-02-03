@@ -1,6 +1,5 @@
 package model.game
 
-import game.EspaceCellulaire
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -160,4 +159,23 @@ class EspaceCellulaireTest {
         // Assert
         assertEquals("nombreEvolution doit être positif.", exception.message)
     }
+
+
+    @Test
+    fun nullAutour() {
+        //Arrange
+        val plateau = EspaceCellulaire(1, 1)
+        plateau.setVivantes(Pair(0, 0))
+
+        //Act
+        plateau.evoluerUnNombreDeFois(1)
+        val result = plateau.toString()
+
+        //Assert
+        assertEquals("O \n", result)
+    }
+
+
+   
+
 }

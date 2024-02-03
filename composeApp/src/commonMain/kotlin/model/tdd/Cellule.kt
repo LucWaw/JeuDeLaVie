@@ -1,4 +1,4 @@
-package tdd
+package model.tdd
 
 class Cellule(var estVivante: Boolean = false) {
 
