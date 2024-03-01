@@ -3,6 +3,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -164,6 +166,41 @@ internal class DragTargetInfo {
     var draggableComposable by mutableStateOf<(@Composable () -> Unit)?>(null)
     var dataToDrop by mutableStateOf<Any?>(null)
 }
+@Composable
+fun <T> DragTarget(
+    modifier: Modifier,
+    dataToDrop: T,
+    content: @Composable (() -> Unit)
+) {
+    var currentPosition by remember { mutableStateOf(Offset.Zero) }
+    val currentState = LocalDragTargetInfo.current
+
+    Box(modifier = modifier
+        .onGloballyPositioned {
+            currentPosition = it.localToWindow(Offset.Zero)
+        }
+        .pointerInput(Unit) {
+            detectDragGesturesAfterLongPress(onDragStart = {
+                currentState.dataToDrop = dataToDrop
+                currentState.isDragging = true
+                currentState.dragPosition = currentPosition + it
+                currentState.draggableComposable = content
+            }, onDrag = { change, dragAmount ->
+                change.consume()
+                currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+            }, onDragEnd = {
+                currentState.isDragging = false
+                currentState.dragOffset = Offset.Zero
+            }, onDragCancel = {
+                currentState.dragOffset = Offset.Zero
+                currentState.isDragging = false
+            })
+
+        }) {
+        content()
+    }
+}
+
 
 
 @Composable
@@ -182,15 +219,18 @@ fun Board(mutableState: MutableStateFlow<State>,onCellClick: (Pair<Int, Int>) ->
     LazyVerticalGrid(GridCells.Fixed(5)) {
         items(25) {
             val cellCoord = Pair(it / 5, it % 5)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(1f) // Assure que la boîte est un carré
-                    .background(
-                        if (miniStateBundle.colored.contains(cellCoord)) Color.Black else Color.White
-                    )
-                    .border(1.dp, Color.Gray)
-            )
+            DragTarget(modifier = Modifier.fillMaxSize(), dataToDrop = cellCoord) { //TODO change dataToDrop to a bundle of cells
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(1f) // Assure que la boîte est un carré
+                        .background(
+                            if (miniStateBundle.colored.contains(cellCoord)) Color.Black else Color.White
+                        )
+                        .border(1.dp, Color.Gray)
+                )
+            }
+
         }
     }
 
