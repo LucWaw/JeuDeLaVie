@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,20 +53,16 @@ fun App() {
             mutableState.value = State(space.getAliveCells().map { Pair(it.first, it.second) })
         }
 
+        val playScope = rememberCoroutineScope()
 
         space.setAliveCells(*mutableState.value.colored.toTypedArray())
-        game(
-            rememberCoroutineScope(),
-            mutableState,
-            space,
-            gameViewModel
-        )
+
         val state: Flow<State> = mutableState
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            GameOfLife(state, gameViewModel, onCellClick)
+            GameOfLife(state, playScope, gameViewModel, onCellClick, mutableState, space)
         }
     }
 }
@@ -73,55 +70,50 @@ fun App() {
 data class State(val colored: List<Pair<Int, Int>>)
 
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun Buttons(gameViewModel: GameViewModel) {
-    //play button with play icon
 
-    Button(
-        onClick = { gameViewModel.togglePause() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val painter = painterResource("baseline_pause_24.xml")
-        if (gameViewModel.isPaused.value) {
-            Icon(painter, contentDescription = "pause")
-        } else {
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Play"
-            )
-        }
+fun toggleGameLoop(
+    mutableState: MutableStateFlow<State>,
+    playScope: CoroutineScope,
+    space: CellularSpace,
+    gameViewModel: GameViewModel
+) {
+    gameViewModel.togglePause() // Met le jeu en pause ou en marche
 
-
+    if (gameViewModel.isRunning.value) {
+        runGameLoop(
+            playScope,
+            mutableState,
+            space,
+            gameViewModel
+        )
     }
 }
 
 
-fun game(
-    scope: CoroutineScope,
+
+fun runGameLoop(
+    playScope: CoroutineScope,
     mutableState: MutableStateFlow<State>,
     cellularSpace: CellularSpace,
     gameViewModel: GameViewModel
 ) {
     val mutex = Mutex()
-    scope.launch {
+    playScope.launch {
+        while (gameViewModel.isRunning.value) {
 
-        while (true) {
             delay(150)
 
-            if (gameViewModel.isPaused.value) {
+
+
+                //mutex pour éviter l' accès concurrent à cellularSpace
                 mutex.withLock {
                     cellularSpace.evolve()
                     mutableState.update {
                         State(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
                     }
                 }
-            }
 
         }
-
     }
 }
 
@@ -129,18 +121,50 @@ fun game(
 @Composable
 fun GameOfLife(
     state: Flow<State>,
+    playScope: CoroutineScope,
     gameViewModel: GameViewModel,
-    onCellClick: (Pair<Int, Int>) -> Unit
+    onCellClick: (Pair<Int, Int>) -> Unit,
+    mutableState: MutableStateFlow<State>,
+    space: CellularSpace
 ) {
     val stateElement = state.collectAsState(initial = null)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
         stateElement.value?.let {
             Board(it, onCellClick)
         }
-        Buttons(gameViewModel)
-    }
 
+        Buttons(gameViewModel, playScope, space, mutableState)
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun Buttons(
+    gameViewModel: GameViewModel,
+    playScope: CoroutineScope,
+    cellularSpace: CellularSpace,
+    mutableState: MutableStateFlow<State>
+) {
+    //play button with play icon
+
+    Button(
+        onClick = { toggleGameLoop(mutableState, playScope, cellularSpace, gameViewModel)},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        val painter = painterResource("baseline_pause_24.xml")
+        if (gameViewModel.isRunning.value) {
+            Icon(painter, contentDescription = "pause")
+        } else {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Play"
+            )
+        }
+    }
 }
 
 
@@ -153,7 +177,6 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
     LazyVerticalGrid(GridCells.Fixed(20), state = scroll, modifier = Modifier.pointerInput(Unit) {
         fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
             //tilesize - scrollstate
-
 
             val tileSize = size.width / 20
             val x = (hitPoint.x / tileSize).toInt()
