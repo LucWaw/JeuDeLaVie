@@ -12,7 +12,6 @@ androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 assertk = "0.27.0"
 compose = "1.6.8"
-compose-compiler = "1.5.8"
 compose-plugin = "1.5.11"
 
 kmmViewmodelCore = "1.0.0-ALPHA-17"
@@ -20,6 +19,8 @@ kotlin = "1.9.21"
 foundationLayoutAndroid = "1.6.8"
 lifecycleViewmodelKtx = "2.8.3"
 foundationAndroid = "1.6.8"
+uiToolingPreviewAndroid = "1.6.8"
+uiToolingPreviewDesktop = "1.6.8"
 
 
 [libraries]
@@ -45,6 +46,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 kotlin-test-js = { module = "org.jetbrains.kotlin:kotlin-test-js" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit" }
+androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
+androidx-ui-tooling-preview-desktop = { group = "androidx.compose.ui", name = "ui-tooling-preview-desktop", version.ref = "uiToolingPreviewDesktop" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

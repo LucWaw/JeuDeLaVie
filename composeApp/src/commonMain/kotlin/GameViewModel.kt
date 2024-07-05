@@ -13,7 +13,5 @@ class GameViewModel : KMMViewModel() {
     }
 
 
-
-
 }
 

@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,7 +35,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import model.game.EspaceCellulaire
+import model.game.CellularSpace
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -46,19 +45,19 @@ fun App() {
     MaterialTheme {
         val mutableState =
             MutableStateFlow(State(listOf()))
-        val espace = EspaceCellulaire(20, 20)
+        val space = CellularSpace(20, 20)
         val gameViewModel = remember { GameViewModel() }
         val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoord ->
-            espace[cellCoord]?.estVivante = !espace[cellCoord]?.estVivante!!
-            mutableState.value = State(espace.getVivantes().map { Pair(it.first, it.second) })
+            space[cellCoord]?.isAlive = !space[cellCoord]?.isAlive!!
+            mutableState.value = State(space.getAliveCells().map { Pair(it.first, it.second) })
         }
 
 
-        espace.setVivantes(*mutableState.value.colored.toTypedArray())
+        space.setAliveCells(*mutableState.value.colored.toTypedArray())
         game(
             rememberCoroutineScope(),
             mutableState,
-            espace,
+            space,
             gameViewModel
         )
         val state: Flow<State> = mutableState
@@ -76,7 +75,7 @@ data class State(val colored: List<Pair<Int, Int>>)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun Bouttons(gameViewModel: GameViewModel){
+fun Buttons(gameViewModel: GameViewModel) {
     //play button with play icon
 
     Button(
@@ -96,16 +95,14 @@ fun Bouttons(gameViewModel: GameViewModel){
         }
 
 
-
     }
 }
-
 
 
 fun game(
     scope: CoroutineScope,
     mutableState: MutableStateFlow<State>,
-    cellularSpace: EspaceCellulaire,
+    cellularSpace: CellularSpace,
     gameViewModel: GameViewModel
 ) {
     val mutex = Mutex()
@@ -116,9 +113,9 @@ fun game(
 
             if (gameViewModel.isPaused.value) {
                 mutex.withLock {
-                    cellularSpace.evoluer()
+                    cellularSpace.evolve()
                     mutableState.update {
-                        State(cellularSpace.getVivantes().map { Pair(it.first, it.second) })
+                        State(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
                     }
                 }
             }
@@ -130,26 +127,30 @@ fun game(
 
 
 @Composable
-fun GameOfLife(state: Flow<State>, gameViewModel: GameViewModel, onCellClick: (Pair<Int, Int>) -> Unit) {
+fun GameOfLife(
+    state: Flow<State>,
+    gameViewModel: GameViewModel,
+    onCellClick: (Pair<Int, Int>) -> Unit
+) {
     val stateElement = state.collectAsState(initial = null)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         stateElement.value?.let {
             Board(it, onCellClick)
         }
-        Bouttons(gameViewModel)
+        Buttons(gameViewModel)
     }
 
 }
 
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
+fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
 
     val scroll = rememberLazyGridState()
 
 
-    LazyVerticalGrid(GridCells.Fixed(20),state = scroll, modifier = Modifier.pointerInput(Unit) {
+    LazyVerticalGrid(GridCells.Fixed(20), state = scroll, modifier = Modifier.pointerInput(Unit) {
         fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
             //tilesize - scrollstate
 
@@ -159,9 +160,10 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit ) {
             val y = (hitPoint.y / tileSize).toInt() + scroll.firstVisibleItemIndex / 20
             return Pair(y, x)
         }
+
         var currentCellCoord = Pair(0, 0)
 
-        detectDragGestures (
+        detectDragGestures(
             onDragStart = { offset ->
                 cellCoordAtOffset(offset).let {
                     if (!state.colored.contains(it)) {

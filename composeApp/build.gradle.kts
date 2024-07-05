@@ -15,12 +15,12 @@ kotlin {
             }
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -36,8 +36,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             //viewmodel
             api(libs.kmm.viewmodel.core)
-
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -62,6 +60,25 @@ kotlin {
 
 
 android {
+    sourceSets {
+
+        //To view android in Android Studio Android explorer view
+        getByName("main") {
+            java.srcDirs("src/androidMain/kotlin")
+            res.srcDirs("src/androidMain/res")
+        }
+        getByName("test") {
+            java.srcDirs("src/androidTest/kotlin")
+            res.srcDirs("src/androidTest/res")
+        }
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
+
+    buildFeatures.compose = true
+
     namespace = "kmp.project.gameoflife"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -100,6 +117,8 @@ android {
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.androidx.ui.tooling.preview.desktop)
 }
 
 

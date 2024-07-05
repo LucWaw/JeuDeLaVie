@@ -9,10 +9,10 @@ class EspaceCellulaireTest {
     @Test
     fun testToStringEstTaille1() {
         //Arrange
-        val plateau = EspaceCellulaire(1, 1)
+        val grid = CellularSpace(1, 1)
 
         //Act
-        val result = plateau.toString()
+        val result = grid.toString()
 
         //Assert
         assertEquals("O \n", result)
@@ -21,10 +21,10 @@ class EspaceCellulaireTest {
     @Test
     fun testToStringEstTaille2() {
         //Arrange
-        val plateau = EspaceCellulaire(2, 2)
+        val grid = CellularSpace(2, 2)
 
         //Act
-        val result = plateau.toString()
+        val result = grid.toString()
 
         //Assert
         assertEquals("O O \nO O \n", result)
@@ -33,10 +33,10 @@ class EspaceCellulaireTest {
     @Test
     fun testToStringEstTaille100() {
         //Arrange
-        val plateau = EspaceCellulaire(100, 100)
+        val grid = CellularSpace(100, 100)
 
         //Act
-        val result = plateau.toString()
+        val result = grid.toString()
 
         //Assert
         val gridSize = 100
@@ -62,10 +62,10 @@ class EspaceCellulaireTest {
     @Test
     fun testToString() {
         //Arrange
-        val plateau = EspaceCellulaire(5, 5)
+        val grid = CellularSpace(5, 5)
 
         //Act
-        val result = plateau.toString()
+        val result = grid.toString()
 
         //Assert
         assertEquals("O O O O O \nO O O O O \nO O O O O \nO O O O O \nO O O O O \n", result)
@@ -75,7 +75,7 @@ class EspaceCellulaireTest {
     fun testToStringNegative() {
         // Arrange & Act & Assert
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            EspaceCellulaire(-1, -1)
+            CellularSpace(-1, -1)
         }
 
         // Assert
@@ -86,7 +86,7 @@ class EspaceCellulaireTest {
     fun testToStringZero() {
         // Arrange & Act & Assert
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            EspaceCellulaire(0, 0)
+            CellularSpace(0, 0)
         }
 
         // Assert
@@ -97,63 +97,63 @@ class EspaceCellulaireTest {
     @Test
     fun evoluerUnNombreDeFois() {
         //Arrange
-        val plateau = EspaceCellulaire(2, 2)
-        plateau[Pair(1, 1)]?.estVivante = true
-        plateau[Pair(1, 0)]?.estVivante = true
-        plateau[Pair(0, 1)]?.estVivante = true
+        val grid = CellularSpace(2, 2)
+        grid[Pair(1, 1)]?.isAlive = true
+        grid[Pair(1, 0)]?.isAlive = true
+        grid[Pair(0, 1)]?.isAlive = true
 
         //Act
-        plateau.evoluerUnNombreDeFois(1)
+        grid.evolveMultipleTimes(1)
 
         //Assert
-        assertEquals("X X \nX X \n", plateau.toString())
+        assertEquals("X X \nX X \n", grid.toString())
     }
 
     @Test
     fun evoluerUnNombreDeFois2() {
         //Arrange
-        val plateau = EspaceCellulaire(5, 5)
-        plateau[Pair(1, 2)]?.estVivante = true
-        plateau[Pair(2, 2)]?.estVivante = true
-        plateau[Pair(3, 2)]?.estVivante = true
+        val grid = CellularSpace(5, 5)
+        grid[Pair(1, 2)]?.isAlive = true
+        grid[Pair(2, 2)]?.isAlive = true
+        grid[Pair(3, 2)]?.isAlive = true
         //Act
-        plateau.evoluerUnNombreDeFois(2)
+        grid.evolveMultipleTimes(2)
 
         //Assert
         assertEquals(
             "O O O O O \nO O X O O \nO O X O O \nO O X O O \nO O O O O \n",
-            plateau.toString()
+            grid.toString()
         )
     }
 
     @Test
     fun evoluerUnNombreDeFoisZero() {
         //Arrange
-        val plateau = EspaceCellulaire(5, 5)
+        val grid = CellularSpace(5, 5)
         //Un carré
-        plateau[Pair(1, 1)]?.estVivante = true
-        plateau[Pair(1, 2)]?.estVivante = true
-        plateau[Pair(2, 1)]?.estVivante = true
-        plateau[Pair(2, 2)]?.estVivante = true
+        grid[Pair(1, 1)]?.isAlive = true
+        grid[Pair(1, 2)]?.isAlive = true
+        grid[Pair(2, 1)]?.isAlive = true
+        grid[Pair(2, 2)]?.isAlive = true
 
         //Act
-        plateau.evoluerUnNombreDeFois(0)
+        grid.evolveMultipleTimes(0)
 
         //Assert
         assertEquals(
             "O O O O O \nO X X O O \nO X X O O \nO O O O O \nO O O O O \n",
-            plateau.toString()
+            grid.toString()
         )
     }
 
     @Test
     fun evoluerUnNombreDeFoisNegative() {
         //Arrange
-        val plateau = EspaceCellulaire(5, 5)
+        val grid = CellularSpace(5, 5)
 
         //Act & Assert
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            plateau.evoluerUnNombreDeFois(-1)
+            grid.evolveMultipleTimes(-1)
         }
 
         // Assert
@@ -164,18 +164,16 @@ class EspaceCellulaireTest {
     @Test
     fun nullAutour() {
         //Arrange
-        val plateau = EspaceCellulaire(1, 1)
-        plateau.setVivantes(Pair(0, 0))
+        val grid = CellularSpace(1, 1)
+        grid.setAliveCells(Pair(0, 0))
 
         //Act
-        plateau.evoluerUnNombreDeFois(1)
-        val result = plateau.toString()
+        grid.evolveMultipleTimes(1)
+        val result = grid.toString()
 
         //Assert
         assertEquals("O \n", result)
     }
 
-
-   
 
 }
