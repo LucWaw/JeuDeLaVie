@@ -5,7 +5,7 @@ import model.tdd.Cellule
 class EspaceCellulaire private constructor(
     private val tailleX: Int,
     private val tailleY: Int,
-    val espace: MutableMap<Pair<Int, Int>, Cellule>
+    private val espace: MutableMap<Pair<Int, Int>, Cellule>
 ) : MutableMap<Pair<Int, Int>, Cellule> by espace {
 
     /**

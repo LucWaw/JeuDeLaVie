@@ -45,16 +45,20 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.assertk)
-            //junit api
 
         }
+        jvmTest.dependencies {
+            implementation(libs.kotlin.test.junit)
+            implementation(libs.assertk)
+        }
 
+        jsTest.dependencies {
+            implementation(libs.kotlin.test.js)
+            implementation(libs.assertk)
+        }
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
 
 
 android {
