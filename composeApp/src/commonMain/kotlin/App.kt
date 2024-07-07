@@ -20,14 +20,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -40,16 +46,18 @@ import model.game.CellularSpace
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
+const val GRID_SIZE = 20
+
 @Composable
 fun App() {
 
     MaterialTheme {
         val mutableState =
             MutableStateFlow(State(listOf()))
-        val space = CellularSpace(20, 20)
+        val space = CellularSpace(GRID_SIZE, GRID_SIZE)
         val gameViewModel = remember { GameViewModel() }
-        val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoord ->
-            space[cellCoord]?.isAlive = !space[cellCoord]?.isAlive!!
+        val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoordinates ->
+            space[cellCoordinates]?.isAlive = !space[cellCoordinates]?.isAlive!!
             mutableState.value = State(space.getAliveCells().map { Pair(it.first, it.second) })
         }
 
@@ -103,8 +111,6 @@ fun runGameLoop(
 
             delay(150)
 
-
-
                 //mutex pour éviter l' accès concurrent à cellularSpace
                 mutex.withLock {
                     cellularSpace.evolve()
@@ -148,7 +154,6 @@ fun Buttons(
     mutableState: MutableStateFlow<State>
 ) {
     //play button with play icon
-
     Button(
         onClick = { toggleGameLoop(mutableState, playScope, cellularSpace, gameViewModel)},
         modifier = Modifier
@@ -167,60 +172,59 @@ fun Buttons(
     }
 }
 
-
 @Composable
 fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
-
     val scroll = rememberLazyGridState()
+    var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
-
-    LazyVerticalGrid(GridCells.Fixed(20), state = scroll, modifier = Modifier.pointerInput(Unit) {
-        fun cellCoordAtOffset(hitPoint: Offset): Pair<Int, Int> {
-            //tilesize - scrollstate
-
-            val tileSize = size.width / 20
-            val x = (hitPoint.x / tileSize).toInt()
-            val y = (hitPoint.y / tileSize).toInt() + scroll.firstVisibleItemIndex / 20
-            return Pair(y, x)
-        }
-
-        var currentCellCoord = Pair(0, 0)
-
-        detectDragGestures(
-            onDragStart = { offset ->
-                cellCoordAtOffset(offset).let {
-                    if (!state.colored.contains(it)) {
-                        currentCellCoord = it
-                        onCellClick(it)
-                    }
+    LazyVerticalGrid(
+        GridCells.Fixed(GRID_SIZE),
+        state = scroll,
+        modifier = Modifier
+            .pointerInput(Unit) {
+                fun cellCoordinatesAtOffset(hitPoint: Offset): Pair<Int, Int> {
+                    // Calculate the actual size of each cell
+                    val tileSize = gridSize.width / GRID_SIZE
+                    val x = (hitPoint.x / tileSize).toInt()
+                    val y = (hitPoint.y / tileSize).toInt()
+                    return Pair(y, x)
                 }
-            },
 
+                var currentCellCoordinates = Pair(0, 0)
 
-            onDrag = { change, _ ->
-                cellCoordAtOffset(change.position).let { pointerCellCoord ->
-                    if (currentCellCoord != pointerCellCoord) {
-                        onCellClick(pointerCellCoord)
-
-                        currentCellCoord = pointerCellCoord
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        cellCoordinatesAtOffset(offset).let {
+                            if (!state.colored.contains(it)) {
+                                currentCellCoordinates = it
+                                onCellClick(it)
+                            }
+                        }
+                    },
+                    onDrag = { change, _ ->
+                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
+                            if (currentCellCoordinates != pointerCellCoordinates) {
+                                onCellClick(pointerCellCoordinates)
+                                currentCellCoordinates = pointerCellCoordinates
+                            }
+                        }
                     }
-                }
+                )
             }
-        )
-    }) {
-        items(400) {
-            val cellCoord = Pair(it / 20, it % 20)
+            .onSizeChanged { newSize ->
+                gridSize = newSize.toSize() // Update the gridSize with the actual size
+            }
+    ) {
+        items(400) { index ->
+            val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .aspectRatio(1f) // Assure que la boîte est un carré
-                    .background(
-                        if (state.colored.contains(cellCoord)) Color.Black else Color.White
-                    )
+                    .aspectRatio(1f)
+                    .background(if (state.colored.contains(cellCoordinates)) Color.Black else Color.White)
                     .border(1.dp, Color.Gray)
-                    .clickable { onCellClick(cellCoord) }
+                    .clickable { onCellClick(cellCoordinates) }
             )
         }
     }
-
 }
