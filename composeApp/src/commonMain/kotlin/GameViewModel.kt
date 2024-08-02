@@ -4,16 +4,12 @@ import com.rickclephas.kmm.viewmodel.KMMViewModel
 
 
 class GameViewModel : KMMViewModel() {
-    private val _isPaused = mutableStateOf(false)
-    val isPaused: MutableState<Boolean> = _isPaused
+    private val _isRunning = mutableStateOf(false)
+    val isRunning: MutableState<Boolean> = _isRunning
 
 
     fun togglePause() {
-        _isPaused.value = !_isPaused.value
+        _isRunning.value = !_isRunning.value
     }
-
-
-
-
 }
 
