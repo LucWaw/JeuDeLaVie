@@ -86,17 +86,31 @@ class CellularSpace private constructor(
 
         for (x in 0..tailleX) {
             for (y in 0..tailleY) {
-                this[Pair(x, y)]?.changeState(
-                    //Changer l'état des 8 cellules voisines
-                    initialCellularSpace[Pair(x - 1, y - 1)],
-                    initialCellularSpace[Pair(x - 1, y)],
-                    initialCellularSpace[Pair(x - 1, y + 1)],
-                    initialCellularSpace[Pair(x, y - 1)],
-                    initialCellularSpace[Pair(x, y + 1)],
-                    initialCellularSpace[Pair(x + 1, y - 1)],
-                    initialCellularSpace[Pair(x + 1, y)],
-                    initialCellularSpace[Pair(x + 1, y + 1)]
-                )
+                if (tailleX > 0 && tailleY > 0) {
+                    this[Pair(x, y)]?.changeState(
+                        //Changer l'état des 8 cellules voisines, passer a droite fera arriver a gauche
+                        initialCellularSpace[Pair((x - 1 + tailleX) % tailleX, (y - 1 + tailleY) % tailleY)],
+                        initialCellularSpace[Pair((x - 1 + tailleX) % tailleX, y)],
+                        initialCellularSpace[Pair((x - 1 + tailleX) % tailleX, (y + 1) % tailleY)],
+                        initialCellularSpace[Pair(x, (y - 1 + tailleY) % tailleY)],
+                        initialCellularSpace[Pair(x, (y + 1) % tailleY)],
+                        initialCellularSpace[Pair((x + 1) % tailleX, (y - 1 + tailleY) % tailleY)],
+                        initialCellularSpace[Pair((x + 1) % tailleX, y)],
+                        initialCellularSpace[Pair((x + 1) % tailleX, (y + 1) % tailleY)]
+                    )
+                }else{
+                    this[Pair(x, y)]?.changeState(
+                        //Changer l'état des 8 cellules voisines
+                        initialCellularSpace[Pair(x - 1, y - 1)],
+                        initialCellularSpace[Pair(x - 1, y)],
+                        initialCellularSpace[Pair(x - 1, y + 1)],
+                        initialCellularSpace[Pair(x, y - 1)],
+                        initialCellularSpace[Pair(x, y + 1)],
+                        initialCellularSpace[Pair(x + 1, y - 1)],
+                        initialCellularSpace[Pair(x + 1, y)],
+                        initialCellularSpace[Pair(x + 1, y + 1)]
+                    )
+                }
             }
         }
     }

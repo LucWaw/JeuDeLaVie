@@ -124,6 +124,7 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.ui.tooling.preview.desktop)
+    implementation(libs.androidx.material3.android)
 }
 
 
