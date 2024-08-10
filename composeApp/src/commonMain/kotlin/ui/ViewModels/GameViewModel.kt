@@ -1,4 +1,4 @@
-package data
+package ui.ViewModels
 
 import androidx.compose.runtime.mutableStateOf
 import com.rickclephas.kmm.viewmodel.KMMViewModel

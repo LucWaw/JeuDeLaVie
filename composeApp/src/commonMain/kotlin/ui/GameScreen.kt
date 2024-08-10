@@ -1,4 +1,4 @@
-package game
+package ui
 
 import GRID_SIZE
 import androidx.compose.foundation.background
@@ -31,14 +31,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import data.GameViewModel
 import data.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import model.game.CellularSpace
+import model.Space.CellularSpace
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import pattern.patternSquare
+import ui.ViewModels.GameViewModel
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -77,11 +76,15 @@ fun Buttons(
 }
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
+fun Board(
+    state: State,
+    aliveCells: List<Pair<Int, Int>>,
+    onCellClick: (Pair<Int, Int>) -> Unit) {
+
     val scroll = rememberLazyGridState()
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
-    patternSquare()
+
     fun cellCoordinatesAtOffset(hitPoint: Offset): Pair<Int, Int> {
         // Calculate the actual size of each cell
         val tileSize = gridSize.width / GRID_SIZE
@@ -89,78 +92,75 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
         val y = (hitPoint.y / tileSize).toInt()
         return Pair(y, x)
     }
+    //DropTarget<MiniState>(modifier = Modifier.width(500.dp)){ isInBound, bundleOfCells ->
 
-    LazyVerticalGrid(
-        GridCells.Fixed(GRID_SIZE),
-        state = scroll,
-        modifier = Modifier
-            .pointerInput(Unit) {
-                var currentCellCoordinates = Pair(0, 0)
+        LazyVerticalGrid(
+            GridCells.Fixed(GRID_SIZE),
+            state = scroll,
+            modifier = Modifier
 
-                detectDragGestures(
-                    onDragStart = { offset ->
-                        cellCoordinatesAtOffset(offset).let {pair ->
-                            if (!state.colored.contains(pair)) {
-                                currentCellCoordinates = pair
-                                onCellClick(pair)
-                            }/*else{
-                                initCellCoord = pair
-                                drag = true
-                            }*/
-                        }
-                    },
-                    onDrag = { change, _ ->
-                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                            if (currentCellCoordinates != pointerCellCoordinates) {
-                                //if (!drag) {
-                                onCellClick(pointerCellCoordinates)
-                                //}
-                                currentCellCoordinates = pointerCellCoordinates
+                .pointerInput(Unit) {
+
+                    var currentCellCoordinates = Pair(0, 0)
+
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            cellCoordinatesAtOffset(offset).let {pair ->
+                                if (!state.colored.contains(pair)) {
+                                    currentCellCoordinates = pair
+                                    onCellClick(pair)
+                                }
+                            }
+                        },
+                        onDrag = { change, _ ->
+                            cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
+                                if (currentCellCoordinates != pointerCellCoordinates) {
+                                    onCellClick(pointerCellCoordinates)
+                                    currentCellCoordinates = pointerCellCoordinates
+                                }
                             }
                         }
-                    }
-                )
-            }.pointerInput(Unit){
-                var currentCellCoordinates = Pair(0, 0)
+                    )
+                }.pointerInput(Unit){
+                    var currentCellCoordinates = Pair(0, 0)
 
-                detectDragGesturesAfterLongPress (
-                    onDragStart = { offset ->
-                        cellCoordinatesAtOffset(offset).let {pair ->
-                            if (!state.colored.contains(pair)) {
-                                currentCellCoordinates = pair
-                                onCellClick(pair)
-                            }/*else{
-                                initCellCoord = pair
-                                drag = true
-                            }*/
-                        }
-                    },
-                    onDrag = { change, _ ->
-                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                            if (currentCellCoordinates != pointerCellCoordinates) {
-                                //if (!drag) {
-                                onCellClick(pointerCellCoordinates)
-                                //}
-                                currentCellCoordinates = pointerCellCoordinates
+                    detectDragGesturesAfterLongPress (
+                        onDragStart = { offset ->
+                            cellCoordinatesAtOffset(offset).let {pair ->
+                                if (!state.colored.contains(pair)) {
+                                    currentCellCoordinates = pair
+                                    onCellClick(pair)
+                                }
+                            }
+                        },
+                        onDrag = { change, _ ->
+                            cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
+                                if (currentCellCoordinates != pointerCellCoordinates) {
+                                    onCellClick(pointerCellCoordinates)
+                                    currentCellCoordinates = pointerCellCoordinates
+                                }
                             }
                         }
-                    }
+                    )
+                }
+                .onSizeChanged { newSize ->
+                    gridSize = newSize.toSize()
+                }
+        ) {
+            items(GRID_SIZE * GRID_SIZE) { index ->
+                val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(1f)
+                        .background(if (state.colored.contains(cellCoordinates)) Color.Black else Color.White)
+                        .border(1.dp, Color.Gray)
+                        .clickable { onCellClick(cellCoordinates) }
                 )
             }
-            .onSizeChanged { newSize ->
-                gridSize = newSize.toSize() // Update the gridSize with the actual size
-            }
-    ) {
-        items(GRID_SIZE * GRID_SIZE) { index ->
-            val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(1f)
-                    .background(if (state.colored.contains(cellCoordinates)) Color.Black else Color.White)
-                    .border(1.dp, Color.Gray)
-                    .clickable { onCellClick(cellCoordinates) }
-            )
         }
-    }
+    //}
+
+
 }

@@ -1,4 +1,4 @@
-package pattern
+package ui.pattern
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import data.MiniState
-import model.game.DragTarget
-import model.game.LongPressDraggable
+import ui.DragTarget
+import ui.LongPressDraggable
 
 
 /*@Composable
@@ -31,9 +31,6 @@ fun patternSquare() {
     val miniStateBundle = MiniState(listOf(Pair(1, 1), Pair(1, 2), Pair(2, 2), Pair(2, 1)))
 
     //when drag via https://blog.canopas.com/android-drag-and-drop-ui-element-in-jetpack-compose-14922073b3f1
-    //metre le bundle dans l'autre grille
-
-    //small lazy grid
 
     val miniGridSize = 4
 
@@ -60,15 +57,6 @@ fun patternSquare() {
                             )
                     )
                 }
-                /*val painter = painterResource("pixelArtsannsbord.png")
-        Surface(modifier = Modifier.background(Color.Black).width(70.dp)) {
-            Image(
-                painter = painter,
-                contentDescription = null
-            )
-        }*/
-
-
             }
         }
     }

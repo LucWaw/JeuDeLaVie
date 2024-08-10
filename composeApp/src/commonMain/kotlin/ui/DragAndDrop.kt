@@ -1,4 +1,4 @@
-package model.game
+package ui
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
@@ -28,7 +28,8 @@ fun LongPressDraggable(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val state = remember { DragTargetInfo() }
+    val state = remember { DragTargetInfo() }    // pass that on a view model
+
     CompositionLocalProvider(
         LocalDragTargetInfo provides state
     ) {

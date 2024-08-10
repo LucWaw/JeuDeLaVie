@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import data.State
-import game.GameOfLife
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import model.game.CellularSpace
+import model.Space.CellularSpace
+import ui.GameOfLife
 
 const val GRID_SIZE = 20
 
