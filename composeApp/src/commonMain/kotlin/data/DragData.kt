@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 
-data class MiniState(val colored: List<Pair<Int, Int>>)
+
 internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
 
 internal class DragTargetInfo {

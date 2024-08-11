@@ -19,8 +19,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import data.DragTargetInfo
 import data.LocalDragTargetInfo
-
-
+import ui.pattern.Pattern
 
 
 @Composable
@@ -61,9 +60,9 @@ fun LongPressDraggable(
 }
 
 @Composable
-fun <T> DragTarget(
+fun DragTarget(
     modifier: Modifier,
-    dataToDrop: T,
+    dataToDrop: Pattern,
     content: @Composable (() -> Unit)
 ) {
 
@@ -96,9 +95,9 @@ fun <T> DragTarget(
 }
 
 @Composable
-fun <T> DropTarget(
+fun DropTarget(
     modifier: Modifier,
-    content: @Composable (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
+    content: @Composable (BoxScope.(isInBound: Boolean, data: Pattern?) -> Unit)
 ) {
 
     val dragInfo = LocalDragTargetInfo.current
@@ -114,7 +113,7 @@ fun <T> DropTarget(
         }
     }) {
         val data =
-            if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as T? else null
+            if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as Pattern? else null
         content(isCurrentDropTarget, data)
     }
 }

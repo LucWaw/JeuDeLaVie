@@ -35,7 +35,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import data.MiniState
 import data.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,8 +87,6 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
 
-    val mutableState = remember { mutableStateOf(state) }
-
     fun cellCoordinatesAtOffset(hitPoint: Offset): Pair<Int, Int> {
         // Calculate the actual size of each cell
         val tileSize = gridSize.width / GRID_SIZE
@@ -97,11 +94,11 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
         val y = (hitPoint.y / tileSize).toInt()
         return Pair(y, x)
     }
-    DropTarget<MiniState>(modifier = Modifier.width(500.dp)) { isInBound, bundleOfCells ->
+    DropTarget(modifier = Modifier.width(500.dp)) { isInBound, bundleOfCells ->
         println("$isInBound and $bundleOfCells")
-        if (isInBound) {
+        /*if (isInBound) {
             mutableState.value = State(bundleOfCells!!.colored)
-        }
+        }*/
         LazyVerticalGrid(
             GridCells.Fixed(GRID_SIZE),
             state = scroll,
