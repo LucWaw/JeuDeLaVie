@@ -49,7 +49,6 @@ fun PatternUI(
                 val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
                 Box(
                     modifier = modifier
-
                         .aspectRatio(1f)
                         .background(if (pattern.cells.contains(cellCoord)) Color.Black else Color.Transparent)
                         .border(

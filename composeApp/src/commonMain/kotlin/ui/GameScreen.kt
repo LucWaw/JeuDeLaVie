@@ -11,7 +11,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -48,7 +47,8 @@ import ui.ViewModels.GameViewModel
 fun Buttons(
     playScope: CoroutineScope,
     cellularSpace: CellularSpace,
-    mutableState: MutableStateFlow<State>
+    mutableState: MutableStateFlow<State>,
+    modifier: Modifier = Modifier
 ) {
     //play button with play icon
     val gameViewModel = remember { GameViewModel() }
@@ -65,7 +65,7 @@ fun Buttons(
                 )
             }
         },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
@@ -82,7 +82,7 @@ fun Buttons(
 }
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
+fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
     val scroll = rememberLazyGridState()
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
@@ -94,11 +94,13 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
         val y = (hitPoint.y / tileSize).toInt()
         return Pair(y, x)
     }
-    DropTarget(modifier = Modifier.width(500.dp)) { isInBound, bundleOfCells ->
+    DropTarget(modifier = modifier.width(400.dp)) { isInBound, bundleOfCells ->
         println("$isInBound and $bundleOfCells")
-        /*if (isInBound) {
-            mutableState.value = State(bundleOfCells!!.colored)
-        }*/
+        if (isInBound && bundleOfCells != null) {
+            bundleOfCells.cells.forEach { cell ->
+                onCellClick(cell)
+            }
+        }
         LazyVerticalGrid(
             GridCells.Fixed(GRID_SIZE),
             state = scroll,
@@ -157,7 +159,6 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit) {
 
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
                         .aspectRatio(1f)
                         .background(if (state.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value) Color.Black else Color.White)
                         .border(1.dp, Color.Gray)

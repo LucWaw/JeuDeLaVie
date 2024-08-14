@@ -1,8 +1,7 @@
 package ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -24,33 +23,27 @@ fun GameOfLife(
     space: CellularSpace,
     modifier: Modifier = Modifier
 ) {
+    Column {
+        LongPressDraggable(modifier = modifier) {
+            Column {
 
-    Column(modifier = modifier.fillMaxSize()) {
-        //Pattern()
+                //Game board
+                mutableState.collectAsState().value.let { //ou if stateElement.value != null
+                    Board(it, onCellClick, modifier)
+                }
 
-        LongPressDraggable (modifier = modifier){
-
-            //Column(modifier = modifier) {
-                LazyRow (
-                    modifier = Modifier,
-                    contentPadding = PaddingValues(horizontal = 10.dp)
+                LazyRow(
+                    modifier = modifier.height(200.dp),
                 ) {
                     items(items = patternList) { pattern ->
                         PatternUI(pattern)
                     }
                 }
-
-                mutableState.collectAsState().value.let { //ou if stateElement.value != null
-                    println("here")
-                    Board(it, onCellClick)
-                }
-            //}
-
-
+            }
         }
-
-
-
-        Buttons(playScope, space, mutableState)
+        //Play pause button
+        Buttons(playScope, space, mutableState, modifier)
     }
+
+
 }

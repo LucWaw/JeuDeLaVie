@@ -3,7 +3,6 @@ package ui
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -32,7 +31,7 @@ fun LongPressDraggable(
     CompositionLocalProvider(
         LocalDragTargetInfo provides state
     ) {
-        Box(modifier = modifier.fillMaxSize())
+        Box(modifier = modifier)
         {
             content()
             if (state.isDragging) {
@@ -112,6 +111,9 @@ fun DropTarget(
             isCurrentDropTarget = rect.contains(dragPosition + dragOffset)
         }
     }) {
+        println(dragInfo.dragOffset)
+        println(dragInfo.dragPosition)
+
         val data =
             if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as Pattern? else null
         content(isCurrentDropTarget, data)
