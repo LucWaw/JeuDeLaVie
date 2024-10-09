@@ -168,7 +168,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                     activated = true
                     println("LAa")
                 }
-                if (activated && interactionSource.collectIsHoveredAsState().value) {
+                if (activated) {
                     activated = false
 
                     println("Here")
