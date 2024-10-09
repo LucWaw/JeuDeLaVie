@@ -100,7 +100,6 @@ class CellularSpace private constructor(
                         initialCellularSpace[Pair((x - 1 + tailleX) % tailleX, (y + 1) % tailleY)],
                         initialCellularSpace[Pair(x, (y + 1) % tailleY)],
                         initialCellularSpace[Pair((x + 1) % tailleX, (y + 1) % tailleY)]
-
                     )
                 } else {
                     this[Pair(x, y)]?.changeState(

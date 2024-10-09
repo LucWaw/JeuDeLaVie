@@ -2,6 +2,7 @@ package ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -24,7 +25,7 @@ fun GameOfLife(
     modifier: Modifier = Modifier
 ) {
     Column {
-        LongPressDraggable(modifier = modifier) {
+        LongPressDraggable(modifier = modifier.width(500.dp)) {
             Column {
 
                 //Game board

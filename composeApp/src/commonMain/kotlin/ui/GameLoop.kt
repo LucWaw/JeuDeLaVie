@@ -31,7 +31,6 @@ fun runGameLoop(
                     State(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
                 }
             }
-
         }
     }
 }

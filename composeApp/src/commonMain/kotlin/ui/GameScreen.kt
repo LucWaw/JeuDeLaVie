@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -31,6 +30,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -57,7 +57,7 @@ fun Buttons(
             gameViewModel.togglePause() // Met le jeu en pause ou en marche
 
             if (gameViewModel.isRunning) {
-                runGameLoop(
+                runGameLoop( 
                     playScope,
                     mutableState,
                     cellularSpace,
@@ -80,6 +80,9 @@ fun Buttons(
         }
     }
 }
+var cell: Pair<Int, Int>? = null
+var bundledCells: List<Pair<Int, Int>>? = null
+var activated = false
 
 @Composable
 fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
@@ -94,68 +97,99 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
         val y = (hitPoint.y / tileSize).toInt()
         return Pair(y, x)
     }
-    DropTarget(modifier = modifier.width(400.dp)) { isInBound, bundleOfCells ->
-        println("$isInBound and $bundleOfCells")
-        if (isInBound && bundleOfCells != null) {
-            bundleOfCells.cells.forEach { cell ->
-                onCellClick(cell)
+
+    var currentPosition by mutableStateOf(Offset.Zero)
+
+
+    LazyVerticalGrid(
+        GridCells.Fixed(GRID_SIZE),
+        state = scroll,
+        modifier = Modifier
+            .onGloballyPositioned {
+                currentPosition = it.localToWindow(Offset.Zero)
             }
-        }
-        LazyVerticalGrid(
-            GridCells.Fixed(GRID_SIZE),
-            state = scroll,
-            modifier = Modifier
-                .pointerInput(Unit) {
-                    var currentCellCoordinates = Pair(0, 0)
+            .pointerInput(Unit) {
+                var currentCellCoordinates = Pair(0, 0)
 
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            cellCoordinatesAtOffset(offset).let { pair ->
-                                if (!state.colored.contains(pair)) {
-                                    currentCellCoordinates = pair
-                                    onCellClick(pair)
-                                }
-                            }
-                        },
-                        onDrag = { change, _ ->
-                            cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                                if (currentCellCoordinates != pointerCellCoordinates) {
-                                    onCellClick(pointerCellCoordinates)
-                                    currentCellCoordinates = pointerCellCoordinates
-                                }
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        cellCoordinatesAtOffset(offset).let { pair ->
+                            if (!state.colored.contains(pair)) {
+                                currentCellCoordinates = pair
+                                onCellClick(pair)
                             }
                         }
-                    )
-                }
-                .pointerInput(Unit) {
-                    var currentCellCoordinates = Pair(0, 0)
-
-                    detectDragGesturesAfterLongPress(
-                        onDragStart = { offset ->
-                            cellCoordinatesAtOffset(offset).let { pair ->
-                                if (!state.colored.contains(pair)) {
-                                    currentCellCoordinates = pair
-                                    onCellClick(pair)
-                                }
-                            }
-                        },
-                        onDrag = { change, _ ->
-                            cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                                if (currentCellCoordinates != pointerCellCoordinates) {
-                                    onCellClick(pointerCellCoordinates)
-                                    currentCellCoordinates = pointerCellCoordinates
-                                }
+                    },
+                    onDrag = { change, _ ->
+                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
+                            if (currentCellCoordinates != pointerCellCoordinates) {
+                                onCellClick(pointerCellCoordinates)
+                                currentCellCoordinates = pointerCellCoordinates
                             }
                         }
-                    )
+                    }
+                )
+            }
+            .pointerInput(Unit) {
+                var currentCellCoordinates = Pair(0, 0)
+
+                detectDragGesturesAfterLongPress(
+                    onDragStart = { offset ->
+                        cellCoordinatesAtOffset(offset).let { pair ->
+                            if (!state.colored.contains(pair)) {
+                                currentCellCoordinates = pair
+                                onCellClick(pair)
+                            }
+                        }
+                    },
+                    onDrag = { change, _ ->
+                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
+                            if (currentCellCoordinates != pointerCellCoordinates) {
+                                onCellClick(pointerCellCoordinates)
+                                currentCellCoordinates = pointerCellCoordinates
+                            }
+                        }
+                    }
+                )
+            }
+            .onSizeChanged { newSize ->
+                gridSize = newSize.toSize() // Update the gridSize with the actual size
+            }
+    ) {
+        items(GRID_SIZE * GRID_SIZE) { index ->
+            val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
+            val interactionSource = remember { MutableInteractionSource() }
+
+            DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
+                println("$isInBound and $bundleOfCells")
+                if (isInBound && bundleOfCells != null) {
+                    cell = cellCoordinates
+                    bundledCells = bundleOfCells.cells
+                    activated = true
+                    println("LAa")
                 }
-                .onSizeChanged { newSize ->
-                    gridSize = newSize.toSize() // Update the gridSize with the actual size
+                if (activated && interactionSource.collectIsHoveredAsState().value) {
+                    activated = false
+
+                    println("Here")
+
+                    println("Hara")
+                    println(cell)
+
+                    bundledCells?.forEach { patternCell ->
+                        if (cell != null) {
+                            onCellClick(
+                                Pair(
+                                    patternCell.first + (cell?.first?:0),
+                                    patternCell.second + (cell?.second ?: 0)
+                                )
+                            )
+                        }
+
+                    }
                 }
-        ) {
-            items(GRID_SIZE * GRID_SIZE) { index ->
-                val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
-                val interactionSource = remember { MutableInteractionSource() }
+
+
 
                 Box(
                     modifier = Modifier

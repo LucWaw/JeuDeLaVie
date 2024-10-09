@@ -41,8 +41,8 @@ fun LongPressDraggable(
                 Box(modifier = Modifier
                     .graphicsLayer {
                         val offset = (state.dragPosition + state.dragOffset)
-                        scaleX = 1.3f
-                        scaleY = 1.3f
+                        scaleX = 0.5f
+                        scaleY = 0.5f
                         alpha = if (targetSize == IntSize.Zero) 0f else .9f
                         translationX = offset.x.minus(targetSize.width / 2)
                         translationY = offset.y.minus(targetSize.height / 2)
@@ -84,6 +84,7 @@ fun DragTarget(
             }, onDragEnd = {
                 currentState.isDragging = false
                 currentState.dragOffset = Offset.Zero
+
             }, onDragCancel = {
                 currentState.dragOffset = Offset.Zero
                 currentState.isDragging = false
@@ -111,9 +112,6 @@ fun DropTarget(
             isCurrentDropTarget = rect.contains(dragPosition + dragOffset)
         }
     }) {
-        println(dragInfo.dragOffset)
-        println(dragInfo.dragPosition)
-
         val data =
             if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as Pattern? else null
         content(isCurrentDropTarget, data)
