@@ -1,11 +1,13 @@
-import androidx.compose.runtime.MutableState
+package ui.ViewModels
+
 import androidx.compose.runtime.mutableStateOf
 import com.rickclephas.kmm.viewmodel.KMMViewModel
 
 
 class GameViewModel : KMMViewModel() {
     private val _isRunning = mutableStateOf(false)
-    val isRunning: MutableState<Boolean> = _isRunning
+    val isRunning: Boolean
+        get() = _isRunning.value
 
 
     fun togglePause() {

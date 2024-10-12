@@ -1,5 +1,6 @@
 package model.game
 
+import model.Space.CellularSpace
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test

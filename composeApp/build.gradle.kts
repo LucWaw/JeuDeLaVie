@@ -63,8 +63,6 @@ kotlin {
 android {
 
 
-
-
     sourceSets {
 
         //To view android in Android Studio Android explorer view
@@ -124,6 +122,8 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.ui.tooling.preview.desktop)
+    implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.foundation.layout.android)
 }
 
 
