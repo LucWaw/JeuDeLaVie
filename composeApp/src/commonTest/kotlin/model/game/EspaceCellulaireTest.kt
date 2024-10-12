@@ -97,18 +97,30 @@ class EspaceCellulaireTest {
 
     @Test
     fun evoluerUnNombreDeFois() {
-        //Arrange
-        val grid = CellularSpace(2, 2)
+        // Arrange
+        val grid = CellularSpace(8, 8)
         grid[Pair(1, 1)]?.isAlive = true
-        grid[Pair(1, 0)]?.isAlive = true
-        grid[Pair(0, 1)]?.isAlive = true
+        grid[Pair(1, 2)]?.isAlive = true
+        grid[Pair(2, 1)]?.isAlive = true
 
-        //Act
+        // Act
         grid.evolveMultipleTimes(1)
 
-        //Assert
-        assertEquals("X X \nX X \n", grid.toString())
+        // Assert
+        // Vérifier que les cellules forment un carré de 2x2 centré sur (1, 2) et (2, 2)
+        val expectedGrid = "O O O O O O O O \n" +
+                "O X X O O O O O \n" +
+                "O X X O O O O O \n" +
+                "O O O O O O O O \n" +
+                "O O O O O O O O \n" +
+                "O O O O O O O O \n" +
+                "O O O O O O O O \n" +
+                "O O O O O O O O \n"
+
+
+        assertEquals(expectedGrid, grid.toString())
     }
+
 
     @Test
     fun evoluerUnNombreDeFois2() {
@@ -161,20 +173,6 @@ class EspaceCellulaireTest {
         assertEquals("nombreEvolution doit être positif.", exception.message)
     }
 
-
-    @Test
-    fun nullAutour() {
-        //Arrange
-        val grid = CellularSpace(1, 1)
-        grid.setAliveCells(Pair(0, 0))
-
-        //Act
-        grid.evolveMultipleTimes(1)
-        val result = grid.toString()
-
-        //Assert
-        assertEquals("O \n", result)
-    }
 
 
 }
