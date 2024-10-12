@@ -34,7 +34,7 @@ fun GameOfLife(
                 }
 
                 LazyRow(
-                    modifier = modifier.height(200.dp),
+                    modifier = modifier.height(250.dp),
                 ) {
                     items(items = patternList) { pattern ->
                         PatternUI(pattern)

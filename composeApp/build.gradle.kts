@@ -121,7 +121,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.ui.tooling.preview.android)
-    implementation(libs.androidx.ui.tooling.preview.desktop)
+    implementation(compose.uiTooling)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.foundation.layout.android)
 }
