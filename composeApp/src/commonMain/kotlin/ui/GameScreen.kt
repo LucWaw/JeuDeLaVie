@@ -10,6 +10,7 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,32 +54,46 @@ fun Buttons(
 ) {
     //play button with play icon
     val gameViewModel = remember { GameViewModel() }
-    Button(
-        onClick = {
-            gameViewModel.togglePause() // Met le jeu en pause ou en marche
 
-            if (gameViewModel.isRunning) {
-                runGameLoop( 
-                    playScope,
-                    mutableState,
-                    cellularSpace,
-                    gameViewModel
-                )
-            }
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val painter = painterResource("baseline_pause_24.xml")
-        if (gameViewModel.isRunning) {
-            Icon(painter, contentDescription = "pause")
-        } else {
+    Row(modifier = modifier.fillMaxWidth().padding(16.dp)){
+        Button(
+            onClick = {
+                //effacer la grille
+                cellularSpace.resetGrid()
+                mutableState.value = State(mutableListOf())
+            },
+            modifier = modifier.weight(0.5f)){
             Icon(
-                imageVector = Icons.Filled.PlayArrow,
+                imageVector = Icons.Filled.Delete,
                 contentDescription = "Play"
             )
         }
+        Button(
+            onClick = {
+                gameViewModel.togglePause() // Met le jeu en pause ou en marche
+
+                if (gameViewModel.isRunning) {
+                    runGameLoop(
+                        playScope,
+                        mutableState,
+                        cellularSpace,
+                        gameViewModel
+                    )
+                }
+            },
+            modifier = modifier.weight(0.5f)
+        ) {
+            val painter = painterResource("baseline_pause_24.xml")
+            if (gameViewModel.isRunning) {
+                Icon(painter, contentDescription = "pause")
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = "Play"
+                )
+            }
+        }
+
     }
 }
 var cell: Pair<Int, Int>? = null

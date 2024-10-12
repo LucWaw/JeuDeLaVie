@@ -40,6 +40,14 @@ class CellularSpace private constructor(
         }
     }
 
+    fun resetGrid() {
+        for (i in 0..tailleX) {
+            for (j in 0..tailleY) {
+                this[Pair(i, j)]?.isAlive = false
+            }
+        }
+    }
+
     fun getAliveCells(): List<Pair<Int, Int>> {
         val aliveCells = mutableListOf<Pair<Int, Int>>()
         for (i in 0..tailleX) {
