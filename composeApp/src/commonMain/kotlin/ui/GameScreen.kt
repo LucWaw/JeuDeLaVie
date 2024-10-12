@@ -189,8 +189,6 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                     }
                 }
 
-
-
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
