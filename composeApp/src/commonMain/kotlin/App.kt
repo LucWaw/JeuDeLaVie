@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import model.Space.CellularSpace
 import ui.GameOfLife
 
-const val GRID_SIZE = 20
+const val GRID_SIZE = 15
 
 @Composable
 fun App() {

@@ -15,8 +15,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -49,22 +47,22 @@ val patternList = listOf(
 
 @Composable
 fun PatternUI(
-    pattern: Pattern,
+    viewModel: MovablePatternViewModel,
     modifier: Modifier = Modifier
 ) {
-    val patternState = remember { mutableStateOf(pattern) }
+
     Column(modifier = modifier.fillMaxWidth()) {
 
         Button(
-            modifier = modifier.width(100.dp),
+            modifier = modifier.width(200.dp),
             onClick = {
                 // Tourner les cellules du pattern de 90 degrés dans le sens horaire
-                val gridSize = patternState.value.gridSize
-                val rotatedCells = patternState.value.cells.map { (x, y) ->
+                val gridSize = viewModel.getPattern().value.gridSize
+                val rotatedCells = viewModel.getPattern().value.cells.map { (x, y) ->
                     Pair(y, gridSize - 1 - x)
                 }
                 // Créer un nouvel objet Pattern avec les cellules mises à jour
-                patternState.value = patternState.value.copy(cells = rotatedCells)
+                viewModel.changePattern(viewModel.getPattern().value.copy(cells = rotatedCells))
             }
         ) {
             Icon(
@@ -73,21 +71,21 @@ fun PatternUI(
             )
         }
 
-        DragTarget(dataToDrop = patternState.value, modifier = modifier) {
+        DragTarget(dataToDrop = viewModel.getPattern(), modifier = modifier.width(200.dp)) {
             LazyVerticalGrid(
-                GridCells.Fixed(patternState.value.gridSize),
+                GridCells.Fixed(viewModel.getPattern().value.gridSize),
                 modifier = modifier.aspectRatio(1f)
             ) {
-                items(patternState.value.gridSize * patternState.value.gridSize) {
-                    val cellCoord = Pair(it / patternState.value.gridSize, it % patternState.value.gridSize)
+                items(viewModel.getPattern().value.gridSize * viewModel.getPattern().value.gridSize) {
+                    val cellCoord = Pair(it / viewModel.getPattern().value.gridSize, it % viewModel.getPattern().value.gridSize)
                     Box(
                         modifier = modifier
                             .aspectRatio(1f)
                             .background(
-                                if (patternState.value.cells.contains(cellCoord)) Color.Black else Color.Transparent
+                                if (viewModel.getPattern().value.cells.contains(cellCoord)) Color.Black else Color.Transparent
                             )
                             .border(
-                                if (patternState.value.cells.contains(cellCoord)) {
+                                if (viewModel.getPattern().value.cells.contains(cellCoord)) {
                                     BorderStroke(1.dp, Color.DarkGray)
                                 } else BorderStroke(0.dp, Color.LightGray)
                             )

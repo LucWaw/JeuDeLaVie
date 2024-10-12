@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,7 +62,7 @@ fun LongPressDraggable(
 @Composable
 fun DragTarget(
     modifier: Modifier,
-    dataToDrop: Pattern,
+    dataToDrop: MutableState<Pattern>,
     content: @Composable (() -> Unit)
 ) {
 
@@ -74,7 +75,7 @@ fun DragTarget(
         }
         .pointerInput(Unit) {
             detectDragGesturesAfterLongPress(onDragStart = {
-                currentState.dataToDrop = dataToDrop
+                currentState.dataToDrop = dataToDrop.value
                 currentState.isDragging = true
                 currentState.dragPosition = currentPosition + it
                 currentState.draggableComposable = content

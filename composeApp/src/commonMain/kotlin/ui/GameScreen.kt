@@ -166,15 +166,9 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                     cell = cellCoordinates
                     bundledCells = bundleOfCells.cells
                     activated = true
-                    println("LAa")
                 }
                 if (activated) {
                     activated = false
-
-                    println("Here")
-
-                    println("Hara")
-                    println(cell)
 
                     bundledCells?.forEach { patternCell ->
                         if (cell != null) {

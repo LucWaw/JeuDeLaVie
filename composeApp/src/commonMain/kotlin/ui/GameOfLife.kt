@@ -13,6 +13,7 @@ import data.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import model.Space.CellularSpace
+import ui.pattern.MovablePatternViewModel
 import ui.pattern.PatternUI
 import ui.pattern.patternList
 
@@ -25,7 +26,7 @@ fun GameOfLife(
     modifier: Modifier = Modifier
 ) {
     Column {
-        LongPressDraggable(modifier = modifier.width(500.dp)) {
+        LongPressDraggable(modifier = modifier.width(1000.dp)) {
             Column {
 
                 //Game board
@@ -37,7 +38,9 @@ fun GameOfLife(
                     modifier = modifier.height(250.dp),
                 ) {
                     items(items = patternList) { pattern ->
-                        PatternUI(pattern)
+                        val  viewModel = MovablePatternViewModel()
+                        viewModel.init(pattern)
+                        PatternUI(viewModel)
                     }
                 }
             }
@@ -45,6 +48,4 @@ fun GameOfLife(
         //Play pause button
         Buttons(playScope, space, mutableState, modifier)
     }
-
-
 }
