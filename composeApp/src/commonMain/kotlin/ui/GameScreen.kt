@@ -151,7 +151,6 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
             val interactionSource = remember { MutableInteractionSource() }
 
             DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
-                println("$isInBound and $bundleOfCells")
                 if (isInBound && bundleOfCells != null) {
                     cell = cellCoordinates
                     bundledCells = bundleOfCells.cells

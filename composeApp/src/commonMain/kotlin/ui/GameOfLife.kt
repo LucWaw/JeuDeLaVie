@@ -1,10 +1,7 @@
 package ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -13,9 +10,7 @@ import data.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import model.Space.CellularSpace
-import ui.pattern.MovablePatternViewModel
-import ui.pattern.PatternUI
-import ui.pattern.patternList
+import ui.pattern.PatternsUI
 
 @Composable
 fun GameOfLife(
@@ -34,15 +29,7 @@ fun GameOfLife(
                     Board(it, onCellClick, modifier)
                 }
 
-                LazyRow(
-                    modifier = modifier.height(250.dp),
-                ) {
-                    items(items = patternList) { pattern ->
-                        val  viewModel = MovablePatternViewModel()
-                        viewModel.init(pattern)
-                        PatternUI(viewModel)
-                    }
-                }
+                PatternsUI()
             }
         }
         //Play pause button

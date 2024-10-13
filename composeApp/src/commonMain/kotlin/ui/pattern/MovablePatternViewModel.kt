@@ -1,23 +1,45 @@
 package ui.pattern
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import com.rickclephas.kmm.viewmodel.KMMViewModel
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 
-class MovablePatternViewModel: KMMViewModel()  {
-    private lateinit var patternState : MutableState<Pattern>
+class MovablePatternViewModel(): ViewModel()  {
+    private val _patterns = MutableStateFlow(patternList)
+    val patterns: StateFlow<List<PatternUIState>> = _patterns.asStateFlow()
 
-    fun init(pattern: Pattern) {
-        patternState = mutableStateOf(pattern)
+    /*private val _uiState = MutableStateFlow(pattern)
+    val uiState: StateFlow<PatternUIState> = _uiState.asStateFlow()*/
+
+
+    fun getPatternById(id: Int): PatternUIState? {
+        return patterns.value.find { it.id == id }
     }
 
-    fun getPattern(): MutableState<Pattern> {
-        return patternState
-    }
+    /**
+     * Tourner les cellules du pattern de 90 degrés dans le sens horaire
+     *
+     */
+    fun rotatePattern(id : Int) {
+        _patterns.value.find { it.id == id }?.let { pattern ->
+            val newCells = pattern.cells.map { (y, x) ->
+                Pair(x, pattern.gridSize - 1 - y)
+            }
+            _patterns.update { patterns ->
+                patterns.map { pattern ->
+                    if (pattern.id == id) {
+                        pattern.copy(cells = newCells)
+                    } else {
+                        pattern
+                    }
+                }
+            }
+        }
 
-    fun changePattern(pattern: Pattern) {
-        patternState.value = pattern
+
     }
 
 

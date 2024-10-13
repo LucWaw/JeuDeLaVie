@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +18,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import data.DragTargetInfo
 import data.LocalDragTargetInfo
-import ui.pattern.Pattern
+import ui.pattern.PatternUIState
 
 
 @Composable
@@ -62,7 +61,7 @@ fun LongPressDraggable(
 @Composable
 fun DragTarget(
     modifier: Modifier,
-    dataToDrop: MutableState<Pattern>,
+    dataToDrop: () -> PatternUIState?,
     content: @Composable (() -> Unit)
 ) {
 
@@ -75,7 +74,7 @@ fun DragTarget(
         }
         .pointerInput(Unit) {
             detectDragGesturesAfterLongPress(onDragStart = {
-                currentState.dataToDrop = dataToDrop.value
+                currentState.dataToDrop = dataToDrop()
                 currentState.isDragging = true
                 currentState.dragPosition = currentPosition + it
                 currentState.draggableComposable = content
@@ -98,7 +97,7 @@ fun DragTarget(
 @Composable
 fun DropTarget(
     modifier: Modifier,
-    content: @Composable (BoxScope.(isInBound: Boolean, data: Pattern?) -> Unit)
+    content: @Composable (BoxScope.(isInBound: Boolean, data: PatternUIState?) -> Unit)
 ) {
 
     val dragInfo = LocalDragTargetInfo.current
@@ -114,7 +113,7 @@ fun DropTarget(
         }
     }) {
         val data =
-            if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as Pattern? else null
+            if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as PatternUIState? else null
         content(isCurrentDropTarget, data)
     }
 }

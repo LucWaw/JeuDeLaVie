@@ -11,7 +11,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "11"
             }
         }
     }
@@ -62,7 +62,6 @@ kotlin {
 
 android {
 
-
     sourceSets {
 
         //To view android in Android Studio Android explorer view
@@ -107,8 +106,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
@@ -116,6 +115,7 @@ android {
     packaging {
         resources.excludes.add("META-INF/*")
     }
+
 }
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
