@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -106,17 +107,14 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
 
-    fun cellCoordinatesAtOffset(hitPoint: Offset): Pair<Int, Int> {
-        // Calculate the actual size of each cell
-        val tileSize = gridSize.width / GRID_SIZE
-        val x = (hitPoint.x / tileSize).toInt()
-        val y = (hitPoint.y / tileSize).toInt()
-        return Pair(y, x)
-    }
+
 
     var currentPosition by mutableStateOf(Offset.Zero)
 
-
+    var currentCellCoordinates = Pair(0, 0)
+    val changeCurentCellCoordinates = { coordinate : Pair<Int, Int> ->
+        currentCellCoordinates = coordinate
+    }
     LazyVerticalGrid(
         GridCells.Fixed(GRID_SIZE),
         state = scroll,
@@ -125,46 +123,22 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                 currentPosition = it.localToWindow(Offset.Zero)
             }
             .pointerInput(Unit) {
-                var currentCellCoordinates = Pair(0, 0)
-
                 detectDragGestures(
                     onDragStart = { offset ->
-                        cellCoordinatesAtOffset(offset).let { pair ->
-                            if (!state.colored.contains(pair)) {
-                                currentCellCoordinates = pair
-                                onCellClick(pair)
-                            }
-                        }
+                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                            if (currentCellCoordinates != pointerCellCoordinates) {
-                                onCellClick(pointerCellCoordinates)
-                                currentCellCoordinates = pointerCellCoordinates
-                            }
-                        }
+                        drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
             .pointerInput(Unit) {
-                var currentCellCoordinates = Pair(0, 0)
-
                 detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
-                        cellCoordinatesAtOffset(offset).let { pair ->
-                            if (!state.colored.contains(pair)) {
-                                currentCellCoordinates = pair
-                                onCellClick(pair)
-                            }
-                        }
+                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        cellCoordinatesAtOffset(change.position).let { pointerCellCoordinates ->
-                            if (currentCellCoordinates != pointerCellCoordinates) {
-                                onCellClick(pointerCellCoordinates)
-                                currentCellCoordinates = pointerCellCoordinates
-                            }
-                        }
+                        drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
@@ -210,4 +184,41 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
             }
         }
     }
+}
+
+private fun drag(
+    change: PointerInputChange,
+    gridSize: Size,
+    currentCellCoordinates: Pair<Int, Int>,
+    changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
+    onCellClick: (Pair<Int, Int>) -> Unit
+) {
+    cellCoordinatesAtOffset(change.position, gridSize).let { pointerCellCoordinates ->
+        if (currentCellCoordinates != pointerCellCoordinates) {
+            onCellClick(pointerCellCoordinates)
+            changeCurentCellCoordinates(pointerCellCoordinates)
+        }
+    }
+}
+
+private fun dragStart(
+    offset: Offset,
+    state: State,
+    gridSize: Size,
+    changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
+    onCellClick: (Pair<Int, Int>) -> Unit
+) {
+    cellCoordinatesAtOffset(offset, gridSize).let { pair ->
+        if (!state.colored.contains(pair)) {
+            changeCurentCellCoordinates(pair)
+            onCellClick(pair)
+        }
+    }
+}
+fun cellCoordinatesAtOffset(hitPoint: Offset, gridSize: Size): Pair<Int, Int> {
+    // Calculate the actual size of each cell
+    val tileSize = gridSize.width / GRID_SIZE
+    val x = (hitPoint.x / tileSize).toInt()
+    val y = (hitPoint.y / tileSize).toInt()
+    return Pair(y, x)
 }
