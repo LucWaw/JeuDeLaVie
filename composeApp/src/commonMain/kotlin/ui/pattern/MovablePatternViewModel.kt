@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import model.PatternUIState
 
 
-class MovablePatternViewModel(): ViewModel()  {
+class MovablePatternViewModel: ViewModel()  {
 
 
     private val _patterns = MutableStateFlow(PatternRepository(PatternFakeAPI()).getAllPatterns())
