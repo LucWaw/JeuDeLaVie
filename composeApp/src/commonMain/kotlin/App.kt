@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.example.draganddrop.ui.theme.DragAndDropTheme
-import data.State
+import model.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import model.Space.CellularSpace
 import ui.GameOfLife

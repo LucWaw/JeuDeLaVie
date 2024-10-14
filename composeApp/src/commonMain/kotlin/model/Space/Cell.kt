@@ -1,4 +1,4 @@
-package model.tdd
+package model.Space
 
 class Cell(var isAlive: Boolean = false) {
 

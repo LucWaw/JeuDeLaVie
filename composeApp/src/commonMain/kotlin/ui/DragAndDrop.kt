@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,9 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import data.DragTargetInfo
-import data.LocalDragTargetInfo
-import ui.pattern.PatternUIState
+import model.PatternUIState
 
 
 @Composable
@@ -116,4 +115,14 @@ fun DropTarget(
             if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as PatternUIState? else null
         content(isCurrentDropTarget, data)
     }
+}
+
+internal val LocalDragTargetInfo = compositionLocalOf { DragTargetInfo() }
+
+internal class DragTargetInfo {
+    var isDragging: Boolean by mutableStateOf(false)
+    var dragPosition by mutableStateOf(Offset.Zero)
+    var dragOffset by mutableStateOf(Offset.Zero)
+    var draggableComposable by mutableStateOf<(@Composable () -> Unit)?>(null)
+    var dataToDrop by mutableStateOf<Any?>(null)
 }

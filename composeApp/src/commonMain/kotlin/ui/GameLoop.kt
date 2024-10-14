@@ -1,6 +1,6 @@
 package ui
 
-import data.State
+import model.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
