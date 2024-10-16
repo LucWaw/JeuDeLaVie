@@ -1,4 +1,4 @@
-package ui.theme
+package ui.draganddrop
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

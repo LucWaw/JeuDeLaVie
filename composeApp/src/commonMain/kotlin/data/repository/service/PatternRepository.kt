@@ -1,7 +1,7 @@
 package data.repository.service
 
 import data.service.PatternAPI
-import model.PatternUIState
+import ui.pattern.PatternUIState
 
 class PatternRepository(private val patternAPI: PatternAPI) {
 

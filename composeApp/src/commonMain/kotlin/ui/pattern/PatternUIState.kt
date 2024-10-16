@@ -1,4 +1,4 @@
-package model
+package ui.pattern
 
 data class PatternUIState(
     val id: Int = 0,

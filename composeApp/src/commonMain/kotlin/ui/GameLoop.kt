@@ -1,6 +1,5 @@
 package ui
 
-import model.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,12 +8,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import model.Space.CellularSpace
-import ui.ViewModels.GameViewModel
+import ui.game.GameViewModel
 
 
 fun runGameLoop(
     playScope: CoroutineScope,
-    mutableState: MutableStateFlow<State>,
+    mutableGameUIState: MutableStateFlow<GameUIState>,
     cellularSpace: CellularSpace,
     gameViewModel: GameViewModel
 ) {
@@ -27,8 +26,8 @@ fun runGameLoop(
             //mutex pour éviter l' accès concurrent à cellularSpace
             mutex.withLock {
                 cellularSpace.evolve()
-                mutableState.update {
-                    State(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+                mutableGameUIState.update {
+                    GameUIState(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
                 }
             }
         }

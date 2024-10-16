@@ -24,8 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import model.PatternUIState
-import ui.DragTarget
+import ui.draganddrop.DragTarget
 
 
 //grid handled by cells

@@ -1,4 +1,4 @@
-package ui
+package ui.draganddrop
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import model.PatternUIState
+import ui.pattern.PatternUIState
 
 
 @Composable

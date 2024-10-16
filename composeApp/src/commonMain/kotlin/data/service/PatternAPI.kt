@@ -1,6 +1,6 @@
 package data.service
 
-import model.PatternUIState
+import ui.pattern.PatternUIState
 
 interface PatternAPI {
     fun getAllPatterns(): List<PatternUIState>

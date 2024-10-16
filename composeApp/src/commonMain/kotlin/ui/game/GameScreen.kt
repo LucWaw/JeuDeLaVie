@@ -1,4 +1,5 @@
-package ui
+package ui.game
+
 
 import GRID_SIZE
 import androidx.compose.foundation.background
@@ -37,20 +38,21 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import model.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import model.Space.CellularSpace
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import ui.ViewModels.GameViewModel
+import ui.GameUIState
+import ui.draganddrop.DropTarget
+import ui.runGameLoop
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Buttons(
     playScope: CoroutineScope,
     cellularSpace: CellularSpace,
-    mutableState: MutableStateFlow<State>,
+    mutableGameUIState: MutableStateFlow<GameUIState>,
     modifier: Modifier = Modifier
 ) {
     //play button with play icon
@@ -61,7 +63,7 @@ fun Buttons(
             onClick = {
                 //effacer la grille
                 cellularSpace.resetGrid()
-                mutableState.value = State(mutableListOf())
+                mutableGameUIState.value = GameUIState(mutableListOf())
             },
             modifier = modifier.weight(0.5f)){
             Icon(
@@ -76,7 +78,7 @@ fun Buttons(
                 if (gameViewModel.isRunning) {
                     runGameLoop(
                         playScope,
-                        mutableState,
+                        mutableGameUIState,
                         cellularSpace,
                         gameViewModel
                     )
@@ -102,7 +104,7 @@ var bundledCells: List<Pair<Int, Int>>? = null
 var activated = false
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
+fun Board(gameUIState: GameUIState, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
     val scroll = rememberLazyGridState()
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
@@ -125,7 +127,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
-                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
                         drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
@@ -135,7 +137,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
-                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
                         drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
@@ -175,7 +177,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .background(if (state.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value) Color.Black else Color.White)
+                        .background(if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value) Color.Black else Color.White)
                         .border(1.dp, Color.Gray)
                         .clickable { onCellClick(cellCoordinates) }
                         .hoverable(interactionSource = interactionSource)
@@ -202,13 +204,13 @@ private fun drag(
 
 private fun dragStart(
     offset: Offset,
-    state: State,
+    gameUIState: GameUIState,
     gridSize: Size,
     changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
     onCellClick: (Pair<Int, Int>) -> Unit
 ) {
     cellCoordinatesAtOffset(offset, gridSize).let { pair ->
-        if (!state.colored.contains(pair)) {
+        if (!gameUIState.colored.contains(pair)) {
             changeCurentCellCoordinates(pair)
             onCellClick(pair)
         }

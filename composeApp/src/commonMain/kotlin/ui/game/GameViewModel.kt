@@ -1,4 +1,4 @@
-package ui.ViewModels
+package ui.game
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
