@@ -13,7 +13,6 @@ import ui.draganddrop.LongPressDraggable
 import ui.game.Buttons
 import ui.pattern.PatternsUI
 
-const val GRID_SIZE = 15
 
 @Composable
 fun GameOfLife(
@@ -26,7 +25,7 @@ fun GameOfLife(
             Column {
 
                 //Game board
-                gameOfLifeViewModel.mutableGameUIState.collectAsState().value.let { //ou if stateElement.value != null
+                gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { //ou if stateElement.value != null
                     Board(it, gameOfLifeViewModel.onCellClick, modifier)
                 }
 
