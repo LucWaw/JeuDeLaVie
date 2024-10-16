@@ -4,32 +4,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
-import model.Space.CellularSpace
+import ui.board.Board
 import ui.draganddrop.LongPressDraggable
-import ui.game.Board
 import ui.game.Buttons
 import ui.pattern.PatternsUI
 
+const val GRID_SIZE = 15
+
 @Composable
 fun GameOfLife(
-    onCellClick: (Pair<Int, Int>) -> Unit,
-    mutableGameUIState: MutableStateFlow<GameUIState>,
-    space: CellularSpace,
     modifier: Modifier = Modifier
 ) {
-
+    val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
 
     Column {
         LongPressDraggable(modifier = modifier.width(1000.dp)) {
             Column {
 
                 //Game board
-                mutableGameUIState.collectAsState().value.let { //ou if stateElement.value != null
-                    Board(it, onCellClick, modifier)
+                gameOfLifeViewModel.mutableGameUIState.collectAsState().value.let { //ou if stateElement.value != null
+                    Board(it, gameOfLifeViewModel.onCellClick, modifier)
                 }
 
                 PatternsUI()
@@ -37,6 +35,7 @@ fun GameOfLife(
         }
         //Play pause button
         val playScope = rememberCoroutineScope()
-        Buttons(playScope, space, mutableGameUIState, modifier)
+        Buttons(playScope, gameOfLifeViewModel.cellularSpace,
+            {  gameOfLifeViewModel.updateCells(it) }, modifier)
     }
 }

@@ -1,7 +1,5 @@
-package ui.game
+package ui.board
 
-
-import GRID_SIZE
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,18 +9,10 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,67 +28,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import model.Space.CellularSpace
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import ui.GRID_SIZE
 import ui.GameUIState
 import ui.draganddrop.DropTarget
-import ui.runGameLoop
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun Buttons(
-    playScope: CoroutineScope,
-    cellularSpace: CellularSpace,
-    mutableGameUIState: MutableStateFlow<GameUIState>,
-    modifier: Modifier = Modifier
-) {
-    //play button with play icon
-    val gameViewModel = remember { GameViewModel() }
-
-    Row(modifier = modifier.fillMaxWidth().padding(16.dp)){
-        Button(
-            onClick = {
-                //effacer la grille
-                cellularSpace.resetGrid()
-                mutableGameUIState.value = GameUIState(mutableListOf())
-            },
-            modifier = modifier.weight(0.5f)){
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Play"
-            )
-        }
-        Button(
-            onClick = {
-                gameViewModel.togglePause() // Met le jeu en pause ou en marche
-
-                if (gameViewModel.isRunning) {
-                    runGameLoop(
-                        playScope,
-                        mutableGameUIState,
-                        cellularSpace,
-                        gameViewModel
-                    )
-                }
-            },
-            modifier = modifier.weight(0.5f)
-        ) {
-            val painter = painterResource("baseline_pause_24.xml")
-            if (gameViewModel.isRunning) {
-                Icon(painter, contentDescription = "pause")
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Play"
-                )
-            }
-        }
-
-    }
-}
 var cell: Pair<Int, Int>? = null
 var bundledCells: List<Pair<Int, Int>>? = null
 var activated = false
@@ -107,9 +40,6 @@ var activated = false
 fun Board(gameUIState: GameUIState, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
     val scroll = rememberLazyGridState()
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
-
-
-
 
     var currentPosition by mutableStateOf(Offset.Zero)
 
