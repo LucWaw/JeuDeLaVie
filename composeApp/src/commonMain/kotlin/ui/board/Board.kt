@@ -1,6 +1,5 @@
-package ui
+package ui.board
 
-import GRID_SIZE
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,18 +9,10 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,77 +28,19 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import data.State
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import model.Space.CellularSpace
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
-import ui.ViewModels.GameViewModel
+import ui.GameUiState
+import ui.draganddrop.DropTarget
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun Buttons(
-    playScope: CoroutineScope,
-    cellularSpace: CellularSpace,
-    mutableState: MutableStateFlow<State>,
-    modifier: Modifier = Modifier
-) {
-    //play button with play icon
-    val gameViewModel = remember { GameViewModel() }
-
-    Row(modifier = modifier.fillMaxWidth().padding(16.dp)){
-        Button(
-            onClick = {
-                //effacer la grille
-                cellularSpace.resetGrid()
-                mutableState.value = State(mutableListOf())
-            },
-            modifier = modifier.weight(0.5f)){
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Play"
-            )
-        }
-        Button(
-            onClick = {
-                gameViewModel.togglePause() // Met le jeu en pause ou en marche
-
-                if (gameViewModel.isRunning) {
-                    runGameLoop(
-                        playScope,
-                        mutableState,
-                        cellularSpace,
-                        gameViewModel
-                    )
-                }
-            },
-            modifier = modifier.weight(0.5f)
-        ) {
-            val painter = painterResource("baseline_pause_24.xml")
-            if (gameViewModel.isRunning) {
-                Icon(painter, contentDescription = "pause")
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Play"
-                )
-            }
-        }
-
-    }
-}
-var cell: Pair<Int, Int>? = null
+var placingCell: Pair<Int, Int>? = null
 var bundledCells: List<Pair<Int, Int>>? = null
 var activated = false
 
 @Composable
-fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
+fun Board(gameUIState: GameUiState, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
+
+
     val scroll = rememberLazyGridState()
     var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
-
-
-
 
     var currentPosition by mutableStateOf(Offset.Zero)
 
@@ -116,7 +49,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
         currentCellCoordinates = coordinate
     }
     LazyVerticalGrid(
-        GridCells.Fixed(GRID_SIZE),
+        GridCells.Fixed(gameUIState.gridSize),
         state = scroll,
         modifier = Modifier
             .onGloballyPositioned {
@@ -125,20 +58,20 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
-                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
+                        drag(change, gridSize,gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
-                        dragStart(offset, state, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        drag(change, gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
+                        drag(change, gridSize, gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
@@ -146,14 +79,13 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                 gridSize = newSize.toSize() // Update the gridSize with the actual size
             }
     ) {
-        items(GRID_SIZE * GRID_SIZE) { index ->
-            val cellCoordinates = Pair(index / GRID_SIZE, index % GRID_SIZE)
+        items(gameUIState.gridSize * gameUIState.gridSize) { index ->
+            val cellCoordinates = Pair(index / gameUIState.gridSize, index % gameUIState.gridSize)
             val interactionSource = remember { MutableInteractionSource() }
 
             DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
-                println("$isInBound and $bundleOfCells")
                 if (isInBound && bundleOfCells != null) {
-                    cell = cellCoordinates
+                    placingCell = cellCoordinates
                     bundledCells = bundleOfCells.cells
                     activated = true
                 }
@@ -161,11 +93,11 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                     activated = false
 
                     bundledCells?.forEach { patternCell ->
-                        if (cell != null) {
+                        if (placingCell != null) {
                             onCellClick(
                                 Pair(
-                                    patternCell.first + (cell?.first?:0),
-                                    patternCell.second + (cell?.second ?: 0)
+                                    patternCell.first + (placingCell?.first?:0),
+                                    patternCell.second + (placingCell?.second ?: 0)
                                 )
                             )
                         }
@@ -176,7 +108,7 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .background(if (state.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value) Color.Black else Color.White)
+                        .background(if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value) Color.Black else Color.White)
                         .border(1.dp, Color.Gray)
                         .clickable { onCellClick(cellCoordinates) }
                         .hoverable(interactionSource = interactionSource)
@@ -189,11 +121,12 @@ fun Board(state: State, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifie
 private fun drag(
     change: PointerInputChange,
     gridSize: Size,
+    cellsGridSize: Int,
     currentCellCoordinates: Pair<Int, Int>,
     changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
     onCellClick: (Pair<Int, Int>) -> Unit
 ) {
-    cellCoordinatesAtOffset(change.position, gridSize).let { pointerCellCoordinates ->
+    cellCoordinatesAtOffset(change.position, gridSize, cellsGridSize).let { pointerCellCoordinates ->
         if (currentCellCoordinates != pointerCellCoordinates) {
             onCellClick(pointerCellCoordinates)
             changeCurentCellCoordinates(pointerCellCoordinates)
@@ -203,21 +136,21 @@ private fun drag(
 
 private fun dragStart(
     offset: Offset,
-    state: State,
+    gameUIState: GameUiState,
     gridSize: Size,
     changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
     onCellClick: (Pair<Int, Int>) -> Unit
 ) {
-    cellCoordinatesAtOffset(offset, gridSize).let { pair ->
-        if (!state.colored.contains(pair)) {
+    cellCoordinatesAtOffset(offset, gridSize, gameUIState.gridSize).let { pair ->
+        if (!gameUIState.colored.contains(pair)) {
             changeCurentCellCoordinates(pair)
             onCellClick(pair)
         }
     }
 }
-fun cellCoordinatesAtOffset(hitPoint: Offset, gridSize: Size): Pair<Int, Int> {
+fun cellCoordinatesAtOffset(hitPoint: Offset, uiGridSize: Size, cellsGridSize: Int): Pair<Int, Int> {
     // Calculate the actual size of each cell
-    val tileSize = gridSize.width / GRID_SIZE
+    val tileSize = uiGridSize.width / cellsGridSize
     val x = (hitPoint.x / tileSize).toInt()
     val y = (hitPoint.y / tileSize).toInt()
     return Pair(y, x)

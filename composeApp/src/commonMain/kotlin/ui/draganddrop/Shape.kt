@@ -1,4 +1,4 @@
-package com.example.draganddrop.ui.theme
+package ui.draganddrop
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

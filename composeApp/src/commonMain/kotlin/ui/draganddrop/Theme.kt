@@ -1,4 +1,4 @@
-package com.example.draganddrop.ui.theme
+package ui.draganddrop
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

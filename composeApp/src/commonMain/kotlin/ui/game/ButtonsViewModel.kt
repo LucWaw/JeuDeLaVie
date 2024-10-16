@@ -1,10 +1,10 @@
-package ui.ViewModels
+package ui.game
 
 import androidx.compose.runtime.mutableStateOf
-import com.rickclephas.kmm.viewmodel.KMMViewModel
+import androidx.lifecycle.ViewModel
 
 
-class GameViewModel : KMMViewModel() {
+class ButtonsViewModel : ViewModel() {
     private val _isRunning = mutableStateOf(false)
     val isRunning: Boolean
         get() = _isRunning.value

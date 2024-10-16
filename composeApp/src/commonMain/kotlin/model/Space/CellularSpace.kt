@@ -1,7 +1,5 @@
 package model.Space
 
-import model.tdd.Cell
-
 class CellularSpace private constructor(
     private val tailleX: Int,
     private val tailleY: Int,
