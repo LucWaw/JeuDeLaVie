@@ -1,4 +1,4 @@
-package model.space
+package model.spacing
 
 class CellularSpace private constructor(
     private val tailleX: Int,

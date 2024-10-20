@@ -3,7 +3,7 @@ package model.tdd
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import model.space.Cell
+import model.spacing.Cell
 import org.junit.Test
 
 class CelluleTest {

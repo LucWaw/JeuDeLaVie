@@ -1,4 +1,4 @@
-package model.space
+package model.spacing
 
 class Cell(var isAlive: Boolean = false) {
 
