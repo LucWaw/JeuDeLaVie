@@ -5,7 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import model.Space.CellularSpace
+import model.space.CellularSpace
 
 
 fun runGameLoop(

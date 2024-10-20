@@ -1,4 +1,4 @@
-package model.Space
+package model.space
 
 class CellularSpace private constructor(
     private val tailleX: Int,
@@ -109,24 +109,24 @@ class CellularSpace private constructor(
                     this[Pair(x, y)]?.changeState(
                         initialCellularSpace[Pair(tailleX, tailleY)], // Boucle en bas à droite
                         initialCellularSpace[Pair(tailleX, y)], // Boucle à droite
-                        initialCellularSpace[Pair(tailleX, y + 1)], // Boucle en bas à droite
+                        initialCellularSpace[Pair(tailleX, 0 + 1)], // Boucle en bas à droite
                         initialCellularSpace[Pair(x, tailleY)], // Boucle en bas
-                        initialCellularSpace[Pair(x, y + 1)], // En bas
-                        initialCellularSpace[Pair(x + 1, tailleY)], // En bas à droite
-                        initialCellularSpace[Pair(x + 1, y)], // À droite
-                        initialCellularSpace[Pair(x + 1, y + 1)] // En bas à droite
+                        initialCellularSpace[Pair(x, 0 + 1)], // En bas
+                        initialCellularSpace[Pair(0 + 1, tailleY)], // En bas à droite
+                        initialCellularSpace[Pair(0 + 1, y)], // À droite
+                        initialCellularSpace[Pair(0 + 1, 0 + 1)] // En bas à droite
                     )
                 } else if (x == tailleX && y == 0) {
                     // Coin en haut à droite
                     this[Pair(x, y)]?.changeState(
                         initialCellularSpace[Pair(x - 1, tailleY)], // Boucle en bas
                         initialCellularSpace[Pair(x - 1, y)], // À gauche
-                        initialCellularSpace[Pair(x - 1, y + 1)], // En bas à gauche
+                        initialCellularSpace[Pair(x - 1, 0 + 1)], // En bas à gauche
                         initialCellularSpace[Pair(x, tailleY)], // Boucle en bas
-                        initialCellularSpace[Pair(x, y + 1)], // En bas
+                        initialCellularSpace[Pair(x, 0 + 1)], // En bas
                         initialCellularSpace[Pair(0, tailleY)], // Boucle en bas à gauche
                         initialCellularSpace[Pair(0, y)], // Boucle à gauche
-                        initialCellularSpace[Pair(0, y + 1)] // Boucle en bas à gauche
+                        initialCellularSpace[Pair(0, 0 + 1)] // Boucle en bas à gauche
                     )
                 } else if (x == 0 && y == tailleY) {
                     // Coin en bas à gauche
@@ -136,9 +136,9 @@ class CellularSpace private constructor(
                         initialCellularSpace[Pair(tailleX, 0)], // Boucle en haut à droite
                         initialCellularSpace[Pair(x, y - 1)], // En haut
                         initialCellularSpace[Pair(x, 0)], // Boucle en haut
-                        initialCellularSpace[Pair(x + 1, y - 1)], // En haut à droite
-                        initialCellularSpace[Pair(x + 1, y)], // À droite
-                        initialCellularSpace[Pair(x + 1, 0)] // Boucle en haut à droite
+                        initialCellularSpace[Pair(0 + 1, y - 1)], // En haut à droite
+                        initialCellularSpace[Pair(0 + 1, y)], // À droite
+                        initialCellularSpace[Pair(0 + 1, 0)] // Boucle en haut à droite
                     )
                 } else if (x == 0) {
                     // Bord gauche
@@ -148,21 +148,21 @@ class CellularSpace private constructor(
                         initialCellularSpace[Pair(tailleX, y + 1)], // Boucle en bas à droite
                         initialCellularSpace[Pair(x, y - 1)], // En haut
                         initialCellularSpace[Pair(x, y + 1)], // En bas
-                        initialCellularSpace[Pair(x + 1, y - 1)], // En haut à droite
-                        initialCellularSpace[Pair(x + 1, y)], // À droite
-                        initialCellularSpace[Pair(x + 1, y + 1)] // En bas à droite
+                        initialCellularSpace[Pair(0 + 1, y - 1)], // En haut à droite
+                        initialCellularSpace[Pair(0 + 1, y)], // À droite
+                        initialCellularSpace[Pair(0 + 1, y + 1)] // En bas à droite
                     )
                 } else if (y == 0) {
                     // Bord supérieur
                     this[Pair(x, y)]?.changeState(
                         initialCellularSpace[Pair(x - 1, tailleY)], // Boucle en bas
                         initialCellularSpace[Pair(x - 1, y)], // À gauche
-                        initialCellularSpace[Pair(x - 1, y + 1)], // En bas à gauche
+                        initialCellularSpace[Pair(x - 1, 0 + 1)], // En bas à gauche
                         initialCellularSpace[Pair(x, tailleY)], // Boucle en bas
-                        initialCellularSpace[Pair(x, y + 1)], // En bas
+                        initialCellularSpace[Pair(x, 0 + 1)], // En bas
                         initialCellularSpace[Pair(x + 1, tailleY)], // Boucle en bas à droite
                         initialCellularSpace[Pair(x + 1, y)], // À droite
-                        initialCellularSpace[Pair(x + 1, y + 1)] // En bas à droite
+                        initialCellularSpace[Pair(x + 1, 0 + 1)] // En bas à droite
                     )
                 } else if (x == tailleX) {
                     // Bord droit
