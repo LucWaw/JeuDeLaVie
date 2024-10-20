@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.ui.geometry.Size
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,5 +30,12 @@ class GameOfLifeViewModel {
                 colored = colored
             )
         }
+    }
+
+    private val _gridSize : MutableStateFlow<Size> = MutableStateFlow(Size.Zero) // To store the actual size of the grid
+    val gridSize : StateFlow<Size> = _gridSize.asStateFlow()
+
+    fun modifyGridSize(gridSize: Size){
+        _gridSize.value = gridSize
     }
 }

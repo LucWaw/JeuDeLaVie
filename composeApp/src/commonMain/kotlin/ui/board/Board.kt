@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import kotlinx.coroutines.flow.StateFlow
 import ui.GameUiState
 import ui.draganddrop.DropTarget
 
@@ -36,11 +38,15 @@ var bundledCells: List<Pair<Int, Int>>? = null
 var activated = false
 
 @Composable
-fun Board(gameUIState: GameUiState, onCellClick: (Pair<Int, Int>) -> Unit, modifier: Modifier = Modifier) {
+fun Board(gameUIState: GameUiState, onCellClick: (Pair<Int, Int>) -> Unit,
+          gridUiSize : StateFlow<Size>,
+          gridChange: (Size)-> Unit,
+          modifier: Modifier = Modifier) {
+
+    val boardUiState by gridUiSize.collectAsState()
 
 
     val scroll = rememberLazyGridState()
-    var gridSize by remember { mutableStateOf(Size.Zero) } // To store the actual size of the grid
 
     var currentPosition by mutableStateOf(Offset.Zero)
 
@@ -58,25 +64,25 @@ fun Board(gameUIState: GameUiState, onCellClick: (Pair<Int, Int>) -> Unit, modif
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
-                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, boardUiState, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        drag(change, gridSize,gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
+                        drag(change, boardUiState,gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
-                        dragStart(offset, gameUIState, gridSize, changeCurentCellCoordinates, onCellClick)
+                        dragStart(offset, gameUIState, boardUiState, changeCurentCellCoordinates, onCellClick)
                     },
                     onDrag = { change, _ ->
-                        drag(change, gridSize, gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
+                        drag(change, boardUiState, gameUIState.gridSize, currentCellCoordinates, changeCurentCellCoordinates, onCellClick)
                     }
                 )
             }
             .onSizeChanged { newSize ->
-                gridSize = newSize.toSize() // Update the gridSize with the actual size
+                gridChange(newSize.toSize())
             }
     ) {
         items(gameUIState.gridSize * gameUIState.gridSize) { index ->
