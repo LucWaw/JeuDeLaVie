@@ -25,9 +25,30 @@ class GameOfLifeViewModel {
     }
 
     fun updateCells(colored: List<Pair<Int, Int>>) {
-        _mutableGameUiState.update { currenState ->
-            currenState.copy(
+        _mutableGameUiState.update { currentState ->
+            currentState.copy(
                 colored = colored
+            )
+        }
+    }
+
+    fun addToCounter(){
+        if(mutableGameUiState.value.colored.isEmpty()){
+            resetCounter()
+            return
+        }
+
+        _mutableGameUiState.update { currentState ->
+            currentState.copy(
+                generationCounter = currentState.generationCounter + 1
+            )
+        }
+    }
+
+    private fun resetCounter(){
+        _mutableGameUiState.update { currentState ->
+            currentState.copy(
+                generationCounter = 0
             )
         }
     }

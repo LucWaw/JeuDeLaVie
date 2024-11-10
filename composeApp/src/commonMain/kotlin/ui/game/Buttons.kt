@@ -23,25 +23,28 @@ import org.jetbrains.compose.resources.painterResource
 fun Buttons(
     playScope: CoroutineScope,
     cellularSpace: CellularSpace,
-    mutableGameUIState: (List<Pair<Int, Int>>) -> Unit,
+    updateCells: (List<Pair<Int, Int>>) -> Unit,
+    addToCounter: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     //play button with play icon
     val buttonsViewModel = remember { ButtonsViewModel() }
 
-    Row(modifier = modifier.fillMaxWidth().padding(16.dp)){
+    Row(modifier = modifier.fillMaxWidth()){
         Button(
             onClick = {
                 //effacer la grille
                 cellularSpace.resetGrid()
-                mutableGameUIState(mutableListOf())
+                updateCells(mutableListOf())
+                addToCounter()
             },
-            modifier = modifier.weight(0.5f)){
+            modifier = modifier.weight(0.5f).padding(16.dp)){
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = "Delete All"
             )
         }
+
         Button(
             onClick = {
                 buttonsViewModel.togglePause() // Met le jeu en pause ou en marche
@@ -49,13 +52,14 @@ fun Buttons(
                 if (buttonsViewModel.isRunning) {
                     runGameLoop(
                         playScope,
-                        { mutableGameUIState(it) },
+                        { updateCells(it) },
+                        addToCounter,
                         cellularSpace,
                         buttonsViewModel
                     )
                 }
             },
-            modifier = modifier.weight(0.5f)
+            modifier = modifier.weight(0.5f).padding(16.dp)
         ) {
             val painter = painterResource("baseline_pause_24.xml")
             if (buttonsViewModel.isRunning) {

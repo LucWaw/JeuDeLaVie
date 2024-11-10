@@ -10,7 +10,8 @@ import model.spacing.CellularSpace
 
 fun runGameLoop(
     playScope: CoroutineScope,
-    mutableGameUIState: (List<Pair<Int, Int>>) -> Unit,
+    updateCells: (List<Pair<Int, Int>>) -> Unit,
+    addToCounter: () -> Unit,
     cellularSpace: CellularSpace,
     buttonsViewModel: ButtonsViewModel
 ) {
@@ -23,7 +24,8 @@ fun runGameLoop(
             //mutex pour éviter l' accès concurrent à cellularSpace
             mutex.withLock {
                 cellularSpace.evolve()
-                mutableGameUIState(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+                updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+                addToCounter()
             }
         }
     }

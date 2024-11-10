@@ -15,9 +15,6 @@ class MovablePatternViewModel: ViewModel()  {
     private val _patterns = MutableStateFlow(PatternRepository(PatternFakeAPI()).getAllPatterns())
     val patterns: StateFlow<List<PatternUIState>> = _patterns.asStateFlow()
 
-    /*private val _uiState = MutableStateFlow(pattern)
-    val uiState: StateFlow<PatternUIState> = _uiState.asStateFlow()*/
-
 
     fun getPatternById(id: Int): PatternUIState? {
         return patterns.value.find { it.id == id }
@@ -42,7 +39,5 @@ class MovablePatternViewModel: ViewModel()  {
                 }
             }
         }
-
-
     }
 }
