@@ -58,7 +58,7 @@ fun Board(
         currentCellCoordinates = coordinate
     }
     LazyVerticalGrid(
-        GridCells.Fixed(gameUIState.gridSize),
+        GridCells.Fixed(gameUIState.gridColumn),
         state = scroll,
         modifier = Modifier
             .onGloballyPositioned {
@@ -79,7 +79,7 @@ fun Board(
                         drag(
                             change,
                             boardUiState,
-                            gameUIState.gridSize,
+                            gameUIState.gridColumn * gameUIState.gridRow,
                             currentCellCoordinates,
                             changeCurentCellCoordinates,
                             onCellClick
@@ -102,7 +102,7 @@ fun Board(
                         drag(
                             change,
                             boardUiState,
-                            gameUIState.gridSize,
+                            gameUIState.gridColumn * gameUIState.gridRow,
                             currentCellCoordinates,
                             changeCurentCellCoordinates,
                             onCellClick
@@ -114,8 +114,8 @@ fun Board(
                 gridChange(newSize.toSize())
             }
     ) {
-        items(gameUIState.gridSize * gameUIState.gridSize) { index ->
-            val cellCoordinates = Pair(index / gameUIState.gridSize, index % gameUIState.gridSize)
+        items(gameUIState.gridColumn * gameUIState.gridRow ) { index ->
+            val cellCoordinates = Pair(index / gameUIState.gridColumn, index / gameUIState.gridRow)
             val interactionSource = remember { MutableInteractionSource() }
 
             DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
@@ -191,7 +191,7 @@ private fun dragStart(
     changeCurentCellCoordinates: (Pair<Int, Int>) -> Unit,
     onCellClick: (Pair<Int, Int>) -> Unit
 ) {
-    cellCoordinatesAtOffset(offset, gridSize, gameUIState.gridSize).let { pair ->
+    cellCoordinatesAtOffset(offset, gridSize, gameUIState.gridColumn * gameUIState.gridRow).let { pair ->
         if (!gameUIState.colored.contains(pair)) {
             changeCurentCellCoordinates(pair)
             onCellClick(pair)
