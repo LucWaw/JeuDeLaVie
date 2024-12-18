@@ -135,8 +135,9 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "kmp.project.gameoflife"
-            packageVersion = "1.0.0"
+            packageName = "GameOfLife Desktop"
+            windows { shortcut = true }
+            packageVersion = "1.0.1"
         }
     }
 }
