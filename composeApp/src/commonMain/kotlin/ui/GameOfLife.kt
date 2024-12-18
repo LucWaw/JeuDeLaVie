@@ -33,11 +33,8 @@ fun GameOfLife(
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
 
     Column {
-        LongPressDraggable(
-            modifier = modifier.width(2000.dp),
-            gameOfLifeViewModel.gridSize,
-            gameUIState.numberOfCells
-        ) {//gameUIState.gridSize can't change
+        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, 50) {//gameUIState.gridSize can't change
+//gameUIState.gridSize can't change
             Column {
 
                 //Game board
