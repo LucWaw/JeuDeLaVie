@@ -36,7 +36,7 @@ fun GameOfLife(
         LongPressDraggable(
             modifier = modifier.width(2000.dp),
             gameOfLifeViewModel.gridSize,
-            gameUIState.gridColumn * gameUIState.gridRow
+            gameUIState.numberOfCells
         ) {//gameUIState.gridSize can't change
             Column {
 
