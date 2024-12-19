@@ -9,13 +9,13 @@ import ui.draganddrop.DragAndDropTheme
 
 
 @Composable
-fun App() {
+fun App(isTablet : Boolean = false) {
     DragAndDropTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            GameOfLife()
+            GameOfLife(isTablet)
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,22 +27,46 @@ import ui.game.Buttons
 import ui.pattern.PatternsUI
 
 
+
+
 @Composable
 fun GameOfLife(
+    isTablet : Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
     val isDesktop: Boolean = getPlatform().name.startsWith("Java")
 
+    val gridRow = getGridRow()
+    val gridColumn = getGridColumn()
+
+    if (isTablet) {
+        LaunchedEffect(Unit) {
+            gameOfLifeViewModel.initCellularSpace(
+                20,
+                80
+            )
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            gameOfLifeViewModel.initCellularSpace(
+                gridRow,
+                gridColumn
+            )
+        }
+    }
+
+
     Column {
-        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, if (isDesktop) 80 else 15) {//gameUIState.gridSize can't change
+        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, if (isDesktop || isTablet) 80 else 15) {//gameUIState.gridSize can't change
 //gameUIState.gridSize can't change
             Column {
 
                 //Game board
                 gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
                     Board(
+                        isTablet,
                         gameUiState,
                         gameOfLifeViewModel.onCellClick,
                         gameOfLifeViewModel.gridSize,
@@ -57,7 +82,7 @@ fun GameOfLife(
         val playScope = rememberCoroutineScope()
         Buttons(
             playScope,
-            gameOfLifeViewModel.cellularSpace,
+            gameOfLifeViewModel.cellularSpace.value,
             { gameOfLifeViewModel.updateCells(it) },
             { gameOfLifeViewModel.addToCounter() },
             modifier

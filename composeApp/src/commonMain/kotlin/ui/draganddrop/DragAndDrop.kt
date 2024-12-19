@@ -95,7 +95,6 @@ fun DragTarget(
     val currentState = LocalDragTargetInfo.current
 
     val isDesktop: Boolean = getPlatform().name.startsWith("Java")
-
     Box(modifier = modifier
         .onGloballyPositioned {
             currentPosition = it.localToWindow(Offset.Zero)

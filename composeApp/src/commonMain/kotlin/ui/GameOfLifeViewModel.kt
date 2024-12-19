@@ -10,19 +10,29 @@ import model.spacing.CellularSpace
 class GameOfLifeViewModel {
 
     private val _mutableGameUiState =
-        MutableStateFlow(GameUiState(emptyList()))
+        MutableStateFlow(GameUiState())
+
 
     val mutableGameUiState: StateFlow<GameUiState> = _mutableGameUiState.asStateFlow()
 
 
-    val cellularSpace =
-        CellularSpace( mutableGameUiState.value.gridRow, mutableGameUiState.value.gridColumn)
+    private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
+    val cellularSpace: StateFlow<CellularSpace> = _cellularSpace.asStateFlow()
+
+
+    fun initCellularSpace(gridRow : Int, gridColumn : Int) {
+        _cellularSpace.update {
+            println("initCellularSpace")
+            CellularSpace(gridRow, gridColumn)
+        }
+    }
 
     val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoordinates ->
-        cellularSpace[cellCoordinates]?.isAlive = !cellularSpace[cellCoordinates]?.isAlive!!
+        cellularSpace.value[cellCoordinates]?.isAlive = !cellularSpace.value[cellCoordinates]?.isAlive!!
         _mutableGameUiState.value =
-            GameUiState(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+            GameUiState(cellularSpace.value.getAliveCells().map { Pair(it.first, it.second) })
     }
+
 
     fun updateCells(colored: List<Pair<Int, Int>>) {
         _mutableGameUiState.update { currentState ->
