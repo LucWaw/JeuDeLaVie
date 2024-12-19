@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import getPlatform
 import ui.board.Board
 import ui.draganddrop.LongPressDraggable
 import ui.game.Buttons
@@ -31,9 +32,10 @@ fun GameOfLife(
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
+    val isDesktop: Boolean = getPlatform().name.startsWith("Java")
 
     Column {
-        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, 50) {//gameUIState.gridSize can't change
+        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, if (isDesktop) 80 else 15) {//gameUIState.gridSize can't change
 //gameUIState.gridSize can't change
             Column {
 
