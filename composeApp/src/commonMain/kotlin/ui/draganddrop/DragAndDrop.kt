@@ -1,5 +1,6 @@
 package ui.draganddrop
 
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -98,6 +99,24 @@ fun DragTarget(
             currentPosition = it.localToWindow(Offset.Zero)
         }
         .pointerInput(Unit) {
+            detectDragGestures(onDragStart = {
+                currentState.dataToDrop = dataToDrop()
+                currentState.isDragging = true
+                currentState.dragPosition = currentPosition + it
+                currentState.draggableComposable = content
+            }, onDrag = { change, dragAmount ->
+                change.consume()
+                currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+            }, onDragEnd = {
+                currentState.isDragging = false
+                currentState.dragOffset = Offset.Zero
+
+            }, onDragCancel = {
+                currentState.dragOffset = Offset.Zero
+                currentState.isDragging = false
+            })
+        }
+        .pointerInput(Unit) {
             detectDragGesturesAfterLongPress(onDragStart = {
                 currentState.dataToDrop = dataToDrop()
                 currentState.isDragging = true
@@ -114,7 +133,10 @@ fun DragTarget(
                 currentState.dragOffset = Offset.Zero
                 currentState.isDragging = false
             })
-        }) {
+        }
+
+
+    ) {
         content()
     }
 }
