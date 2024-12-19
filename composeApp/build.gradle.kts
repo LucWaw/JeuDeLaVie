@@ -136,7 +136,11 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "GameOfLife Desktop"
-            windows { shortcut = true }
+            windows {
+                shortcut = true
+                iconFile.set(project.file("iconn.ico"))
+
+            }
             packageVersion = "1.0.1"
         }
     }

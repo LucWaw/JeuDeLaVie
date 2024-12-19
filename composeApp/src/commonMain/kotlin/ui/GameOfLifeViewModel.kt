@@ -16,7 +16,7 @@ class GameOfLifeViewModel {
 
 
     val cellularSpace =
-        CellularSpace(mutableGameUiState.value.gridSize, mutableGameUiState.value.gridSize)
+        CellularSpace( mutableGameUiState.value.gridRow, mutableGameUiState.value.gridColumn)
 
     val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoordinates ->
         cellularSpace[cellCoordinates]?.isAlive = !cellularSpace[cellCoordinates]?.isAlive!!
