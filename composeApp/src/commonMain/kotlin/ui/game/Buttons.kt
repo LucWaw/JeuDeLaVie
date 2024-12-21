@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import model.spacing.CellularSpace
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -25,6 +26,7 @@ fun Buttons(
     cellularSpace: CellularSpace,
     updateCells: (List<Pair<Int, Int>>) -> Unit,
     addToCounter: () -> Unit,
+    speedValue: StateFlow<Float>,
     modifier: Modifier = Modifier
 ) {
     //play button with play icon
@@ -55,7 +57,8 @@ fun Buttons(
                         { updateCells(it) },
                         addToCounter,
                         cellularSpace,
-                        buttonsViewModel
+                        buttonsViewModel,
+                        speedValue
                     )
                 }
             },

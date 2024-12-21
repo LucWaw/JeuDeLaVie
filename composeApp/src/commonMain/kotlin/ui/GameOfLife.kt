@@ -4,34 +4,35 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Slider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import getPlatform
+import kotlinx.coroutines.flow.asStateFlow
 import ui.board.Board
 import ui.draganddrop.LongPressDraggable
 import ui.game.Buttons
 import ui.pattern.PatternsUI
 
 
-
-
 @Composable
 fun GameOfLife(
-    isTablet : Boolean = false,
+    isTablet: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
@@ -59,7 +60,11 @@ fun GameOfLife(
 
 
     Column {
-        LongPressDraggable(modifier = modifier.width(2000.dp), gameOfLifeViewModel.gridSize, if (isDesktop || isTablet) 80 else 15) {//gameUIState.gridSize can't change
+        LongPressDraggable(
+            modifier = modifier.width(2000.dp),
+            gameOfLifeViewModel.gridSize,
+            if (isDesktop || isTablet) 80 else 15
+        ) {//gameUIState.gridSize can't change
 //gameUIState.gridSize can't change
             Column {
 
@@ -85,28 +90,38 @@ fun GameOfLife(
             gameOfLifeViewModel.cellularSpace.value,
             { gameOfLifeViewModel.updateCells(it) },
             { gameOfLifeViewModel.addToCounter() },
-            modifier
+            gameOfLifeViewModel._speedGeneration.asStateFlow(),
         )
 
 
-        Row {
+        Row(Modifier.padding(16.dp)) {
+            SliderMinimalExample(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
             Spacer(Modifier.weight(1f))
-
             generationCounter(gameUIState)
-            Spacer(Modifier.size(16.dp))
-
-
         }
     }
 }
 
+@Composable
+fun SliderMinimalExample(onPositionChange: (Float) -> Unit) {
+    var sliderPosition by remember { mutableFloatStateOf(0f) }
+    Column(Modifier.width(200.dp)) {
+        Slider(
+            value = sliderPosition,
+            onValueChange = {
+                sliderPosition = it
+                onPositionChange(it)
+            }
+        )
+        Text(text = sliderPosition.toString())
+    }
+}
 
 
 @Composable
 private fun generationCounter(gameUIState: GameUiState) {
     Row(
         modifier = Modifier
-            .height(30.dp)
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colors.primary,

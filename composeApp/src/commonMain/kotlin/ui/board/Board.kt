@@ -28,6 +28,8 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.flow.StateFlow
@@ -63,7 +65,6 @@ fun Board(
     }
 
     val gridRow = if (isTablet) 20 else getGridRow()
-    println("gridRow: $gridRow")
     val gridColumn = if (isTablet) 80 else getGridColumn()
     val numberOfCells = gridRow * gridColumn
 
@@ -175,6 +176,9 @@ fun Board(
                         .border(1.dp, Color.Gray)
                         .clickable { onCellClick(cellCoordinates) }
                         .hoverable(interactionSource = interactionSource)
+                        .semantics {
+                            contentDescription = "Item $index at $cellCoordinates"
+                        }
                 )
             }
         }

@@ -19,10 +19,11 @@ class GameOfLifeViewModel {
     private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
     val cellularSpace: StateFlow<CellularSpace> = _cellularSpace.asStateFlow()
 
+    val _speedGeneration = MutableStateFlow(1f)
+
 
     fun initCellularSpace(gridRow : Int, gridColumn : Int) {
         _cellularSpace.update {
-            println("initCellularSpace")
             CellularSpace(gridRow, gridColumn)
         }
     }
@@ -40,6 +41,15 @@ class GameOfLifeViewModel {
                 colored = colored
             )
         }
+    }
+
+    fun changeSpeedGeneration(speed: Float){
+        _speedGeneration.update {
+            println("update : $speed")
+            speed
+
+        }
+        println(speed)
     }
 
     fun addToCounter(){

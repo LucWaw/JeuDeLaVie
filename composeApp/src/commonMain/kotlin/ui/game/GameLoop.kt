@@ -2,6 +2,8 @@ package ui.game
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -13,20 +15,35 @@ fun runGameLoop(
     updateCells: (List<Pair<Int, Int>>) -> Unit,
     addToCounter: () -> Unit,
     cellularSpace: CellularSpace,
-    buttonsViewModel: ButtonsViewModel
+    buttonsViewModel: ButtonsViewModel,
+    speedFlow: StateFlow<Float>
 ) {
     val mutex = Mutex()
     playScope.launch {
-        while (buttonsViewModel.isRunning) {
+        speedFlow.collectLatest { speed ->
+            val adjustedSpeed = maxOf(speed, 0.1f) // Éviter des vitesses trop lentes
+            val delayTime = (150 / adjustedSpeed).toLong()
 
-            delay(150)
+            var lastUpdateTime = System.currentTimeMillis()
 
-            //mutex pour éviter l' accès concurrent à cellularSpace
-            mutex.withLock {
-                cellularSpace.evolve()
-                updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
-                addToCounter()
+            while (buttonsViewModel.isRunning) {
+                val currentTime = System.currentTimeMillis()
+                val deltaTime = currentTime - lastUpdateTime
+
+                if (deltaTime >= delayTime) {
+                    lastUpdateTime = currentTime
+
+                    mutex.withLock {
+                        cellularSpace.evolve() // Une seule évolution par tick
+                        updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+                        addToCounter()
+                    }
+                }
+
+                // Attendre une petite période pour éviter une boucle trop rapide
+                delay(1L)
             }
         }
     }
 }
+

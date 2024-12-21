@@ -8,7 +8,8 @@ val isDesktop: Boolean = getPlatform().name.startsWith("Java")
 
 data class GameUiState(
     val colored: List<Pair<Int, Int>> = emptyList(),
-    val generationCounter : Int = 0
+    val generationCounter : Int = 0,
+    val speedGeneration : Float = 1f
 )
 
 @Composable
