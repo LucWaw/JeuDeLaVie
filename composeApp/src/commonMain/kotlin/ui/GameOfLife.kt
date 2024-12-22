@@ -95,7 +95,7 @@ fun GameOfLife(
 
 
         Row(Modifier.padding(16.dp)) {
-            SliderMinimalExample(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
+            SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
             Spacer(Modifier.weight(1f))
             generationCounter(gameUIState)
         }
@@ -103,8 +103,8 @@ fun GameOfLife(
 }
 
 @Composable
-fun SliderMinimalExample(onPositionChange: (Float) -> Unit) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
+fun SliderSpeed(onPositionChange: (Float) -> Unit) {
+    var sliderPosition by remember { mutableFloatStateOf(1f) }
     Column(Modifier.width(200.dp)) {
         Slider(
             value = sliderPosition,
@@ -113,7 +113,6 @@ fun SliderMinimalExample(onPositionChange: (Float) -> Unit) {
                 onPositionChange(it)
             }
         )
-        Text(text = sliderPosition.toString())
     }
 }
 

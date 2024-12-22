@@ -45,11 +45,8 @@ class GameOfLifeViewModel {
 
     fun changeSpeedGeneration(speed: Float){
         _speedGeneration.update {
-            println("update : $speed")
             speed
-
         }
-        println(speed)
     }
 
     fun addToCounter(){
