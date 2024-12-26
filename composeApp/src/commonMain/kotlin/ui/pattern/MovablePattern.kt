@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import ui.draganddrop.DragTarget
 
 
-//grid handled by cells
 
 
 @Composable
@@ -41,7 +39,7 @@ fun PatternsUI(
     val patternsUiState by viewModel.patterns.collectAsState()
 
     LazyRow(
-        modifier = Modifier.height(250.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)
+        modifier = Modifier.height(200.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(items = patternsUiState) { pattern ->
             Pattern(
@@ -58,10 +56,10 @@ fun PatternsUI(
 fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -> PatternUIState?) {
 
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.width(150.dp)) {
 
         Button(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.width(150.dp),
             onClick = rotatePattern
 
         ) {

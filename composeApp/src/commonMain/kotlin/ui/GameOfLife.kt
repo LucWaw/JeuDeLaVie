@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,7 +62,7 @@ fun GameOfLife(
 
     Column {
         LongPressDraggable(
-            modifier = modifier.width(2000.dp),
+            modifier = modifier.fillMaxWidth(),
             gameOfLifeViewModel.gridSize,
             if (isDesktop || isTablet) 80 else 15
         ) {//gameUIState.gridSize can't change
@@ -94,7 +95,7 @@ fun GameOfLife(
         )
 
 
-        Row(Modifier.padding(16.dp)) {
+        Row(Modifier.padding(16.dp, 4.dp, 16.dp, 4.dp)) {
             SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
             Spacer(Modifier.weight(1f))
             generationCounter(gameUIState)
