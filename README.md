@@ -9,7 +9,7 @@
 # Jeu de la vie
 
 Téléchargez-le [ici](https://play.google.com/store/apps/details?id=kmp.project.gameoflife) / Download it [here](https://play.google.com/store/apps/details?id=kmp.project.gameoflife)
-: https://play.google.com/store/apps/details?id=kmp.project.gameoflife
+(https://play.google.com/store/apps/details?id=kmp.project.gameoflife)
 
 Jeu de la vie en Kotlin. Les cellules sont des objets distincts et non des cases d'un tableau.
 
