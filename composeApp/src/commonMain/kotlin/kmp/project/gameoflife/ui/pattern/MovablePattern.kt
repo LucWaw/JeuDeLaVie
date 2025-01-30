@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.rounded.Favorite
@@ -108,19 +108,16 @@ fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -
                 }
             }
 
-            val iconSize = 24.dp
-
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .size(iconSize)
-                    .align(Alignment.TopEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Favorite,
-                    contentDescription = "Put in favorite",
-                    tint = Color.Yellow
-                )
+            Box(modifier = Modifier.background(MaterialTheme.colors.primary).align(Alignment.TopEnd)) {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Favorite,
+                        contentDescription = "Put in favorite",
+                        tint = Color.Yellow
+                    )
+                }
             }
         }
 

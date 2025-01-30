@@ -4,7 +4,7 @@ import kmp.project.gameoflife.spacing.CellularSpace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,30 +20,24 @@ fun runGameLoop(
 ) {
     val mutex = Mutex()
     playScope.launch {
-        speedFlow.collectLatest { speed ->
-            val adjustedSpeed = maxOf(speed, 0.1f) // Éviter des vitesses trop lentes
+        while (buttonsViewModel.isRunning) {
+            // ✅ Lire la vitesse actuelle sans relancer toute la boucle
+            val speed = speedFlow.first() // Prend la valeur actuelle sans suspendre la boucle
+            val adjustedSpeed = maxOf(speed, 0.1f)
             val delayTime = (150 / adjustedSpeed).toLong()
 
-            var lastUpdateTime = System.currentTimeMillis()
 
-            while (buttonsViewModel.isRunning) {
-                val currentTime = System.currentTimeMillis()
-                val deltaTime = currentTime - lastUpdateTime
-
-                if (deltaTime >= delayTime) {
-                    lastUpdateTime = currentTime
-
-                    mutex.withLock {
-                        cellularSpace.evolve() // Une seule évolution par tick
-                        updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
-                        addToCounter()
-                    }
-                }
-
-                // Attendre une petite période pour éviter une boucle trop rapide
-                delay(1L)
+            mutex.withLock {
+                cellularSpace.evolve()
+                updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+                addToCounter()
             }
+
+            delay(delayTime) // Attente en fonction de la vitesse actuelle
         }
     }
 }
+
+
+
 

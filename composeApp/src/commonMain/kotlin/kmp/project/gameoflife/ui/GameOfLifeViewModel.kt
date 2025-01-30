@@ -16,10 +16,12 @@ class GameOfLifeViewModel {
     val mutableGameUiState: StateFlow<GameUiState> = _mutableGameUiState.asStateFlow()
 
 
+
     private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
     val cellularSpace: StateFlow<CellularSpace> = _cellularSpace.asStateFlow()
 
-    val _speedGeneration = MutableStateFlow(1f)
+    private val _speedGeneration = MutableStateFlow(1f)
+    val speedState : StateFlow<Float> = _speedGeneration.asStateFlow()
 
 
     fun initCellularSpace(gridRow : Int, gridColumn : Int) {

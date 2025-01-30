@@ -27,7 +27,6 @@ import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.draganddrop.LongPressDraggable
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.pattern.PatternsUI
-import kotlinx.coroutines.flow.asStateFlow
 
 
 @Composable
@@ -90,7 +89,7 @@ fun GameOfLife(
             gameOfLifeViewModel.cellularSpace.value,
             { gameOfLifeViewModel.updateCells(it) },
             { gameOfLifeViewModel.addToCounter() },
-            gameOfLifeViewModel._speedGeneration.asStateFlow(),
+            gameOfLifeViewModel.speedState,
         )
 
 
