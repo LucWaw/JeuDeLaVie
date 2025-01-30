@@ -1,11 +1,18 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop.
+<br />
+<div align="center">
+    <img src="images/phone_3.png" alt="Logo" width="200">
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+<h3 align="center">Jeu de la Vie ANDROID</h3>
 
+</div>
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+# Jeu de la vie
+
+Téléchargez-le [ici](https://play.google.com/store/apps/details?id=kmp.project.gameoflife) / Download it [here](https://play.google.com/store/apps/details?id=kmp.project.gameoflife)
+: https://play.google.com/store/apps/details?id=kmp.project.gameoflife
+
+Jeu de la vie en Kotlin. Les cellules sont des objets distincts et non des cases d'un tableau.
+
+Il est possible de Drag & Drop des patterns dans la grille.
+
+Créé avec Kotlin Multiplatform, lancement sur pc avec "gradle :composeApp:run"
