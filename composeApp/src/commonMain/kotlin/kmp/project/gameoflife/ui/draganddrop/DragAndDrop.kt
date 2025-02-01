@@ -22,8 +22,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.getPlatform
-import kotlinx.coroutines.flow.StateFlow
 import kmp.project.gameoflife.ui.pattern.PatternUIState
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
@@ -86,7 +86,7 @@ fun LongPressDraggable(
 
 @Composable
 fun DragTarget(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     dataToDrop: () -> PatternUIState?,
     content: @Composable (() -> Unit)
 ) {

@@ -45,7 +45,7 @@ fun PatternsUI(
     val patternsUiState by viewModel.patterns.collectAsState()
 
     LazyRow(
-        modifier = Modifier.height(250.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)
+        modifier = Modifier.height(200.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(items = patternsUiState) { pattern ->
             Pattern(
@@ -59,13 +59,18 @@ fun PatternsUI(
 }
 
 @Composable
-fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -> PatternUIState?) {
+fun Pattern(
+    pattern: PatternUIState,
+    rotatePattern: () -> Unit,
+    getPattern: () -> PatternUIState?,
+    width: Int = 150
+) {
 
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
         Button(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.width(width.dp),
             onClick = rotatePattern
 
         ) {
@@ -74,10 +79,11 @@ fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -
                 contentDescription = "Rotate"
             )
         }
+
         val isInDark = isSystemInDarkTheme()
 
-        Box{
-            DragTarget(dataToDrop = getPattern, modifier = Modifier.width(200.dp)) {
+        Box {
+            DragTarget(dataToDrop = getPattern, modifier = Modifier.width(width.dp)) {
                 LazyVerticalGrid(
                     GridCells.Fixed(pattern.gridSize),
                     modifier = Modifier.aspectRatio(1f)
@@ -108,18 +114,25 @@ fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -
                 }
             }
 
-            Box(modifier = Modifier.background(MaterialTheme.colors.primary).align(Alignment.TopEnd)) {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Favorite,
-                        contentDescription = "Put in favorite",
-                        tint = Color.Yellow
-                    )
-                }
+            Box(
+                modifier = Modifier.background(MaterialTheme.colors.primary).align(Alignment.TopEnd)
+            ) {
+                favoriteButton()
             }
         }
 
+    }
+}
+
+@Composable
+fun favoriteButton() {
+    IconButton(
+        onClick = {}
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Favorite,
+            contentDescription = "Put in favorite",
+            tint = Color.Yellow
+        )
     }
 }

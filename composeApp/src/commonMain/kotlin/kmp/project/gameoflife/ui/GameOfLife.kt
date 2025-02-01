@@ -93,7 +93,7 @@ fun GameOfLife(
         )
 
 
-        Row(Modifier.padding(16.dp)) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
             Spacer(Modifier.weight(1f))
             generationCounter(gameUIState)
