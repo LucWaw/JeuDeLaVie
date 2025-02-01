@@ -21,7 +21,7 @@ fun runGameLoop(
     val mutex = Mutex()
     playScope.launch {
         while (buttonsViewModel.isRunning) {
-            // ✅ Lire la vitesse actuelle sans relancer toute la boucle
+            // Lire la vitesse actuelle sans relancer toute la boucle
             val speed = speedFlow.first() // Prend la valeur actuelle sans suspendre la boucle
             val adjustedSpeed = maxOf(speed, 0.1f)
             val delayTime = (150 / adjustedSpeed).toLong()

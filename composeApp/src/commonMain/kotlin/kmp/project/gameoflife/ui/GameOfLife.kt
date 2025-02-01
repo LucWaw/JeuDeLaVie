@@ -99,6 +99,8 @@ fun GameOfLife(
             generationCounter(gameUIState)
         }
     }
+
+
 }
 
 @Composable
