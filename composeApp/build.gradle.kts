@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -20,26 +21,33 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+            }
+        }
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(libs.dagger.compiler)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+            }
 
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
         }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-        }
+
     }
 }
 
@@ -73,6 +81,9 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("ksp", "com.google.dagger:dagger-compiler:2.51.1")
+
+
 }
 
 compose.desktop {

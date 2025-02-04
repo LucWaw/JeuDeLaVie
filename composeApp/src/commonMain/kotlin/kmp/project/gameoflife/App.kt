@@ -15,7 +15,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App(isTablet: Boolean = false) {
     DragAndDropTheme {
-        BottomSheetScaffold(
+        BottomSheetScaffold( //Not modal because ModalBottomSheetLayout creates a shadow above the rest of the screen especially in dark mode
             sheetContent = {
                 BottomSheetsContent()
             },
