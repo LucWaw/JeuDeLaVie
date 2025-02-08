@@ -1,6 +1,5 @@
 package kmp.project.gameoflife.ui
 
-import androidx.compose.ui.geometry.Size
 import kmp.project.gameoflife.spacing.CellularSpace
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -72,10 +71,5 @@ class GameOfLifeViewModel {
         }
     }
 
-    private val _gridSize : MutableStateFlow<Size> = MutableStateFlow(Size.Zero) // To store the actual size of the grid
-    val gridSize : StateFlow<Size> = _gridSize.asStateFlow()
 
-    fun modifyGridSize(gridSize: Size){
-        _gridSize.value = gridSize
-    }
 }

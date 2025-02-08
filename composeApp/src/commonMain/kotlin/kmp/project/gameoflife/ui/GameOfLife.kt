@@ -20,18 +20,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.getPlatform
 import kmp.project.gameoflife.ui.board.Board
+import kmp.project.gameoflife.ui.draganddrop.DragTargetInfo
 import kmp.project.gameoflife.ui.draganddrop.LongPressDraggable
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.pattern.PatternsUI
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
 fun GameOfLife(
     isTablet: Boolean = false,
+    gridSizeChange : (Size) -> Unit,
+    gridSizeUi : StateFlow<Size>,
+    dragInfoFromSheet : DragTargetInfo,
     modifier: Modifier = Modifier
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
@@ -57,12 +63,13 @@ fun GameOfLife(
         }
     }
 
-
+    val dragTargetInfoFromFavorite = remember { DragTargetInfo() }
     Column {
         LongPressDraggable(
             modifier = modifier.width(2000.dp),
-            gameOfLifeViewModel.gridSize,
-            if (isDesktop || isTablet) 80 else 15
+            gridSizeUi,
+            if (isDesktop || isTablet) 80 else 15,
+            dragTargetInfoFromFavorite
         ) {//gameUIState.gridSize can't change
 //gameUIState.gridSize can't change
             Column {
@@ -73,13 +80,15 @@ fun GameOfLife(
                         isTablet,
                         gameUiState,
                         gameOfLifeViewModel.onCellClick,
-                        gameOfLifeViewModel.gridSize,
-                        { gameOfLifeViewModel.modifyGridSize(it) },
-                        modifier
+                        gridSizeUi,
+                        { gridSizeChange(it) },
+                        dragTargetInfoFromPattern = dragTargetInfoFromFavorite,
+                        dragTargetInfoFromSheet = dragInfoFromSheet,
+                        modifier = modifier
                     )
                 }
 
-                PatternsUI()
+                PatternsUI(dragTargetInfoFromFavorite)
             }
         }
         //Play pause button

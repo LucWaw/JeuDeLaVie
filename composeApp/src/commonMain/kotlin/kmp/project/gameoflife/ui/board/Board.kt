@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.ui.GameUiState
+import kmp.project.gameoflife.ui.draganddrop.DragTargetInfo
 import kmp.project.gameoflife.ui.draganddrop.DropTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
@@ -49,6 +50,8 @@ fun Board(
     onCellClick: (Pair<Int, Int>) -> Unit,
     gridUiSize: StateFlow<Size>,
     gridChange: (Size) -> Unit,
+    dragTargetInfoFromSheet : DragTargetInfo,
+    dragTargetInfoFromPattern : DragTargetInfo,
     modifier: Modifier = Modifier
 ) {
 
@@ -136,7 +139,11 @@ fun Board(
 
             val interactionSource = remember { MutableInteractionSource() }
 
-            DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
+            DropTarget(
+                modifier = modifier,
+                favoriteDragTargetInfo = dragTargetInfoFromPattern,
+                sheetDragTargetInfo = dragTargetInfoFromSheet
+            ) { isInBound, bundleOfCells ->
                 if (isInBound && bundleOfCells != null) {
                     placingCell = cellCoordinates
                     bundledCells = bundleOfCells.cells

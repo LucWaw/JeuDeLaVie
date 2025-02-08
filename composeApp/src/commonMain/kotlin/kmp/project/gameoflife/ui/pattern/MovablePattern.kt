@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.ui.draganddrop.DragTarget
+import kmp.project.gameoflife.ui.draganddrop.DragTargetInfo
 
 
 //grid handled by cells
@@ -38,6 +39,7 @@ import kmp.project.gameoflife.ui.draganddrop.DragTarget
 
 @Composable
 fun PatternsUI(
+    dragTargetInfo: DragTargetInfo
 ) {
     val viewModel = remember { MovablePatternViewModel() }
 
@@ -51,11 +53,11 @@ fun PatternsUI(
             Pattern(
                 pattern = pattern,
                 getPattern = { viewModel.getPatternById(pattern.id) },
-                rotatePattern = { viewModel.rotatePattern(pattern.id) })
+                rotatePattern = { viewModel.rotatePattern(pattern.id) },
+                dragTargetInfo = dragTargetInfo
+            )
         }
     }
-
-
 }
 
 @Composable
@@ -63,6 +65,7 @@ fun Pattern(
     pattern: PatternUIState,
     rotatePattern: () -> Unit,
     getPattern: () -> PatternUIState?,
+    dragTargetInfo: DragTargetInfo,
     width: Int = 150
 ) {
 
@@ -83,7 +86,11 @@ fun Pattern(
         val isInDark = isSystemInDarkTheme()
 
         Box {
-            DragTarget(dataToDrop = getPattern, modifier = Modifier.width(width.dp)) {
+            DragTarget(
+                dataToDrop = getPattern,
+                localDragTargetInfo = dragTargetInfo,
+                modifier = Modifier.width(width.dp)
+            ) {
                 LazyVerticalGrid(
                     GridCells.Fixed(pattern.gridSize),
                     modifier = Modifier.aspectRatio(1f)
