@@ -1,6 +1,8 @@
 package kmp.project.gameoflife.ui
 
+import androidx.compose.ui.geometry.Size
 import kmp.project.gameoflife.spacing.CellularSpace
+import kmp.project.gameoflife.ui.draganddrop.DragTargetInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +16,8 @@ class GameOfLifeViewModel {
 
     val mutableGameUiState: StateFlow<GameUiState> = _mutableGameUiState.asStateFlow()
 
+    private val _dragTargetInfoSheet = MutableStateFlow(DragTargetInfo())
+    val dragTargetInfoSheet: StateFlow<DragTargetInfo> = _dragTargetInfoSheet.asStateFlow()
 
 
     private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
@@ -69,6 +73,13 @@ class GameOfLifeViewModel {
                 generationCounter = 0
             )
         }
+    }
+
+    private val _gridSize : MutableStateFlow<Size> = MutableStateFlow(Size.Zero) // To store the actual size of the grid
+    val gridSize : StateFlow<Size> = _gridSize.asStateFlow()
+
+    fun modifyGridSize(gridSize: Size){
+        _gridSize.value = gridSize
     }
 
 
