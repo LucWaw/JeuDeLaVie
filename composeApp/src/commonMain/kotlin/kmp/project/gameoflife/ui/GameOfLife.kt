@@ -63,6 +63,7 @@ fun GameOfLife(
     if (dragTargetInfoSheet.isDragging) {
         LaunchedEffect(Unit) {
             bottomSheetScaffoldState.bottomSheetState.collapse()
+            lazyGridState.scrollToItem(0)
         }
     }
 

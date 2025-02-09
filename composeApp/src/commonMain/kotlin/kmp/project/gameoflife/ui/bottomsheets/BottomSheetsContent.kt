@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,7 +30,7 @@ fun BottomSheetsContent(dragTargetInfo: DragTargetInfo, lazyGridState: LazyGridS
     val patternsUiState by viewModel.patterns.collectAsState()
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.heightIn(min = 100.dp, max = 800.dp)
     ) {
 
         Spacer(//Using this to create a kind of Icon that tells the user that the sheet is expandable
