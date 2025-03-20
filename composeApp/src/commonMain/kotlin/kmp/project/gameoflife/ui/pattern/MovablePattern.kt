@@ -17,16 +17,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -105,18 +101,6 @@ fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -
                                 )
                         )
                     }
-                }
-            }
-
-            Box(modifier = Modifier.background(MaterialTheme.colors.primary).align(Alignment.TopEnd)) {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Favorite,
-                        contentDescription = "Put in favorite",
-                        tint = Color.Yellow
-                    )
                 }
             }
         }
