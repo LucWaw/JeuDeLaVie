@@ -63,10 +63,10 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            isDebuggable = false
             ndk {
                 ndk.debugSymbolLevel = "FULL"
             }
-
         }
     }
     compileOptions {
