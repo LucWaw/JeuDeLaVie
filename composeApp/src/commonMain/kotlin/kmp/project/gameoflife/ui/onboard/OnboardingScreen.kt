@@ -72,7 +72,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             }
             Box(modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center) {
-                IndicatorUI(pageSize = pages.size, currentPage = pagerState.currentPage)
+                PageIndicator(numberOfPages =pages.size, selectedPage = pagerState.currentPage, space = 5.dp, selectedLength = 35.dp)
             }
 
             Box(modifier = Modifier.weight(1f),
