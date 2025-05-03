@@ -15,7 +15,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -114,68 +113,108 @@ actual fun GifImage(ressources: DrawableResource) {
 
         }
         R.drawable.page2 -> {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .clip(
-                        CroppedShape(
-                            cropStart = 10.dp,
-                            cropTop = 20.dp,
-                            cropEnd = 15.dp,
-                            cropBottom = 25.dp
+                    .size(350.dp, 500.dp) // Taille de la box
+                    .offset(y=(120).dp)// Placer l'image au centre de l'écran
+                    .padding(top = 20.dp),// Espace au dessus de la Box
+                contentAlignment = Alignment.BottomCenter
+            ){
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
+                        scaleX = 1.5f
+                        scaleY = 1.5f
+                    }
+                        .clip(
+                            CroppedShape(  //CROP
+                                cropStart = 24.dp,
+                                cropTop = 16.dp,
+                                cropEnd = 24.dp,
+                                cropBottom = 114.dp
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
         R.drawable.page3 -> {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .clip(
-                        CroppedShape(
-                            cropStart = 10.dp,
-                            cropTop = 20.dp,
-                            cropEnd = 15.dp,
-                            cropBottom = 25.dp
+                    .size(350.dp, 500.dp) // Taille de la box
+                    .offset(y=(190).dp)// Placer l'image au centre de l'écran
+                    .padding(top = 20.dp),// Espace au dessus de la Box
+                contentAlignment = Alignment.BottomCenter
+            ){
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
+                        scaleX = 1.5f
+                        scaleY = 1.5f
+                    }
+                        .clip(
+                            CroppedShape(  //CROP
+                                cropStart = 24.dp,
+                                cropTop = 16.dp,
+                                cropEnd = 24.dp,
+                                cropBottom = 242.dp
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
         R.drawable.page4 -> {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .clip(
-                        CroppedShape(
-                            cropStart = 10.dp,
-                            cropTop = 20.dp,
-                            cropEnd = 15.dp,
-                            cropBottom = 25.dp
+                    .size(350.dp, 500.dp) // Taille de la box
+                    .offset(y=(25).dp)// Placer l'image au centre de l'écran
+                    .padding(top = 20.dp),// Espace au dessus de la Box
+                contentAlignment = Alignment.BottomCenter
+            ){
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
+                        scaleX = 1.5f
+                        scaleY = 1.5f
+                    }
+                        .clip(
+                            CroppedShape(  //CROP
+                                cropStart = 0.dp,
+                                cropTop = 61.dp,
+                                cropEnd = 0.dp,
+                                cropBottom = 40.dp
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
         R.drawable.page5 -> {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
-                    .clip(
-                        CroppedShape(
-                            cropStart = 10.dp,
-                            cropTop = 20.dp,
-                            cropEnd = 15.dp,
-                            cropBottom = 25.dp
+                    .size(350.dp, 500.dp) // Taille de la box
+                    .offset(y=(80).dp)// Placer l'image au centre de l'écran
+                    .padding(top = 20.dp),// Espace au dessus de la Box
+                contentAlignment = Alignment.BottomCenter
+            ){
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
+                        scaleX = 1.5f
+                        scaleY = 1.5f
+                    }
+                        .clip(
+                            CroppedShape(  //CROP
+                                cropStart = 0.dp,
+                                cropTop = 31.dp,
+                                cropEnd = 0.dp,
+                                cropBottom = 70.dp
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
 
     }
