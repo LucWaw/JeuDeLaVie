@@ -21,10 +21,11 @@ import kmp.project.gameoflife.ui.draganddrop.Purple500
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        initOnboardingUtils(this)
         setContent {
             App(isTablet = isTablet())
         }
+
     }
 }
 

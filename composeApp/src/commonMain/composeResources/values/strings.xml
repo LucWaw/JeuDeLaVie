@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="hello_world">Hello World !</string>
+    <string name="hello_world">Hello World!</string>
+
+    <string name="first_page_title">Welcome to the Game of Life</string>
+    <string name="first_page_description">This is a simple game where you can create and evolve patterns using Conway's Game of Life rules.</string>
+
+    <string name="second_page_title">Drag and drop patterns</string>
+    <string name="second_page_description">You can drag and drop patterns by holding your finger on one, then dropping it onto the grid.</string>
+
+    <string name="third_page_title">Draw on the grid</string>
+    <string name="third_page_description">Draw on the grid by holding your finger down or tapping the cells you want to color!</string>
+
+    <string name="fourth_page_title">Change game speed</string>
+    <string name="fourth_page_description">You can change the animation speed using the slider.</string>
+
+    <string name="fifth_page_title">Start the animation!</string>
+    <string name="fifth_page_description">Simply start the animation by clicking the start button.</string>
 </resources>

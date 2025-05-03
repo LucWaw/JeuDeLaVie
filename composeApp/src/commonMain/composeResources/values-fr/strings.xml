@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="hello_world">Bonjour Monde !</string>
+
+    <string name="first_page_title">Bienvenue dans le jeu de la vie</string>
+    <string name="first_page_description">Il s'agit d'un jeu simple où vous pouvez créer et faire évoluer des motifs en utilisant les règles du jeu de la vie de Conway.</string>
+
+    <string name="second_page_title">Glisser-déposer des motifs</string>
+    <string name="second_page_description">Vous pouvez glisser-déposer des motifs en laissant le doigt appuyé sur l'un d'eux avant de le déposer dans la grille.</string>
+
+    <string name="third_page_title">Dessiner sur la grille</string>
+    <string name="third_page_description">Dessinez sur la grille en maintenant votre doigt ou en tapotant les cases à colorer !</string>
+
+    <string name="fourth_page_title">Changer la vitesse du jeu</string>
+    <string name="fourth_page_description">Vous pouvez changer la vitesse de l'animation à l'aide du curseur.</string>
+
+    <string name="fifth_page_title">Lancer l'animation !</string>
+    <string name="fifth_page_description">Lancez simplement l'animation en cliquant sur le bouton Démarrer.</string>
 </resources>
