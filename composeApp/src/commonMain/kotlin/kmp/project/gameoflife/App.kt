@@ -30,7 +30,9 @@ fun App(isTablet: Boolean = false) {
                     }
                 )
             } else {
-                GameOfLife(isTablet)
+                GameOfLife(isTablet, showOnboarding = {
+                    showOnboarding = true
+                })
             }
         }
     }

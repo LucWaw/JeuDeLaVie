@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +36,7 @@ import kmp.project.gameoflife.ui.pattern.PatternsUI
 @Composable
 fun GameOfLife(
     isTablet: Boolean = false,
+    showOnboarding: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
@@ -95,6 +100,17 @@ fun GameOfLife(
 
         Row(Modifier.padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
+            Spacer(Modifier.weight(1f))
+            IconButton(
+                onClick = {
+                    showOnboarding()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Refresh"
+                )
+            }
             Spacer(Modifier.weight(1f))
             generationCounter(gameUIState)
         }
