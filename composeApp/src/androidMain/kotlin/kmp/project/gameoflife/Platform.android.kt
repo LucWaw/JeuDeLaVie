@@ -9,15 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.ImageLoader
 import coil3.compose.rememberAsyncImagePainter
@@ -124,30 +118,6 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
             )
         }
 
-    }
-}
-
-
-class CroppedShape(
-    private val cropStart: Dp = 0.dp,
-    private val cropTop: Dp = 0.dp,
-    private val cropEnd: Dp = 0.dp,
-    private val cropBottom: Dp = 0.dp
-) : Shape {
-
-    override fun createOutline(
-        size: androidx.compose.ui.geometry.Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        with(density) {
-            val left = cropStart.toPx()
-            val top = cropTop.toPx()
-            val right = size.width - cropEnd.toPx()
-            val bottom = size.height - cropBottom.toPx()
-
-            return Outline.Rectangle(Rect(left, top, right, bottom))
-        }
     }
 }
 

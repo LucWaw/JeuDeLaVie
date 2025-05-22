@@ -1,6 +1,7 @@
 package kmp.project.gameoflife
 
-import android.content.res.Configuration
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,20 +11,35 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import kmp.project.gameoflife.ui.draganddrop.Purple500
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("SourceLockedOrientationActivity")
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initOnboardingUtils(this)
+
+
+
         setContent {
-            App(isTablet = isTablet())
+            val windowSizeClass = calculateWindowSizeClass(this)
+            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact ||
+                windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
+
+                ){
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                }
+            App(isTablet = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded)
         }
 
     }
@@ -34,15 +50,7 @@ fun AppAndroidPreview() {
     App()
 }
 
-@Composable
-fun isTablet(): Boolean {
-    val configuration = LocalConfiguration.current
-    return if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        configuration.screenWidthDp > 840
-    } else {
-        configuration.screenWidthDp > 600
-    }
-}
+
 
 
 @Composable

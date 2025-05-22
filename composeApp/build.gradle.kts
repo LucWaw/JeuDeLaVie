@@ -37,7 +37,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-
+            implementation(libs.material3.window.size.class1)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
