@@ -24,15 +24,15 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
 
 
-        GifImage(ressources = onboardingModel.image)
+        GifImage(ressources = onboardingModel.image, modifier = Modifier.weight(1f))
 
 
         Spacer(
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(10.dp)
         )
 
         Text(
@@ -46,7 +46,7 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .size(15.dp)
+                .size(5.dp)
         )
 
         Text(
@@ -58,12 +58,6 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.onSurface,
-        )
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(60.dp)
         )
 
     }

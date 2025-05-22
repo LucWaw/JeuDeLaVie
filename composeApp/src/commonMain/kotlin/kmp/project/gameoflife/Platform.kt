@@ -1,6 +1,7 @@
 package kmp.project.gameoflife
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -13,4 +14,4 @@ expect fun getPlatform(): Platform
 expect fun getOnboardingUtils(): OnboardingUtils
 
 @Composable
-expect fun GifImage(ressources: DrawableResource)
+expect fun GifImage(ressources: DrawableResource, modifier: Modifier = Modifier)

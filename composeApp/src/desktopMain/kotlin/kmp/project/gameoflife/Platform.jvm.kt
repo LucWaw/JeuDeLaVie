@@ -19,10 +19,10 @@ actual fun getOnboardingUtils(): OnboardingUtils {
 }
 
 @Composable
-actual fun GifImage(ressources: DrawableResource) {
+actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     Image(
         painter = painterResource(ressources),
         contentDescription = null,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     )
 }

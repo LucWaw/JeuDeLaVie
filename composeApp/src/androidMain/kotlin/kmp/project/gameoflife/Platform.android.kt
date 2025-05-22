@@ -1,20 +1,18 @@
 package kmp.project.gameoflife
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -54,8 +52,9 @@ actual fun getOnboardingUtils(): OnboardingUtils {
 }
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-actual fun GifImage(ressources: DrawableResource) {
+actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     var ressource = when (ressources) {
         Res.drawable.page1 -> R.drawable.page1
         Res.drawable.page2 -> R.drawable.page2
@@ -86,135 +85,43 @@ actual fun GifImage(ressources: DrawableResource) {
 
     when (ressource) {
         R.drawable.page1 -> {
-            Box(
-                modifier = Modifier
-                    .size(350.dp, 500.dp) // Taille de la box
-                    .offset(y=(190).dp)// Placer l'image au centre de l'écran
-                    .padding(top = 20.dp),// Espace au dessus de la Box
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Image(
-                painter = painter,
-                contentDescription = null,
-                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                    }
-                        .clip(
-                            CroppedShape(  //CROP
-                                cropStart = 0.dp,
-                                cropTop = 16.dp,
-                                cropEnd = 0.dp,
-                                cropBottom = 242.dp
-                            )
-                        )
-                )
-            }
+            Image(
+                modifier = Modifier.width(350.dp).padding(top = 20.dp),
+            painter = painter,
+            contentDescription = "Presentation of the app"
+            )
 
         }
         R.drawable.page2 -> {
-            Box(
-                modifier = Modifier
-                    .size(350.dp, 500.dp) // Taille de la box
-                    .offset(y=(120).dp)// Placer l'image au centre de l'écran
-                    .padding(top = 20.dp),// Espace au dessus de la Box
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                    }
-                        .clip(
-                            CroppedShape(  //CROP
-                                cropStart = 24.dp,
-                                cropTop = 16.dp,
-                                cropEnd = 24.dp,
-                                cropBottom = 114.dp
-                            )
-                        )
-                )
-            }
+            Image(
+                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                contentScale = ContentScale.FillHeight,
+                painter = painter,
+                contentDescription = "You can drag and drops patterns"
+            )
         }
         R.drawable.page3 -> {
-            Box(
-                modifier = Modifier
-                    .size(350.dp, 500.dp) // Taille de la box
-                    .offset(y=(190).dp)// Placer l'image au centre de l'écran
-                    .padding(top = 20.dp),// Espace au dessus de la Box
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                    }
-                        .clip(
-                            CroppedShape(  //CROP
-                                cropStart = 24.dp,
-                                cropTop = 16.dp,
-                                cropEnd = 24.dp,
-                                cropBottom = 242.dp
-                            )
-                        )
-                )
-            }
+            Image(
+                modifier = Modifier.width(350.dp).padding(top = 20.dp),
+                painter = painter,
+                contentDescription = "You can draw on the grid"
+            )
         }
         R.drawable.page4 -> {
-            Box(
-                modifier = Modifier
-                    .size(350.dp, 500.dp) // Taille de la box
-                    .offset(y=(25).dp)// Placer l'image au centre de l'écran
-                    .padding(top = 20.dp),// Espace au dessus de la Box
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                    }
-                        .clip(
-                            CroppedShape(  //CROP
-                                cropStart = 0.dp,
-                                cropTop = 61.dp,
-                                cropEnd = 0.dp,
-                                cropBottom = 40.dp
-                            )
-                        )
-                )
-            }
+            Image(
+                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                contentScale = ContentScale.FillHeight,
+                painter = painter,
+                contentDescription = "You can change the speed of the game"
+            )
         }
         R.drawable.page5 -> {
-            Box(
-                modifier = Modifier
-                    .size(350.dp, 500.dp) // Taille de la box
-                    .offset(y=(80).dp)// Placer l'image au centre de l'écran
-                    .padding(top = 20.dp),// Espace au dessus de la Box
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.graphicsLayer { //Augmenter la taille de l'image
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                    }
-                        .clip(
-                            CroppedShape(  //CROP
-                                cropStart = 0.dp,
-                                cropTop = 31.dp,
-                                cropEnd = 0.dp,
-                                cropBottom = 70.dp
-                            )
-                        )
-                )
-            }
+            Image(
+                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                contentScale = ContentScale.FillHeight,
+                painter = painter,
+                contentDescription = "Launch with the bottom right button"
+            )
         }
 
     }

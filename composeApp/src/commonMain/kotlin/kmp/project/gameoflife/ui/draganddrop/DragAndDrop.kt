@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -22,8 +23,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.getPlatform
-import kotlinx.coroutines.flow.StateFlow
 import kmp.project.gameoflife.ui.pattern.PatternUIState
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
@@ -90,59 +91,73 @@ fun DragTarget(
     dataToDrop: () -> PatternUIState?,
     content: @Composable (() -> Unit)
 ) {
-
     var currentPosition by remember { mutableStateOf(Offset.Zero) }
     val currentState = LocalDragTargetInfo.current
-
     val isDesktop: Boolean = getPlatform().name.startsWith("Java")
+
     Box(modifier = modifier
         .onGloballyPositioned {
             currentPosition = it.localToWindow(Offset.Zero)
         }
         .pointerInput(Unit) {
             if (isDesktop) {
-                detectDragGestures(onDragStart = {
-                    currentState.dataToDrop = dataToDrop()
-                    currentState.isDragging = true
-                    currentState.dragPosition = currentPosition + it
-                    currentState.draggableComposable = content
-                }, onDrag = { change, dragAmount ->
-                    change.consume()
-                    currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
-                }, onDragEnd = {
-                    currentState.isDragging = false
-                    currentState.dragOffset = Offset.Zero
-
-                }, onDragCancel = {
-                    currentState.dragOffset = Offset.Zero
-                    currentState.isDragging = false
-                })
+                detectDragGestures(
+                    onDragStart = {
+                        currentState.dataToDrop = dataToDrop()
+                        currentState.isDragging = true
+                        currentState.dragPosition = currentPosition + it
+                        currentState.draggableComposable = {
+                            Box(modifier = Modifier.aspectRatio(1f)) {
+                                content()
+                            }
+                        }
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+                    },
+                    onDragEnd = {
+                        currentState.isDragging = false
+                        currentState.dragOffset = Offset.Zero
+                    },
+                    onDragCancel = {
+                        currentState.dragOffset = Offset.Zero
+                        currentState.isDragging = false
+                    }
+                )
             }
         }
         .pointerInput(Unit) {
-            detectDragGesturesAfterLongPress(onDragStart = {
-                currentState.dataToDrop = dataToDrop()
-                currentState.isDragging = true
-                currentState.dragPosition = currentPosition + it
-                currentState.draggableComposable = content
-            }, onDrag = { change, dragAmount ->
-                change.consume()
-                currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
-            }, onDragEnd = {
-                currentState.isDragging = false
-                currentState.dragOffset = Offset.Zero
-
-            }, onDragCancel = {
-                currentState.dragOffset = Offset.Zero
-                currentState.isDragging = false
-            })
+            detectDragGesturesAfterLongPress(
+                onDragStart = {
+                    currentState.dataToDrop = dataToDrop()
+                    currentState.isDragging = true
+                    currentState.dragPosition = currentPosition + it
+                    currentState.draggableComposable = {
+                        Box(modifier = Modifier.aspectRatio(1f)) {
+                            content()
+                        }
+                    }
+                },
+                onDrag = { change, dragAmount ->
+                    change.consume()
+                    currentState.dragOffset += Offset(dragAmount.x, dragAmount.y)
+                },
+                onDragEnd = {
+                    currentState.isDragging = false
+                    currentState.dragOffset = Offset.Zero
+                },
+                onDragCancel = {
+                    currentState.dragOffset = Offset.Zero
+                    currentState.isDragging = false
+                }
+            )
         }
-
-
     ) {
         content()
     }
 }
+
 
 @Composable
 fun DropTarget(

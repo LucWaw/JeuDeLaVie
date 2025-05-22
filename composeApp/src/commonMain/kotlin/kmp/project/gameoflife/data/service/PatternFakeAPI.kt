@@ -35,7 +35,36 @@ class PatternFakeAPI : PatternAPI {
                 Pair(3, 0), Pair(3, 6), //Quatrième ligne
                 Pair(4, 1), Pair(4, 2), Pair(4, 3), Pair(4, 4), Pair(4, 5), Pair(4,6) //Cinquième ligne
             )
+        ),
+        PatternUIState(
+            id = 9, "Light-Weight Spaceship", gridSize = 6,
+            listOf(
+                Pair(0, 1), Pair(0, 4), //Première ligne
+                Pair (1, 0), //Deuxième ligne
+                Pair(2, 0), Pair(2, 4), //Quatrième ligne
+                Pair(3, 0),Pair(3, 1), Pair(3, 2), Pair(3, 3) //Cinquième ligne
+            )
+        ),
+        PatternUIState(
+            id = 10, name = "T-tetromino", gridSize = 4,
+            listOf(
+                Pair(0,1),// Première ligne
+                Pair(1,0), Pair(1,1), Pair(1,2) //Deuxième ligne
+            )
+        ),
+        PatternUIState(
+            id = 11,
+            name = "Boat",
+            gridSize = 4,
+            cells = listOf(
+                Pair(0, 1),
+                Pair(1, 0),
+                Pair(2, 1),
+                Pair(0, 2),
+                Pair(1, 2)
+            )
         )
+
 
 
     )
