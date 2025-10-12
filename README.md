@@ -1,6 +1,6 @@
 <br />
 <div align="center">
-    <img src="images/phone_3.png" alt="Logo" width="200">
+    <img src="images/1.png" alt="Logo" width="200">
 
 <h3 align="center">Jeu de la Vie ANDROID</h3>
 
