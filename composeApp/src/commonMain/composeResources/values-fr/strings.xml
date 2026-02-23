@@ -15,5 +15,5 @@
     <string name="fourth_page_description">Vous pouvez changer la vitesse de l'animation à l'aide du curseur.</string>
 
     <string name="fifth_page_title">Lancer l'animation !</string>
-    <string name="fifth_page_description">Lancez simplement l'animation en cliquant sur le bouton Démarrer.</string>
+    <string name="fifth_page_description">Lancez l'animation en cliquant sur le bouton démarrer en bas a droite.</string>
 </resources>

@@ -1,6 +1,9 @@
 package kmp.project.gameoflife
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -30,9 +33,9 @@ fun App(isTablet: Boolean = false) {
                     }
                 )
             } else {
-                GameOfLife(isTablet, showOnboarding = {
+                GameOfLife(isTablet = isTablet, showOnboarding = {
                     showOnboarding = true
-                })
+                }, modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars))
             }
         }
     }

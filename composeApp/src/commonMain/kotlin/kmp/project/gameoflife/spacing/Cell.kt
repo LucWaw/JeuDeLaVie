@@ -2,10 +2,6 @@ package kmp.project.gameoflife.spacing
 
 class Cell(var isAlive: Boolean = false) {
 
-    fun meurtDeSolitude() {
-        isAlive = false
-    }
-
     fun changeState(
         cell0: Cell?,
         cell1: Cell?,

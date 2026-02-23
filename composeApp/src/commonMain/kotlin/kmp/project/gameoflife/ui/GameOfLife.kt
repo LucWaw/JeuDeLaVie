@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
-import gameoflife.composeapp.generated.resources.baseline_pause_24
 import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.getPlatform
 import kmp.project.gameoflife.ui.board.Board
@@ -39,9 +38,9 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun GameOfLife(
+    modifier: Modifier = Modifier,
     isTablet: Boolean = false,
     showOnboarding: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
@@ -67,10 +66,12 @@ fun GameOfLife(
     }
 
 
-    Column(Modifier
-        .fillMaxSize()) {
+    Column(
+        modifier
+            .fillMaxSize()
+    ) {
         LongPressDraggable(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             gameOfLifeViewModel.gridSize,
             if (isDesktop || isTablet) 80 else 15
         ) {//gameUIState.gridSize can't change
@@ -80,12 +81,12 @@ fun GameOfLife(
                 //Game board
                 gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
                     Board(
+                        modifier,
                         isTablet,
                         gameUiState,
                         gameOfLifeViewModel.onCellClick,
                         gameOfLifeViewModel.gridSize,
-                        { gameOfLifeViewModel.modifyGridSize(it) },
-                        modifier
+                        { gameOfLifeViewModel.modifyGridSize(it) }
                     )
                 }
 
@@ -97,7 +98,7 @@ fun GameOfLife(
         val playScope = rememberCoroutineScope()
         Buttons(
             playScope,
-            gameOfLifeViewModel.cellularSpace.value,
+            gameOfLifeViewModel.cellularSpace.collectAsState().value,
             { gameOfLifeViewModel.updateCells(it) },
             { gameOfLifeViewModel.addToCounter() },
             gameOfLifeViewModel.speedState,
@@ -120,7 +121,7 @@ fun GameOfLife(
 
             }
             Spacer(Modifier.weight(1f))
-            generationCounter(gameUIState)
+            GenerationCounter(gameUIState)
         }
     }
 }
@@ -141,7 +142,7 @@ fun SliderSpeed(onPositionChange: (Float) -> Unit) {
 
 
 @Composable
-private fun generationCounter(gameUIState: GameUiState) {
+private fun GenerationCounter(gameUIState: GameUiState) {
     Row(
         modifier = Modifier
             .border(

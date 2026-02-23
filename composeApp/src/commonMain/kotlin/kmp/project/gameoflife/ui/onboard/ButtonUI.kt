@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ButtonUi(
+    modifier: Modifier = Modifier,
     text: String = "Next",
     backgroundColor: Color = MaterialTheme.colors.primary,
     textColor: Color = MaterialTheme.colors.onPrimary,
@@ -24,7 +25,7 @@ fun ButtonUi(
 ) {
 
     Button(
-        onClick = onClick, modifier = Modifier.width(100.dp).height(50.dp), colors = ButtonDefaults.buttonColors(
+        onClick = onClick, modifier = modifier.width(100.dp).height(50.dp), colors = ButtonDefaults.buttonColors(
             backgroundColor = backgroundColor,
             contentColor = textColor
         ), shape = RoundedCornerShape(10.dp)
