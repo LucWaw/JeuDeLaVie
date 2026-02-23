@@ -1,12 +1,14 @@
 package kmp.project.gameoflife.ui.onboard
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,45 +24,41 @@ import org.jetbrains.compose.resources.stringResource
 fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
 
-        GifImage(ressources = onboardingModel.image, modifier = Modifier.weight(1f))
-
-
-        Spacer(
-            modifier = Modifier.size(10.dp)
+        GifImage(
+            ressources = onboardingModel.image,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = stringResource(onboardingModel.title),
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 20.sp,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onBackground
+            fontSize = 25.sp,
+            style = MaterialTheme.typography.h1
         )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(5.dp)
-        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(onboardingModel.description),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(25.dp, 0.dp),
-            fontSize = 16.sp,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier.padding(horizontal = 24.dp)
         )
 
+        Spacer(modifier = Modifier.weight(0.1f))
+
     }
+
 
 
 }

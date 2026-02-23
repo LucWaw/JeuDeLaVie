@@ -49,7 +49,7 @@ actual fun getOnboardingUtils(): OnboardingUtils {
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
-    var ressource = when (ressources) {
+    val ressource = when (ressources) {
         Res.drawable.page1 -> R.drawable.page1
         Res.drawable.page2 -> R.drawable.page2
         Res.drawable.page3 -> R.drawable.page3
@@ -80,7 +80,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     when (ressource) {
         R.drawable.page1 -> {
             Image(
-                modifier = Modifier.width(350.dp).padding(top = 20.dp),
+                modifier = modifier.width(350.dp).padding(top = 20.dp),
             painter = painter,
             contentDescription = "Presentation of the app"
             )
@@ -88,7 +88,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
         }
         R.drawable.page2 -> {
             Image(
-                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
                 painter = painter,
                 contentDescription = "You can drag and drops patterns"
@@ -96,14 +96,14 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
         }
         R.drawable.page3 -> {
             Image(
-                modifier = Modifier.width(350.dp).padding(top = 20.dp),
+                modifier = modifier.width(350.dp).padding(top = 20.dp),
                 painter = painter,
                 contentDescription = "You can draw on the grid"
             )
         }
         R.drawable.page4 -> {
             Image(
-                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
                 painter = painter,
                 contentDescription = "You can change the speed of the game"
@@ -111,7 +111,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
         }
         R.drawable.page5 -> {
             Image(
-                modifier = Modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
                 painter = painter,
                 contentDescription = "Launch with the bottom right button"

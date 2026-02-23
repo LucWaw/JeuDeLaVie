@@ -3,7 +3,7 @@ package kmp.project.gameoflife.spacing
 class CellularSpace private constructor(
     private val tailleX: Int,
     private val tailleY: Int,
-    private val espace: MutableMap<Pair<Int, Int>, Cell>
+    espace: MutableMap<Pair<Int, Int>, Cell>
 ) : MutableMap<Pair<Int, Int>, Cell> by espace {
 
     /**

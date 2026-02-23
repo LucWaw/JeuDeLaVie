@@ -6,15 +6,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.baseline_pause_24
+import gameoflife.composeapp.generated.resources.delete_24px
+import gameoflife.composeapp.generated.resources.play_arrow_24px
 import kmp.project.gameoflife.spacing.CellularSpace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +42,7 @@ fun Buttons(
             modifier = modifier.weight(0.5f).padding(16.dp)
         ) {
             Icon(
-                imageVector = Icons.Filled.Delete,
+                painter = painterResource(Res.drawable.delete_24px),
                 contentDescription = "Delete All"
             )
         }
@@ -70,7 +69,7 @@ fun Buttons(
                 Icon(painter, contentDescription = "pause")
             } else {
                 Icon(
-                    imageVector = Icons.Filled.PlayArrow,
+                    painter = painterResource(Res.drawable.play_arrow_24px),
                     contentDescription = "Play"
                 )
             }
