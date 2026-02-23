@@ -14,8 +14,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,11 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import gameoflife.composeapp.generated.resources.Res
+import gameoflife.composeapp.generated.resources.baseline_pause_24
+import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.getPlatform
 import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.draganddrop.LongPressDraggable
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.pattern.PatternsUI
+import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -111,9 +113,11 @@ fun GameOfLife(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Refresh"
+                    painter = painterResource(Res.drawable.info_24px),
+                    contentDescription = "Refresh",
                 )
+
+
             }
             Spacer(Modifier.weight(1f))
             generationCounter(gameUIState)

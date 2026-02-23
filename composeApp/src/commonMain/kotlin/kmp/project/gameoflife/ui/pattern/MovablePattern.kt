@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import gameoflife.composeapp.generated.resources.Res
+import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import kmp.project.gameoflife.ui.draganddrop.DragTarget
+import org.jetbrains.compose.resources.painterResource
 
 
 //grid handled by cells
@@ -56,7 +57,7 @@ fun PatternsUI() {
                 val pattern = patternsUiState[index]
                 Pattern(
                     modifier = Modifier
-                        .width(rowHeight-50.dp),
+                        .width(rowHeight - 50.dp),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) }
@@ -68,20 +69,25 @@ fun PatternsUI() {
 
 
 @Composable
-fun Pattern(pattern: PatternUIState, rotatePattern: () -> Unit, getPattern: () -> PatternUIState?, modifier: Modifier = Modifier) {
+fun Pattern(
+    pattern: PatternUIState,
+    rotatePattern: () -> Unit,
+    getPattern: () -> PatternUIState?,
+    modifier: Modifier = Modifier
+) {
     val isInDark = isSystemInDarkTheme()
 
 
     Column(
         modifier = modifier
-            //.width(patternWidth) // Imposer la même largeur
+        //.width(patternWidth) // Imposer la même largeur
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(), // Va prendre toute la largeur imposée par Column
             onClick = rotatePattern
         ) {
             Icon(
-                imageVector = Icons.Filled.Refresh,
+                painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
                 contentDescription = "Rotate"
             )
         }
