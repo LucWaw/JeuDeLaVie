@@ -2,6 +2,8 @@ package kmp.project.gameoflife
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -15,3 +17,7 @@ expect fun getOnboardingUtils(): OnboardingUtils
 
 @Composable
 expect fun GifImage(ressources: DrawableResource, modifier: Modifier = Modifier)
+
+expect fun buildTextTransferData(text: String): DragAndDropTransferData
+expect fun DragAndDropEvent.hasText(): Boolean
+expect fun DragAndDropEvent.getText(): String?

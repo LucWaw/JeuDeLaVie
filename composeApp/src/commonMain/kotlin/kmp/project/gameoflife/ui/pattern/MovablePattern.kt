@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
-import kmp.project.gameoflife.ui.draganddrop.DragTarget
+import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -97,7 +97,10 @@ fun Pattern(
                 .fillMaxWidth() // Même largeur que Button
                 .aspectRatio(1f) // Pour garder un carré
         ) {
-            DragTarget(dataToDrop = getPattern, modifier = Modifier) {
+            CustomDragTarget(
+                data = getPattern()?: PatternUIState(),
+                modifier = Modifier
+            ) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(pattern.gridSize),
                     modifier = Modifier.fillMaxSize() // Remplit la Box carrée

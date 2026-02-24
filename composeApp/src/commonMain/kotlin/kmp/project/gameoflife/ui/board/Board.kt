@@ -30,7 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.ui.GameUiState
-import kmp.project.gameoflife.ui.draganddrop.DropTarget
+import kmp.project.gameoflife.ui.draganddrop.CustomDropTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import kotlinx.coroutines.flow.StateFlow
@@ -129,7 +129,53 @@ fun Board(
 
             val interactionSource = remember { MutableInteractionSource() }
 
-            DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
+            CustomDropTarget() { modifier, data ->
+                if (data != null) {
+                    placingCell = cellCoordinates
+                    bundledCells = data.cells
+                    activated = true
+                }
+                if (activated) {
+                    activated = false
+
+                    bundledCells?.forEach { patternCell ->
+                        if (placingCell != null) {
+                            onCellClick(
+                                Pair(
+                                    patternCell.first + (placingCell?.first ?: 0),
+                                    patternCell.second + (placingCell?.second ?: 0)
+                                )
+                            )
+                        }
+
+                    }
+                }
+                val isInDark = isSystemInDarkTheme()
+
+
+
+                Box(
+                    modifier = modifier
+                        .aspectRatio(1f)
+                        .background(
+                            if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value)
+                                if (isInDark) {
+                                    Color.White
+                                } else {
+                                    Color.Black
+                                }
+                            else Color.Transparent
+                        )
+                        .border(1.dp, Color.Gray)
+                        .clickable { onCellClick(cellCoordinates) }
+                        .hoverable(interactionSource = interactionSource)
+                        .semantics {
+                            contentDescription = "Item $index at $cellCoordinates"
+                        }
+                )
+            }
+
+            /*DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
                 if (isInBound && bundleOfCells != null) {
                     placingCell = cellCoordinates
                     bundledCells = bundleOfCells.cells
@@ -173,7 +219,7 @@ fun Board(
                             contentDescription = "Item $index at $cellCoordinates"
                         }
                 )
-            }
+            }*/
         }
     }
 }
