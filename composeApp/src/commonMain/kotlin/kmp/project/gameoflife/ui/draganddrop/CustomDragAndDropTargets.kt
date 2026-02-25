@@ -22,9 +22,12 @@ import kmp.project.gameoflife.buildTextTransferData
 import kmp.project.gameoflife.getText
 import kmp.project.gameoflife.hasText
 import kmp.project.gameoflife.ui.pattern.PatternUIState
-import kotlinx.serialization.json.Json
 import kotlin.math.min
 
+
+object LocalDragDropState {
+    var draggedPattern: PatternUIState? = null
+}
 
 @Composable
 fun CustomDragTarget(
@@ -37,35 +40,53 @@ fun CustomDragTarget(
     val isInDark = isSystemInDarkTheme()
 
     val ghostSizePx = remember(gridSize, tileSize) {
-        Size(tileSize.width * gridSize, tileSize.height * gridSize)
+        Size(tileSize.width * gridSize *2 , tileSize.height * gridSize *2) //YOU CAN MODIFY HERE
     }
 
-    val dragSourceModifier = remember(data, tileSize, isInDark) {
+    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark) {
         Modifier.dragAndDropSource(
             drawDragDecoration = {
                 val currentState = data()
                 if (currentState != null) {
                     val patternGridSize = currentState.gridSize
-                    val tileW = tileSize.width
-                    val tileH = tileSize.height
+
+                    // 1. Appliquer la même réduction que dans le Modifier.layout
+                    val gWidth = ghostSizePx.width
+                    val gHeight = ghostSizePx.height
+                    // 'size' est la taille de la zone allouée au drag
+                    val scale = min(size.width / gWidth, size.height / gHeight)
+
+                    // 2. La vraie taille d'une case, adaptée à l'écran
+                    val tileW = tileSize.width * scale
+                    val tileH = tileSize.height * scale
+
+                    // 3. Calculer le point central de la case en bas à droite
+                    val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
+                    val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
+
+                    // 4. Calculer le décalage pour que ce point soit EXACTEMENT
+                    //    au milieu de la zone de drag (là où se trouve le pointeur)
+                    val startX = (size.width / 2f) - bottomRightCenterX
+                    val startY = (size.height / 2f) - bottomRightCenterY
 
                     for (i in 0 until patternGridSize) {
                         for (j in 0 until patternGridSize) {
-                            val topLeft = Offset(j * tileW, i * tileH)
-                            val size = Size(tileW, tileH)
+                            // Plus de risque de négatif, on part de startX et startY !
+                            val topLeft = Offset(startX + j * tileW, startY + i * tileH)
+                            val rectSize = Size(tileW, tileH)
 
                             if (currentState.cells.contains(Pair(i, j))) {
                                 drawRect(
                                     color = if (isInDark) Color.White else Color.Black,
                                     topLeft = topLeft,
-                                    size = size,
+                                    size = rectSize,
                                     style = Fill
                                 )
                             }
                             drawRect(
                                 color = Color.Gray,
                                 topLeft = topLeft,
-                                size = size,
+                                size = rectSize,
                                 style = Stroke(width = 1.dp.toPx())
                             )
                         }
@@ -74,9 +95,9 @@ fun CustomDragTarget(
             }
         ) { _ ->
             val currentState = data()
-            println(currentState)
             if (currentState != null) {
-                buildTextTransferData(Json.encodeToString(currentState))
+                LocalDragDropState.draggedPattern = currentState
+                buildTextTransferData("LOCAL_PATTERN")
             } else {
                 null
             }
@@ -126,13 +147,14 @@ fun CustomDropTarget(
         object : DragAndDropTarget {
             override fun onDrop(event: DragAndDropEvent): Boolean {
                 val textReceived = event.getText()
-                if (textReceived != null) {
-                    try {
-                        val pattern = Json.decodeFromString<PatternUIState>(textReceived)
+                if (textReceived == "LOCAL_PATTERN") {
+                    val pattern = LocalDragDropState.draggedPattern
+                    if (pattern != null) {
                         onDropPattern(pattern)
+
+                        // Clean up memory after the drop
+                        LocalDragDropState.draggedPattern = null
                         return true
-                    } catch (_: Exception) {
-                        return false
                     }
                 }
                 return false

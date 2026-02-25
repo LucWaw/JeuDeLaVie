@@ -126,11 +126,12 @@ fun Board(
 
             CustomDropTarget(
                 onDropPattern = { pattern ->
+                    val offset = pattern.gridSize - 1
                     pattern.cells.forEach { patternCell ->
                         onCellClick(
                             Pair(
-                                patternCell.first + cellCoordinates.first,
-                                patternCell.second + cellCoordinates.second
+                                (patternCell.first + cellCoordinates.first) - offset,
+                                (patternCell.second + cellCoordinates.second) - offset
                             )
                         )
                     }
