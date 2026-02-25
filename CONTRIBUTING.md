@@ -1,6 +1,6 @@
 # Contributing to Jeu de la Vie ANDROID
 
-Thank you for your interest in contributing to Jeu de la Vie ANDROID.
+Thank you for your interest in contributing to Jeu de la Vie KMP.
 All contributions are welcome.
 This project is built with Kotlin Multiplatform and uses Jetpack Compose for UI.
 
