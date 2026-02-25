@@ -31,9 +31,6 @@ import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import org.jetbrains.compose.resources.painterResource
 
 
-//grid handled by cells
-
-
 @Composable
 fun PatternsUI() {
     val viewModel = remember { MovablePatternViewModel() }
@@ -70,7 +67,7 @@ fun PatternsUI() {
 
 @Composable
 fun Pattern(
-    pattern: PatternUIState,
+    pattern :  PatternUIState,
     rotatePattern: () -> Unit,
     getPattern: () -> PatternUIState?,
     modifier: Modifier = Modifier
@@ -98,14 +95,19 @@ fun Pattern(
                 .aspectRatio(1f) // Pour garder un carré
         ) {
             CustomDragTarget(
-                data = getPattern()?: PatternUIState(),
+                data = getPattern,
                 modifier = Modifier
             ) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(pattern.gridSize),
                     modifier = Modifier.fillMaxSize() // Remplit la Box carrée
                 ) {
-                    items(pattern.gridSize * pattern.gridSize) {
+                    items(pattern.gridSize * pattern.gridSize,
+                        key = { index ->
+                            val coord = Pair(index / pattern.gridSize, index % pattern.gridSize)
+                            "${pattern.id}_${index}_${pattern.cells.contains(coord)}"
+                        }
+                        ) {
                         val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
                         Box(
                             modifier = Modifier

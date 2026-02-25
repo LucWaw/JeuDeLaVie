@@ -35,10 +35,6 @@ import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import kotlinx.coroutines.flow.StateFlow
 
-var placingCell: Pair<Int, Int>? = null
-var bundledCells: List<Pair<Int, Int>>? = null
-var activated = false
-
 @Composable
 fun Board(
     modifier: Modifier = Modifier,
@@ -67,7 +63,7 @@ fun Board(
     LazyVerticalGrid(
         GridCells.Fixed(gridColumn),
         state = scroll,
-        modifier = Modifier
+        modifier = modifier
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
@@ -126,44 +122,28 @@ fun Board(
     ) {
         items(numberOfCells) { index ->
             val cellCoordinates = Pair(index / gridColumn, index % gridColumn)
-
             val interactionSource = remember { MutableInteractionSource() }
 
-            CustomDropTarget() { modifier, data ->
-                if (data != null) {
-                    placingCell = cellCoordinates
-                    bundledCells = data.cells
-                    activated = true
-                }
-                if (activated) {
-                    activated = false
-
-                    bundledCells?.forEach { patternCell ->
-                        if (placingCell != null) {
-                            onCellClick(
-                                Pair(
-                                    patternCell.first + (placingCell?.first ?: 0),
-                                    patternCell.second + (placingCell?.second ?: 0)
-                                )
+            CustomDropTarget(
+                onDropPattern = { pattern ->
+                    pattern.cells.forEach { patternCell ->
+                        onCellClick(
+                            Pair(
+                                patternCell.first + cellCoordinates.first,
+                                patternCell.second + cellCoordinates.second
                             )
-                        }
-
+                        )
                     }
                 }
+            ) {
                 val isInDark = isSystemInDarkTheme()
 
-
-
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .aspectRatio(1f)
                         .background(
                             if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value)
-                                if (isInDark) {
-                                    Color.White
-                                } else {
-                                    Color.Black
-                                }
+                                if (isInDark) Color.White else Color.Black
                             else Color.Transparent
                         )
                         .border(1.dp, Color.Gray)
@@ -174,52 +154,6 @@ fun Board(
                         }
                 )
             }
-
-            /*DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
-                if (isInBound && bundleOfCells != null) {
-                    placingCell = cellCoordinates
-                    bundledCells = bundleOfCells.cells
-                    activated = true
-                }
-                if (activated) {
-                    activated = false
-
-                    bundledCells?.forEach { patternCell ->
-                        if (placingCell != null) {
-                            onCellClick(
-                                Pair(
-                                    patternCell.first + (placingCell?.first ?: 0),
-                                    patternCell.second + (placingCell?.second ?: 0)
-                                )
-                            )
-                        }
-
-                    }
-                }
-                val isInDark = isSystemInDarkTheme()
-
-
-
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .background(
-                            if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value)
-                                if (isInDark) {
-                                    Color.White
-                                } else {
-                                    Color.Black
-                                }
-                            else Color.Transparent
-                        )
-                        .border(1.dp, Color.Gray)
-                        .clickable { onCellClick(cellCoordinates) }
-                        .hoverable(interactionSource = interactionSource)
-                        .semantics {
-                            contentDescription = "Item $index at $cellCoordinates"
-                        }
-                )
-            }*/
         }
     }
 }

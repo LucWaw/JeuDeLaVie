@@ -74,14 +74,17 @@ fun GameOfLife(
             //Game board
             gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
                 Board(
-                    modifier,
-                    isTablet,
-                    gameUiState,
-                    gameOfLifeViewModel.onCellClick,
-                    gameOfLifeViewModel.gridSize,
-                    { gameOfLifeViewModel.modifyGridSize(it) }
+                    isTablet = isTablet,
+                    gameUIState = gameUiState,
+                    onCellClick = gameOfLifeViewModel.onCellClick,
+                    gridUiSize = gameOfLifeViewModel.gridSize,
+                    gridChange ={ gameOfLifeViewModel.modifyGridSize(it) }
                 )
             }
+
+
+
+
 
             PatternsUI()
         }

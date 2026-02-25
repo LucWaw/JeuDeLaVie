@@ -4,10 +4,7 @@ import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -18,49 +15,69 @@ import kmp.project.gameoflife.hasText
 import kmp.project.gameoflife.ui.pattern.PatternUIState
 import kotlinx.serialization.json.Json
 
-//TODO TAILLE ET PAS DE CLIGNOTEMENT
+//TODO TAILLE adapté a la grille
+
+
 @Composable
 fun CustomDragTarget(
-    data: PatternUIState, modifier: Modifier = Modifier,
+    data: () -> PatternUIState?,
+    modifier: Modifier = Modifier,
     visual: @Composable () -> Unit,
 ) {
+    val dragSourceModifier = remember(data) {
+        Modifier.dragAndDropSource { _ ->
+            val currentState = data()
+            println(currentState)
+            if (currentState != null) {
+                buildTextTransferData(Json.encodeToString(currentState))
+            } else {
+                null
+            }
+        }
+    }
+
     Box(
-        modifier = modifier
-            .dragAndDropSource { _ ->
-                buildTextTransferData(Json.encodeToString(data))
-            },
+        modifier = modifier.then(dragSourceModifier),
         contentAlignment = Alignment.Center
     ) {
         visual()
     }
 }
 
+
 @Composable
 fun CustomDropTarget(
     modifier: Modifier = Modifier,
-    visual: @Composable (Modifier, PatternUIState?) -> Unit
+    onDropPattern: (PatternUIState) -> Unit,
+    visual: @Composable () -> Unit
 ) {
-    var patternDrop by remember { mutableStateOf<PatternUIState?>(null) }
-
-    //var isHovered by remember { mutableStateOf(false) }
-
-    val dropTarget = remember {
+    val dropTarget = remember(onDropPattern) {
         object : DragAndDropTarget {
-
             override fun onDrop(event: DragAndDropEvent): Boolean {
                 val textReceived = event.getText()
                 if (textReceived != null) {
-                    patternDrop = Json.decodeFromString<PatternUIState>(textReceived)
-                    return true
+                    try {
+                        val pattern = Json.decodeFromString<PatternUIState>(textReceived)
+                        onDropPattern(pattern)
+                        return true
+                    } catch (_: Exception) {
+                        return false
+                    }
                 }
                 return false
             }
         }
     }
-    visual(
-        modifier.dragAndDropTarget(
-            shouldStartDragAndDrop = { event -> event.hasText() },
+
+    val shouldStartDrag = remember { { event: DragAndDropEvent -> event.hasText() } }
+
+    Box(
+        modifier = modifier.dragAndDropTarget(
+            shouldStartDragAndDrop = shouldStartDrag,
             target = dropTarget
-        ), patternDrop
-    )
+        ),
+        contentAlignment = Alignment.Center
+    ) {
+        visual()
+    }
 }

@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.material3.window.size.class1)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.collections.immutable)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
