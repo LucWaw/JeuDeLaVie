@@ -1,4 +1,4 @@
-# Contributing to Jeu de la Vie ANDROID
+# Contributing to Jeu de la Vie KMP
 
 Thank you for your interest in contributing to Jeu de la Vie KMP.
 All contributions are welcome.
