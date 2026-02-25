@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.info_24px
-import kmp.project.gameoflife.getPlatform
 import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.pattern.PatternsUI
@@ -42,7 +41,6 @@ fun GameOfLife(
 ) {
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
-    val isDesktop: Boolean = getPlatform().name.startsWith("Java")
 
     val gridRow = getGridRow()
     val gridColumn = getGridColumn()
@@ -86,7 +84,11 @@ fun GameOfLife(
 
 
 
-            PatternsUI()
+            val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
+            PatternsUI(
+                boardGridSize = boardGridSize,
+                isTablet = isTablet
+            )
         }
 
         //Play pause button
