@@ -33,6 +33,7 @@ import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
+import androidx.compose.ui.geometry.Offset
 
 
 class AndroidPlatform : Platform {
@@ -136,7 +137,7 @@ fun GifImagePreview() {
 
 
 // Build data using Android's ClipData
-actual fun buildTextTransferData(text: String): DragAndDropTransferData {
+actual fun buildTextTransferData(text: String, dragOffset: Offset): DragAndDropTransferData {
     return DragAndDropTransferData(
         clipData = ClipData.newPlainText("Dragged Text", text)
     )

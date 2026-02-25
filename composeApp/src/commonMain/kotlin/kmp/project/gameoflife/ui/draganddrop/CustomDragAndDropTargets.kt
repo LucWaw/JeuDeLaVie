@@ -5,7 +5,10 @@ import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -16,7 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.buildTextTransferData
 import kmp.project.gameoflife.getText
@@ -43,28 +48,30 @@ fun CustomDragTarget(
         Size(tileSize.width * gridSize *2 , tileSize.height * gridSize *2) //YOU CAN MODIFY HERE
     }
 
-    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark) {
+    var boxSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark, boxSize) {
         Modifier.dragAndDropSource(
             drawDragDecoration = {
                 val currentState = data()
                 if (currentState != null) {
                     val patternGridSize = currentState.gridSize
 
-                    // 1. Appliquer la même réduction que dans le Modifier.layout
+                    // Appliquer la même réduction que dans le Modifier.layout
                     val gWidth = ghostSizePx.width
                     val gHeight = ghostSizePx.height
                     // 'size' est la taille de la zone allouée au drag
                     val scale = min(size.width / gWidth, size.height / gHeight)
 
-                    // 2. La vraie taille d'une case, adaptée à l'écran
+                    // La vraie taille d'une case, adaptée à l'écran
                     val tileW = tileSize.width * scale
                     val tileH = tileSize.height * scale
 
-                    // 3. Calculer le point central de la case en bas à droite
+                    // Calculer le point central de la case en bas à droite
                     val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
                     val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
 
-                    // 4. Calculer le décalage pour que ce point soit EXACTEMENT
+                    // Calculer le décalage pour que ce point soit EXACTEMENT
                     //    au milieu de la zone de drag (là où se trouve le pointeur)
                     val startX = (size.width / 2f) - bottomRightCenterX
                     val startY = (size.height / 2f) - bottomRightCenterY
@@ -93,11 +100,19 @@ fun CustomDragTarget(
                     }
                 }
             }
-        ) { _ ->
+        ) { pointerOffset ->
             val currentState = data()
             if (currentState != null) {
                 LocalDragDropState.draggedPattern = currentState
-                buildTextTransferData("LOCAL_PATTERN")
+
+                //On calcule le centre exact de la Box pour y accrocher la souris Desktop
+                val centerOffset = if (boxSize != IntSize.Zero) {
+                    Offset(boxSize.width / 2f, boxSize.height / 2f)
+                } else {
+                    pointerOffset // Sécurité si la taille n'est pas encore calculée
+                }
+
+                buildTextTransferData("LOCAL_PATTERN", dragOffset = centerOffset)
             } else {
                 null
             }
@@ -129,6 +144,7 @@ fun CustomDragTarget(
                     }
                 }
             }
+            .onSizeChanged { boxSize = it }
             .then(dragSourceModifier),
         contentAlignment = Alignment.Center
     ) {

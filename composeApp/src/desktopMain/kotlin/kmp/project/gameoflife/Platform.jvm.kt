@@ -13,6 +13,7 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferAction
 import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
+import androidx.compose.ui.geometry.Offset
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 class JVMPlatform: Platform {
@@ -38,18 +39,18 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
 
 // Build data using Desktop's StringSelection and Transferable wrappers
 @OptIn(ExperimentalComposeUiApi::class)
-actual fun buildTextTransferData(text: String): DragAndDropTransferData {
+actual fun buildTextTransferData(text: String, dragOffset: Offset): DragAndDropTransferData {
     return DragAndDropTransferData(
-        transferable = DragAndDropTransferable(
-            StringSelection(text)
-        ),
+        transferable = DragAndDropTransferable(StringSelection(text)),
         supportedActions = listOf(
             DragAndDropTransferAction.Copy,
             DragAndDropTransferAction.Move,
             DragAndDropTransferAction.Link,
-        )
+        ),
+        dragDecorationOffset = dragOffset
     )
 }
+
 
 // Check if AWT payload contains a string
 @OptIn(ExperimentalComposeUiApi::class)
