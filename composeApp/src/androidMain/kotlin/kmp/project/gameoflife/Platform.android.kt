@@ -27,6 +27,13 @@ import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
+import android.content.ClipData
+import android.content.ClipDescription
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
+import androidx.compose.ui.draganddrop.mimeTypes
+import androidx.compose.ui.draganddrop.toAndroidDragEvent
+import androidx.compose.ui.geometry.Offset
 
 
 class AndroidPlatform : Platform {
@@ -126,4 +133,26 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
 @Composable
 fun GifImagePreview() {
     GifImage(ressources = Res.drawable.page1)
+}
+
+
+// Build data using Android's ClipData
+actual fun buildTextTransferData(text: String, dragOffset: Offset): DragAndDropTransferData {
+    return DragAndDropTransferData(
+        clipData = ClipData.newPlainText("Dragged Text", text)
+    )
+}
+
+// Check mime types using Android's DragEvent bindings
+actual fun DragAndDropEvent.hasText(): Boolean {
+    return this.mimeTypes().contains(ClipDescription.MIMETYPE_TEXT_PLAIN)
+}
+
+// Extract the text safely
+actual fun DragAndDropEvent.getText(): String? {
+    val clipData = this.toAndroidDragEvent().clipData ?: return null
+    if (clipData.itemCount > 0) {
+        return clipData.getItemAt(0).text?.toString()
+    }
+    return null
 }

@@ -30,14 +30,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.ui.GameUiState
-import kmp.project.gameoflife.ui.draganddrop.DropTarget
+import kmp.project.gameoflife.ui.draganddrop.CustomDropTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import kotlinx.coroutines.flow.StateFlow
-
-var placingCell: Pair<Int, Int>? = null
-var bundledCells: List<Pair<Int, Int>>? = null
-var activated = false
 
 @Composable
 fun Board(
@@ -67,7 +63,7 @@ fun Board(
     LazyVerticalGrid(
         GridCells.Fixed(gridColumn),
         state = scroll,
-        modifier = Modifier
+        modifier = modifier
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
@@ -126,44 +122,29 @@ fun Board(
     ) {
         items(numberOfCells) { index ->
             val cellCoordinates = Pair(index / gridColumn, index % gridColumn)
-
             val interactionSource = remember { MutableInteractionSource() }
 
-            DropTarget(modifier = modifier) { isInBound, bundleOfCells ->
-                if (isInBound && bundleOfCells != null) {
-                    placingCell = cellCoordinates
-                    bundledCells = bundleOfCells.cells
-                    activated = true
-                }
-                if (activated) {
-                    activated = false
-
-                    bundledCells?.forEach { patternCell ->
-                        if (placingCell != null) {
-                            onCellClick(
-                                Pair(
-                                    patternCell.first + (placingCell?.first ?: 0),
-                                    patternCell.second + (placingCell?.second ?: 0)
-                                )
+            CustomDropTarget(
+                onDropPattern = { pattern ->
+                    val offset = pattern.gridSize - 1
+                    pattern.cells.forEach { patternCell ->
+                        onCellClick(
+                            Pair(
+                                (patternCell.first + cellCoordinates.first) - offset,
+                                (patternCell.second + cellCoordinates.second) - offset
                             )
-                        }
-
+                        )
                     }
                 }
+            ) {
                 val isInDark = isSystemInDarkTheme()
-
-
 
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .background(
                             if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value)
-                                if (isInDark) {
-                                    Color.White
-                                } else {
-                                    Color.Black
-                                }
+                                if (isInDark) Color.White else Color.Black
                             else Color.Transparent
                         )
                         .border(1.dp, Color.Gray)

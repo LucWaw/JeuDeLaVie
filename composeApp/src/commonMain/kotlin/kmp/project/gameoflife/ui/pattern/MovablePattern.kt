@@ -25,19 +25,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.geometry.Size
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
-import kmp.project.gameoflife.ui.draganddrop.DragTarget
+import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
+import kmp.project.gameoflife.ui.getGridColumn
+import kmp.project.gameoflife.ui.getGridRow
 import org.jetbrains.compose.resources.painterResource
 
 
-//grid handled by cells
-
-
 @Composable
-fun PatternsUI() {
+fun PatternsUI(
+    boardGridSize: Size,
+    isTablet: Boolean = false
+) {
     val viewModel = remember { MovablePatternViewModel() }
     val patternsUiState by viewModel.patterns.collectAsState()
+
+    val gridRow = if (isTablet) 20 else getGridRow()
+    val gridColumn = if (isTablet) 80 else getGridColumn()
+
+    val tileSize = if (boardGridSize != Size.Zero && gridColumn > 0 && gridRow > 0) {
+        Size(boardGridSize.width / gridColumn, boardGridSize.height / gridRow)
+    } else {
+        Size(20f, 20f) // Fallback
+    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val screenHeight = maxHeight
@@ -60,7 +72,8 @@ fun PatternsUI() {
                         .width(rowHeight - 50.dp),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
-                    rotatePattern = { viewModel.rotatePattern(pattern.id) }
+                    rotatePattern = { viewModel.rotatePattern(pattern.id) },
+                    tileSize = tileSize
                 )
             }
         }
@@ -70,10 +83,11 @@ fun PatternsUI() {
 
 @Composable
 fun Pattern(
-    pattern: PatternUIState,
+    pattern :  PatternUIState,
     rotatePattern: () -> Unit,
     getPattern: () -> PatternUIState?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    tileSize: Size = Size(20f, 20f)
 ) {
     val isInDark = isSystemInDarkTheme()
 
@@ -97,12 +111,22 @@ fun Pattern(
                 .fillMaxWidth() // Même largeur que Button
                 .aspectRatio(1f) // Pour garder un carré
         ) {
-            DragTarget(dataToDrop = getPattern, modifier = Modifier) {
+            CustomDragTarget(
+                data = getPattern,
+                modifier = Modifier,
+                gridSize = pattern.gridSize,
+                tileSize = tileSize
+            ) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(pattern.gridSize),
                     modifier = Modifier.fillMaxSize() // Remplit la Box carrée
                 ) {
-                    items(pattern.gridSize * pattern.gridSize) {
+                    items(pattern.gridSize * pattern.gridSize,
+                        key = { index ->
+                            val coord = Pair(index / pattern.gridSize, index % pattern.gridSize)
+                            "${pattern.id}_${index}_${pattern.cells.contains(coord)}"
+                        }
+                        ) {
                         val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
                         Box(
                             modifier = Modifier
