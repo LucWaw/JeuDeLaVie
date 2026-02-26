@@ -16,4 +16,11 @@
 
     <string name="fifth_page_title">Lancer l'animation !</string>
     <string name="fifth_page_description">Lancez l'animation en cliquant sur le bouton démarrer en bas a droite.</string>
+
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <string name="custom_pattern">Choisissez le motif que vous souhaitez enregistrer.</string>
+    <string name="custom_pattern_current_grid">Contenu de la grille actuelle</string>
+    <string name="custom_pattern_previous_grid">Contenu de la grille précédente, c'est-à-dire lors du dernier lancement</string>
 </resources>

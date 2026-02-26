@@ -16,4 +16,11 @@
 
     <string name="fifth_page_title">Start the animation!</string>
     <string name="fifth_page_description">Start the animation by clicking on the start button at the bottom right.</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="custom_pattern">Choose which pattern you want to save</string>
+    <string name="custom_pattern_current_grid">Current grid content</string>
+    <string name="custom_pattern_previous_grid">Previous grid content, i.e. from the last launch</string>
 </resources>
