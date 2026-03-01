@@ -43,9 +43,9 @@ class MovablePatternViewModel: ViewModel()  {
      * Ajoute un nouveau pattern personnalisé.
      * Calcule le "carré minimal" pour normaliser les cellules.
      */
-    fun addCustomPattern(cells: List<Pair<Int, Int>>, sourceName: String) {
+    fun addCustomPattern(cells: List<Pair<Int, Int>>, emptyGridText : String = "", doneText: String = "") {
         if (cells.isEmpty()) {
-            showToast("La grille est vide, impossible de créer un pattern.")
+            showToast(emptyGridText)
             return
         }
 
@@ -79,6 +79,6 @@ class MovablePatternViewModel: ViewModel()  {
             (currentList + newPattern).toMutableList()
         }
         
-        showToast("Pattern '$sourceName' enregistré !")
+        showToast(doneText)
     }
 }

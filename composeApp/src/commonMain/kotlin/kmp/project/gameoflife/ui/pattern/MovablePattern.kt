@@ -44,10 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.add_24px
+import gameoflife.composeapp.generated.resources.current_grid_short
 import gameoflife.composeapp.generated.resources.custom_pattern
 import gameoflife.composeapp.generated.resources.custom_pattern_current_grid
+import gameoflife.composeapp.generated.resources.custom_pattern_empty_error
 import gameoflife.composeapp.generated.resources.custom_pattern_previous_grid
+import gameoflife.composeapp.generated.resources.custom_pattern_saved
 import gameoflife.composeapp.generated.resources.no
+import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
@@ -81,25 +85,29 @@ fun PatternsUI(
 
     if (showGridCustomPatternDialog) {
         // Logique de sélection automatique ou manuelle
+        val customPatternEmptyError = stringResource(Res.string.custom_pattern_empty_error)
+        val customPatternCurrentShortSaved = stringResource(Res.string.custom_pattern_saved, stringResource(Res.string.current_grid_short))
+        val customPatternPreviousShortSaved = stringResource(Res.string.custom_pattern_saved, stringResource(Res.string.previous_grid_short))
+
         when {
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
-                viewModel.addCustomPattern(emptyList(), "") // Déclenchera le toast "vide"
+                viewModel.addCustomPattern(emptyList(), customPatternEmptyError) // Déclenchera le toast "vide"
                 showGridCustomPatternDialog = false //Never read but useful for remember
             }
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
-                viewModel.addCustomPattern(currentGrid, "Grille actuelle")
+                viewModel.addCustomPattern(currentGrid, doneText = customPatternCurrentShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
             currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
-                viewModel.addCustomPattern(previousGrid, "Grille précédente")
+                viewModel.addCustomPattern(previousGrid, doneText = customPatternPreviousShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
             else -> {
                 // Les deux sont remplies, on affiche le dialogue
                 SelectGridForCustomPatternDialogCustom(
                     onDismissRequest = { showGridCustomPatternDialog = false },//Never read but useful for remember
-                    onConfirmCurrentGridPattern = { viewModel.addCustomPattern(currentGrid, "Grille actuelle") },
-                    onConfirmPreviousGridPattern = { viewModel.addCustomPattern(previousGrid, "Grille précédente") }
+                    onConfirmCurrentGridPattern = { viewModel.addCustomPattern(currentGrid, doneText = customPatternCurrentShortSaved) },
+                    onConfirmPreviousGridPattern = { viewModel.addCustomPattern(previousGrid, doneText = customPatternPreviousShortSaved) }
                 )
             }
         }
