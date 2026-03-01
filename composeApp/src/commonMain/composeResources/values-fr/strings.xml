@@ -30,4 +30,7 @@
     <string name="previous_grid_short">Grille précédente</string>
 
     <string name="cant_add_pattern_while_game_running">Impossible d'ajouter un motif pendant que le jeu est en cours</string>
+
+    <string name="delete_selected_patterns_title">Supprimer les patterns</string>
+    <string name="delete_selected_patterns_confirmation">Voulez-vous vraiment supprimer les patterns sélectionnés ?</string>
 </resources>

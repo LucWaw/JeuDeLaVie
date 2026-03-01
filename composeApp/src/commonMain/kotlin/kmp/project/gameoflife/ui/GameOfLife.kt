@@ -30,6 +30,7 @@ import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.game.ButtonsViewModel
+import kmp.project.gameoflife.ui.pattern.MovablePatternViewModel
 import kmp.project.gameoflife.ui.pattern.PatternsUI
 import org.jetbrains.compose.resources.painterResource
 
@@ -43,6 +44,7 @@ fun GameOfLife(
     val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
     val buttonsViewModel = remember { ButtonsViewModel() }
+    val patternViewModel = remember { MovablePatternViewModel() }
 
     val gridRow = getGridRow()
     val gridColumn = getGridColumn()
@@ -92,7 +94,9 @@ fun GameOfLife(
                 currentGrid = gameUIState.colored,
                 previousGrid = gameOfLifeViewModel.previousGrid,
                 isTablet = isTablet,
-                isGameRunning = buttonsViewModel.isRunning
+                isGameRunning = buttonsViewModel.isRunning,
+                buttonsViewModel = buttonsViewModel,
+                viewModel = patternViewModel
             )
         }
 
@@ -105,7 +109,10 @@ fun GameOfLife(
             { gameOfLifeViewModel.addToCounter() },
             gameOfLifeViewModel.speedState,
             { gameOfLifeViewModel.capturePreviousGrid() },
-            buttonsViewModel = buttonsViewModel
+            buttonsViewModel = buttonsViewModel,
+            onDeleteSelectedPatterns = {
+                patternViewModel.deletePatterns(buttonsViewModel.selectedPatternIds.toList())
+            }
         )
 
 

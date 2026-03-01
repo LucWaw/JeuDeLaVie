@@ -3,6 +3,7 @@ package kmp.project.gameoflife.ui.pattern
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -45,6 +47,7 @@ import androidx.compose.ui.window.Dialog
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.add_24px
 import gameoflife.composeapp.generated.resources.cant_add_pattern_while_game_running
+import gameoflife.composeapp.generated.resources.check_circle_24px
 import gameoflife.composeapp.generated.resources.current_grid_short
 import gameoflife.composeapp.generated.resources.custom_pattern
 import gameoflife.composeapp.generated.resources.custom_pattern_current_grid
@@ -58,6 +61,7 @@ import gameoflife.composeapp.generated.resources.yes
 import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.draganddrop.Shapes
+import kmp.project.gameoflife.ui.game.ButtonsViewModel
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import org.jetbrains.compose.resources.painterResource
@@ -70,9 +74,10 @@ fun PatternsUI(
     currentGrid: List<Pair<Int, Int>> = emptyList(),
     previousGrid: List<Pair<Int, Int>> = emptyList(),
     isTablet: Boolean = false,
-    isGameRunning: Boolean = false
+    isGameRunning: Boolean = false,
+    buttonsViewModel: ButtonsViewModel? = null,
+    viewModel: MovablePatternViewModel = remember { MovablePatternViewModel() }
 ) {
-    val viewModel = remember { MovablePatternViewModel() }
     val patternsUiState by viewModel.patterns.collectAsState()
 
     val gridRow = if (isTablet) 20 else getGridRow()
@@ -154,12 +159,18 @@ fun PatternsUI(
             }
             items(patternsUiState.size) { index ->
                 val pattern = patternsUiState[index]
+                val isEditing = buttonsViewModel?.isEditingMode ?: false
+                val isSelected = buttonsViewModel?.selectedPatternIds?.contains(pattern.id) ?: false
+
                 Pattern(
                     modifier = Modifier.width(rowHeight - 50.dp),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) },
-                    tileSize = tileSize
+                    tileSize = tileSize,
+                    isEditingMode = isEditing,
+                    isSelected = isSelected,
+                    onSelect = { buttonsViewModel?.togglePatternSelection(pattern.id) }
                 )
             }
         }
@@ -272,7 +283,10 @@ fun Pattern(
     rotatePattern: () -> Unit,
     getPattern: () -> PatternUIState?,
     modifier: Modifier = Modifier,
-    tileSize: Size = Size(20f, 20f)
+    tileSize: Size = Size(20f, 20f),
+    isEditingMode: Boolean = false,
+    isSelected: Boolean = false,
+    onSelect: () -> Unit = {}
 ) {
     val isInDark = isSystemInDarkTheme()
 
@@ -282,67 +296,90 @@ fun Pattern(
         PatternType.CUSTOM -> Color(0xFF9C27B0)     // Purple
     }
 
-    Column(
-        modifier = modifier
-    ) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = rotatePattern,
-            border = BorderStroke(1.dp, patternColor),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isInDark) Color(0xFF303030) else Color.White,
-                contentColor = patternColor
-            )
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
-                contentDescription = "Rotate"
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .border(BorderStroke(2.dp, patternColor), Shapes.medium)
-                .padding(4.dp)
-        ) {
-            CustomDragTarget(
-                data = getPattern,
-                modifier = Modifier,
-                gridSize = pattern.gridSize,
-                tileSize = tileSize
+    Box(modifier = modifier) {
+        Column {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = rotatePattern,
+                border = BorderStroke(1.dp, patternColor),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isInDark) Color(0xFF303030) else Color.White,
+                    contentColor = patternColor
+                ),
+                enabled = !isEditingMode
             ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(pattern.gridSize),
-                    modifier = Modifier.fillMaxSize()
+                Icon(
+                    painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
+                    contentDescription = "Rotate"
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .border(
+                        BorderStroke(
+                            width = if (isSelected) 4.dp else 2.dp,
+                            color = if (isSelected) Color.Red else patternColor
+                        ),
+                        Shapes.medium
+                    ).clickable(enabled = isEditingMode) { onSelect()
+                        println("Pattern clicked: ${pattern.name}")
+                    }
+                    .padding(4.dp)
+            ) {
+                CustomDragTarget(
+                    data = getPattern,
+                    modifier = Modifier,
+                    gridSize = pattern.gridSize,
+                    tileSize = tileSize,
+                    isEnabled = !isEditingMode,
                 ) {
-                    items(
-                        pattern.gridSize * pattern.gridSize,
-                        key = { index ->
-                            val coord = Pair(index / pattern.gridSize, index % pattern.gridSize)
-                            "${pattern.id}_${index}_${pattern.cells.contains(coord)}"
-                        }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(pattern.gridSize),
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
-                        val isAlive = pattern.cells.contains(cellCoord)
-                        
-                        Box(
-                            modifier = Modifier
-                                .aspectRatio(1f)
-                                .background(
-                                    if (isAlive) patternColor else patternColor.copy(alpha = 0.03f)
-                                )
-                                .border(
-                                    BorderStroke(
-                                        width = 0.5.dp, 
-                                        color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(alpha = 0.1f)
+                        items(
+                            pattern.gridSize * pattern.gridSize,
+                            key = { index ->
+                                val coord = Pair(index / pattern.gridSize, index % pattern.gridSize)
+                                "${pattern.id}_${index}_${pattern.cells.contains(coord)}"
+                            }
+                        ) {
+                            val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
+                            val isAlive = pattern.cells.contains(cellCoord)
+
+                            Box(
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .background(
+                                        if (isAlive) patternColor else patternColor.copy(alpha = 0.03f)
                                     )
-                                )
-                        )
+                                    .border(
+                                        BorderStroke(
+                                            width = 0.5.dp,
+                                            color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(alpha = 0.1f)
+                                        )
+                                    )
+                            )
+                        }
                     }
                 }
             }
+        }
+        
+        if (isEditingMode && isSelected) {
+            Icon(
+                painter = painterResource(Res.drawable.check_circle_24px),
+                contentDescription = "Selected",
+                tint = Color.Red,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
+                    .size(24.dp)
+                    .background(Color.White, Shapes.medium)
+            )
         }
     }
 }

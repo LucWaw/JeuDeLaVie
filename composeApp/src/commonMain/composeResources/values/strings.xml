@@ -30,4 +30,7 @@
     <string name="previous_grid_short">Previous grid</string>
 
     <string name="cant_add_pattern_while_game_running">Can't add pattern while game is running</string>
+
+    <string name="delete_selected_patterns_title">Delete patterns</string>
+    <string name="delete_selected_patterns_confirmation">Do you really want to remove selected patterns?</string>
 </resources>

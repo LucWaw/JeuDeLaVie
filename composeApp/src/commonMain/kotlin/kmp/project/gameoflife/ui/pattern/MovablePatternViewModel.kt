@@ -82,4 +82,10 @@ class MovablePatternViewModel: ViewModel()  {
         
         showToast(doneText)
     }
+
+    fun deletePatterns(ids: List<Int>) {
+        _patterns.update { currentList ->
+            currentList.filterNot { it.id in ids }.toMutableList()
+        }
+    }
 }
