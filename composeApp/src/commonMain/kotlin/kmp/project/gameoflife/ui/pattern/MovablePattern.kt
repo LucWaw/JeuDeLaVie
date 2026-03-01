@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -138,9 +139,7 @@ fun PatternsUI(
                 val runningText = stringResource(Res.string.cant_add_pattern_while_game_running)
                 Button(
                     modifier = Modifier
-                        .width(rowHeight - 50.dp)
-                        .padding(7.dp)
-                        .border(2.dp, Color(0xFF9C27B0), Shapes.medium), // Couleur Custom pour le bouton d'ajout
+                        .fillMaxSize().border(BorderStroke(2.dp, Color(0xFF9C27B0)), Shapes.medium), // Couleur Custom pour le bouton d'ajout
                     onClick = {
                         if (!isGameRunning) {
                             showGridCustomPatternDialog = true
@@ -150,7 +149,7 @@ fun PatternsUI(
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.size(32.dp),
                         painter = painterResource(Res.drawable.add_24px),
                         contentDescription = "Add a pattern",
                         tint = Color(0xFF9C27B0)
@@ -163,7 +162,7 @@ fun PatternsUI(
                 val isSelected = buttonsViewModel?.selectedPatternIds?.contains(pattern.id) ?: false
 
                 Pattern(
-                    modifier = Modifier.width(rowHeight - 50.dp),
+                    modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight(),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) },
@@ -325,7 +324,6 @@ fun Pattern(
                     )
                 }
             }
-
 
             Box(
                 modifier = Modifier
