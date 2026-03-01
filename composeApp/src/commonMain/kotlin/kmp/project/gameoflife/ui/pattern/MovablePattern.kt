@@ -302,16 +302,19 @@ fun Pattern(
                         }
                     ) {
                         val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
+                        val isAlive = pattern.cells.contains(cellCoord)
+                        
                         Box(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .background(
-                                    if (pattern.cells.contains(cellCoord)) {
-                                        patternColor
-                                    } else Color.Transparent
+                                    if (isAlive) patternColor else patternColor.copy(alpha = 0.05f)
                                 )
                                 .border(
-                                    BorderStroke(1.dp, Color.Gray)
+                                    BorderStroke(
+                                        width = 0.5.dp, 
+                                        color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(alpha = 0.1f)
+                                    )
                                 )
                         )
                     }
