@@ -68,3 +68,7 @@ actual fun DragAndDropEvent.getText(): String? {
         null
     }
 }
+
+actual fun showToast(message: String) {
+    // No-op for desktop as requested
+}

@@ -61,6 +61,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PatternsUI(
     boardGridSize: Size,
+    currentGrid: List<Pair<Int, Int>> = emptyList(),
+    previousGrid: List<Pair<Int, Int>> = emptyList(),
     isTablet: Boolean = false
 ) {
     val viewModel = remember { MovablePatternViewModel() }
@@ -78,11 +80,29 @@ fun PatternsUI(
     var showGridCustomPatternDialog by remember { mutableStateOf(false) }
 
     if (showGridCustomPatternDialog) {
-        SelectGridForCustomPatternDialogCustom(
-            onDismissRequest = { showGridCustomPatternDialog = false },
-            onConfirmCurrentGridPattern = {},
-            onConfirmPreviousGridPattern = {}
-        )
+        // Logique de sélection automatique ou manuelle
+        when {
+            currentGrid.isEmpty() && previousGrid.isEmpty() -> {
+                viewModel.addCustomPattern(emptyList(), "") // Déclenchera le toast "vide"
+                showGridCustomPatternDialog = false //Never read but useful for remember
+            }
+            currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
+                viewModel.addCustomPattern(currentGrid, "Grille actuelle")
+                showGridCustomPatternDialog = false//Never read but useful for remember
+            }
+            currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
+                viewModel.addCustomPattern(previousGrid, "Grille précédente")
+                showGridCustomPatternDialog = false//Never read but useful for remember
+            }
+            else -> {
+                // Les deux sont remplies, on affiche le dialogue
+                SelectGridForCustomPatternDialogCustom(
+                    onDismissRequest = { showGridCustomPatternDialog = false },//Never read but useful for remember
+                    onConfirmCurrentGridPattern = { viewModel.addCustomPattern(currentGrid, "Grille actuelle") },
+                    onConfirmPreviousGridPattern = { viewModel.addCustomPattern(previousGrid, "Grille précédente") }
+                )
+            }
+        }
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
@@ -95,18 +115,16 @@ fun PatternsUI(
 
         LazyHorizontalGrid(
             rows = GridCells.Fixed(visibleRows),
-            modifier = Modifier
-                .height(gridHeight),
+            modifier = Modifier.height(gridHeight),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
-
                 Button(
                     modifier = Modifier
                         .width(rowHeight - 50.dp)
                         .padding(7.dp)
                         .border(2.dp, Color(0xFF9C27B0), Shapes.medium), // Couleur Custom pour le bouton d'ajout
-                    onClick = { showGridCustomPatternDialog = true },
+                    onClick = { showGridCustomPatternDialog = true },//Never read but useful for remember
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
@@ -120,8 +138,7 @@ fun PatternsUI(
             items(patternsUiState.size) { index ->
                 val pattern = patternsUiState[index]
                 Pattern(
-                    modifier = Modifier
-                        .width(rowHeight - 50.dp),
+                    modifier = Modifier.width(rowHeight - 50.dp),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) },
@@ -171,9 +188,7 @@ fun GridDialogContent(
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = title
-        )
+        Text(text = title)
         val previousGrid = stringResource(Res.string.custom_pattern_previous_grid)
         val currentGrid = stringResource(Res.string.custom_pattern_current_grid)
 
@@ -184,19 +199,11 @@ fun GridDialogContent(
         )
 
         val gridRadioOptions = listOf(
-            GridRadioOptions(currentGrid) {
-                onConfirmCurrentGridPattern()
-            },
-            GridRadioOptions(previousGrid) {
-                onConfirmPreviousGridPattern()
-            }
+            GridRadioOptions(currentGrid) { onConfirmCurrentGridPattern() },
+            GridRadioOptions(previousGrid) { onConfirmPreviousGridPattern() }
         )
 
-        val (selectedOption, onOptionSelected) = remember {
-            mutableStateOf(
-                gridRadioOptions[0].name
-            )
-        }
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(gridRadioOptions[0].name) }
 
         Column(Modifier.selectableGroup()) {
             gridRadioOptions.forEach { options ->
@@ -216,9 +223,7 @@ fun GridDialogContent(
                         selected = (options.name == selectedOption),
                         onClick = { onOptionSelected(options.name) }
                     )
-                    Text(
-                        text = options.name
-                    )
+                    Text(text = options.name)
                 }
             }
         }
@@ -232,8 +237,8 @@ fun GridDialogContent(
             }
             Spacer(modifier = Modifier.width(8.dp))
             TextButton(onClick = {
-                val selectedOption = gridRadioOptions.find { it.name == selectedOption }
-                selectedOption?.method?.invoke()
+                val selected = gridRadioOptions.find { it.name == selectedOption }
+                selected?.method?.invoke()
                 onDismissRequest()
             }) {
                 Text(text = stringResource(resource = Res.string.yes))

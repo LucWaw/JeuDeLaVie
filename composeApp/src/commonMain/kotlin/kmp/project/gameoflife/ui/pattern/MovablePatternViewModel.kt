@@ -3,7 +3,7 @@ package kmp.project.gameoflife.ui.pattern
 import androidx.lifecycle.ViewModel
 import kmp.project.gameoflife.data.repository.service.PatternRepository
 import kmp.project.gameoflife.data.service.PatternFakeAPI
-import kmp.project.gameoflife.data.utils.RleParser
+import kmp.project.gameoflife.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +23,6 @@ class MovablePatternViewModel: ViewModel()  {
 
     /**
      * Tourner les cellules du pattern de 90 degrés dans le sens horaire
-     *
      */
     fun rotatePattern(id : Int) {
         _patterns.update { patterns ->
@@ -41,24 +40,45 @@ class MovablePatternViewModel: ViewModel()  {
     }
 
     /**
-     * Ajoute un nouveau pattern personnalisé à partir d'une liste de cellules.
+     * Ajoute un nouveau pattern personnalisé.
+     * Calcule le "carré minimal" pour normaliser les cellules.
      */
-    fun addCustomPattern(cells: List<Pair<Int, Int>>, name: String = "Custom Pattern") {
-        if (cells.isEmpty()) return
+    fun addCustomPattern(cells: List<Pair<Int, Int>>, sourceName: String) {
+        if (cells.isEmpty()) {
+            showToast("La grille est vide, impossible de créer un pattern.")
+            return
+        }
 
-        val rle = RleParser.encode(cells, name)
+        // Calcul du carré minimal (Bounding Box)
+        val minX = cells.minOf { it.first }
+        val maxX = cells.maxOf { it.first }
+        val minY = cells.minOf { it.second }
+        val maxY = cells.maxOf { it.second }
+
+        // Normalisation (décalage vers 0,0)
+        val normalizedCells = cells.map { (x, y) ->
+            Pair(x - minX, y - minY)
+        }
+
+        val width = maxX - minX + 1
+        val height = maxY - minY + 1
+        val gridSize = maxOf(width, height)
+
         val newId = (_patterns.value.maxOfOrNull { it.id } ?: 0) + 1
-        
+        val name = "Custom #$newId"
+
         val newPattern = PatternUIState(
             id = newId,
-            name = RleParser.getName(rle) ?: name,
-            gridSize = RleParser.getGridSize(rle),
-            cells = RleParser.decode(rle),
-            type = PatternType.CUSTOM // On force le type CUSTOM
+            name = name,
+            gridSize = gridSize,
+            cells = normalizedCells,
+            type = PatternType.CUSTOM
         )
 
         _patterns.update { currentList ->
             (currentList + newPattern).toMutableList()
         }
+        
+        showToast("Pattern '$sourceName' enregistré !")
     }
 }

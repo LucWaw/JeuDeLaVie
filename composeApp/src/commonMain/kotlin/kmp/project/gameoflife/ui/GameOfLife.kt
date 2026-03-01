@@ -87,6 +87,8 @@ fun GameOfLife(
             val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
             PatternsUI(
                 boardGridSize = boardGridSize,
+                currentGrid = gameUIState.colored,
+                previousGrid = gameOfLifeViewModel.previousGrid,
                 isTablet = isTablet
             )
         }
@@ -99,6 +101,7 @@ fun GameOfLife(
             { gameOfLifeViewModel.updateCells(it) },
             { gameOfLifeViewModel.addToCounter() },
             gameOfLifeViewModel.speedState,
+            { gameOfLifeViewModel.capturePreviousGrid() }
         )
 
 

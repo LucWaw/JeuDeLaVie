@@ -26,6 +26,7 @@ fun Buttons(
     updateCells: (List<Pair<Int, Int>>) -> Unit,
     addToCounter: () -> Unit,
     speedValue: StateFlow<Float>,
+    capturePreviousGrid: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     //play button with play icon
@@ -52,6 +53,7 @@ fun Buttons(
                 buttonsViewModel.togglePause() // Met le jeu en pause ou en marche
 
                 if (buttonsViewModel.isRunning) {
+                    capturePreviousGrid() // On enregistre l'état actuel comme "précédent" avant de lancer la boucle
                     runGameLoop(
                         playScope,
                         { updateCells(it) },
