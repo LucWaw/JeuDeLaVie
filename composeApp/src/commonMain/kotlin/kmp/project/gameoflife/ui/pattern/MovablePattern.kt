@@ -26,6 +26,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
@@ -95,28 +97,52 @@ fun PatternsUI(
     if (showGridCustomPatternDialog) {
         // Logique de sélection automatique ou manuelle
         val customPatternEmptyError = stringResource(Res.string.custom_pattern_empty_error)
-        val customPatternCurrentShortSaved = stringResource(Res.string.custom_pattern_saved, stringResource(Res.string.current_grid_short))
-        val customPatternPreviousShortSaved = stringResource(Res.string.custom_pattern_saved, stringResource(Res.string.previous_grid_short))
+        val customPatternCurrentShortSaved = stringResource(
+            Res.string.custom_pattern_saved,
+            stringResource(Res.string.current_grid_short)
+        )
+        val customPatternPreviousShortSaved = stringResource(
+            Res.string.custom_pattern_saved,
+            stringResource(Res.string.previous_grid_short)
+        )
 
         when {
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
-                viewModel.addCustomPattern(emptyList(), customPatternEmptyError) // Déclenchera le toast "vide"
+                viewModel.addCustomPattern(
+                    emptyList(),
+                    customPatternEmptyError
+                ) // Déclenchera le toast "vide"
                 showGridCustomPatternDialog = false //Never read but useful for remember
             }
+
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
                 viewModel.addCustomPattern(currentGrid, doneText = customPatternCurrentShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
+
             currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
                 viewModel.addCustomPattern(previousGrid, doneText = customPatternPreviousShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
+
             else -> {
                 // Les deux sont remplies, on affiche le dialogue
                 SelectGridForCustomPatternDialogCustom(
-                    onDismissRequest = { showGridCustomPatternDialog = false },//Never read but useful for remember
-                    onConfirmCurrentGridPattern = { viewModel.addCustomPattern(currentGrid, doneText = customPatternCurrentShortSaved) },
-                    onConfirmPreviousGridPattern = { viewModel.addCustomPattern(previousGrid, doneText = customPatternPreviousShortSaved) }
+                    onDismissRequest = {
+                        showGridCustomPatternDialog = false
+                    },//Never read but useful for remember
+                    onConfirmCurrentGridPattern = {
+                        viewModel.addCustomPattern(
+                            currentGrid,
+                            doneText = customPatternCurrentShortSaved
+                        )
+                    },
+                    onConfirmPreviousGridPattern = {
+                        viewModel.addCustomPattern(
+                            previousGrid,
+                            doneText = customPatternPreviousShortSaved
+                        )
+                    }
                 )
             }
         }
@@ -139,13 +165,21 @@ fun PatternsUI(
                 val runningText = stringResource(Res.string.cant_add_pattern_while_game_running)
                 Button(
                     modifier = Modifier
-                        .fillMaxSize().border(BorderStroke(2.dp, Color(0xFF9C27B0)), Shapes.medium), // Couleur Custom pour le bouton d'ajout
+                        .width(rowHeight - 50.dp)
+                        .fillMaxHeight()
+                        .padding(top = 8.dp)
+                        .border(
+                            2.dp,
+                            Color(0xFF9C27B0),
+                            Shapes.medium
+                        ), // Couleur Custom pour le bouton d'ajout
                     onClick = {
                         if (!isGameRunning) {
                             showGridCustomPatternDialog = true
                         } else {
                             showToast(runningText)
-                        }},//Never read but useful for remember
+                        }
+                    },//Never read but useful for remember
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
@@ -162,7 +196,9 @@ fun PatternsUI(
                 val isSelected = buttonsViewModel?.selectedPatternIds?.contains(pattern.id) ?: false
 
                 Pattern(
-                    modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight(),
+                    modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight().border( 2.dp,
+                        Color(0xFF9C27B0),//TODO REMOVE THIS BORDER
+                        Shapes.medium),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) },
@@ -296,11 +332,14 @@ fun Pattern(
     }
 
     Box(modifier = modifier.padding(top = 8.dp).clickable(enabled = isEditingMode) { onSelect() }) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)){
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.small,
-                border = BorderStroke(1.dp, if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor),
+                border = BorderStroke(
+                    width = if (isSelected) 2.dp else 1.dp,
+                    color = if (isSelected) Color.Red else patternColor
+                ),
                 color = if (isInDark) Color(0xFF303030) else Color.White,
                 contentColor = if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor,
                 elevation = 0.dp
@@ -368,7 +407,9 @@ fun Pattern(
                                     .border(
                                         BorderStroke(
                                             width = 0.5.dp,
-                                            color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(alpha = 0.1f)
+                                            color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(
+                                                alpha = 0.1f
+                                            )
                                         )
                                     )
                             )
@@ -377,17 +418,18 @@ fun Pattern(
                 }
             }
         }
-        
-        if (isEditingMode && isSelected) {
-            Icon(
-                painter = painterResource(Res.drawable.check_circle_24px),
-                contentDescription = "Selected",
-                tint = Color.Red,
+
+        if (isEditingMode) {
+            Checkbox(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(4.dp)
-                    .size(24.dp)
-                    .background(Color.White, Shapes.medium)
+                    .size(20.dp),
+                checked = isSelected,
+                onCheckedChange = { onSelect() },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Color.Red
+                )
             )
         }
     }
