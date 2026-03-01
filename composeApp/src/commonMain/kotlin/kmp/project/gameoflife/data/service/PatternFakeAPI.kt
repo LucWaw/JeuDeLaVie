@@ -99,6 +99,10 @@ class PatternFakeAPI : PatternAPI {
         )
     }
 
+    override fun addPattern(pattern: PatternUIState) {
+        TODO("Not yet implemented") //Should be first
+    }
+
     override fun getAllPatterns(): List<PatternUIState> {
         return patternList
     }

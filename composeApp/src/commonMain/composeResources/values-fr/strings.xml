@@ -28,4 +28,6 @@
     <string name="custom_pattern_saved">Pattern %1$s enregistré !</string>
     <string name="current_grid_short">Grille actuelle</string>
     <string name="previous_grid_short">Grille précédente</string>
+
+    <string name="cant_add_pattern_while_game_running">Impossible d'ajouter un motif pendant que le jeu est en cours</string>
 </resources>

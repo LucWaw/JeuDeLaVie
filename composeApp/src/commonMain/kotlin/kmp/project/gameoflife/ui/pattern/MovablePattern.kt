@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.add_24px
+import gameoflife.composeapp.generated.resources.cant_add_pattern_while_game_running
 import gameoflife.composeapp.generated.resources.current_grid_short
 import gameoflife.composeapp.generated.resources.custom_pattern
 import gameoflife.composeapp.generated.resources.custom_pattern_current_grid
@@ -54,6 +55,7 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
+import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.draganddrop.Shapes
 import kmp.project.gameoflife.ui.getGridColumn
@@ -67,7 +69,8 @@ fun PatternsUI(
     boardGridSize: Size,
     currentGrid: List<Pair<Int, Int>> = emptyList(),
     previousGrid: List<Pair<Int, Int>> = emptyList(),
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    isGameRunning: Boolean = false
 ) {
     val viewModel = remember { MovablePatternViewModel() }
     val patternsUiState by viewModel.patterns.collectAsState()
@@ -127,12 +130,18 @@ fun PatternsUI(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
+                val runningText = stringResource(Res.string.cant_add_pattern_while_game_running)
                 Button(
                     modifier = Modifier
                         .width(rowHeight - 50.dp)
                         .padding(7.dp)
                         .border(2.dp, Color(0xFF9C27B0), Shapes.medium), // Couleur Custom pour le bouton d'ajout
-                    onClick = { showGridCustomPatternDialog = true },//Never read but useful for remember
+                    onClick = {
+                        if (!isGameRunning) {
+                            showGridCustomPatternDialog = true
+                        } else {
+                            showToast(runningText)
+                        }},//Never read but useful for remember
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
@@ -163,10 +172,11 @@ fun SelectGridForCustomPatternDialogCustom(
     onConfirmCurrentGridPattern: () -> Unit,
     onConfirmPreviousGridPattern: () -> Unit
 ) {
+    val isInDark = isSystemInDarkTheme()
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = Color.White,
+            color = if (isInDark) Color(0xFF303030) else Color.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)

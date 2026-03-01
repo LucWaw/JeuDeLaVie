@@ -76,7 +76,8 @@ class MovablePatternViewModel: ViewModel()  {
         )
 
         _patterns.update { currentList ->
-            (currentList + newPattern).toMutableList()
+            // On place 'newPattern' en premier dans la nouvelle liste
+            (listOf(newPattern) + currentList).toMutableList()
         }
         
         showToast(doneText)

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
@@ -27,10 +26,9 @@ fun Buttons(
     addToCounter: () -> Unit,
     speedValue: StateFlow<Float>,
     capturePreviousGrid: () -> Unit,
+    buttonsViewModel: ButtonsViewModel,
     modifier: Modifier = Modifier
 ) {
-    //play button with play icon
-    val buttonsViewModel = remember { ButtonsViewModel() }
 
     Row(modifier = modifier.fillMaxWidth()) {
         Button(

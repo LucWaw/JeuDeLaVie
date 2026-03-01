@@ -28,4 +28,6 @@
     <string name="custom_pattern_saved">Pattern %1$s saved!</string>
     <string name="current_grid_short">Current grid</string>
     <string name="previous_grid_short">Previous grid</string>
+
+    <string name="cant_add_pattern_while_game_running">Can't add pattern while game is running</string>
 </resources>
