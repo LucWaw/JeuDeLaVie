@@ -296,23 +296,36 @@ fun Pattern(
         PatternType.CUSTOM -> Color(0xFF9C27B0)     // Purple
     }
 
-    Box(modifier = modifier) {
-        Column {
-            Button(
+    Box(modifier = modifier.padding(top = 8.dp).clickable(enabled = isEditingMode) { onSelect() }) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)){
+            Surface(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = rotatePattern,
-                border = BorderStroke(1.dp, patternColor),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isInDark) Color(0xFF303030) else Color.White,
-                    contentColor = patternColor
-                ),
-                enabled = !isEditingMode
+                shape = MaterialTheme.shapes.small,
+                border = BorderStroke(1.dp, if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor),
+                color = if (isInDark) Color(0xFF303030) else Color.White,
+                contentColor = if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor,
+                elevation = 0.dp
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
-                    contentDescription = "Rotate"
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (!isEditingMode) {
+                                Modifier.clickable { rotatePattern() }
+                            } else {
+                                Modifier
+                            }
+                        )
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
+                        contentDescription = "Rotate"
+                    )
+                }
             }
+
 
             Box(
                 modifier = Modifier
@@ -324,9 +337,7 @@ fun Pattern(
                             color = if (isSelected) Color.Red else patternColor
                         ),
                         Shapes.medium
-                    ).clickable(enabled = isEditingMode) { onSelect()
-                        println("Pattern clicked: ${pattern.name}")
-                    }
+                    )
                     .padding(4.dp)
             ) {
                 CustomDragTarget(
