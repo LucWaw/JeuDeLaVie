@@ -50,7 +50,6 @@ import androidx.compose.ui.window.Dialog
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.add_24px
 import gameoflife.composeapp.generated.resources.cant_add_pattern_while_game_running
-import gameoflife.composeapp.generated.resources.check_circle_24px
 import gameoflife.composeapp.generated.resources.current_grid_short
 import gameoflife.composeapp.generated.resources.custom_pattern
 import gameoflife.composeapp.generated.resources.custom_pattern_current_grid
@@ -158,7 +157,8 @@ fun PatternsUI(
 
         LazyHorizontalGrid(
             rows = GridCells.Fixed(visibleRows),
-            modifier = Modifier.height(gridHeight),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.height(gridHeight).padding(top = 8.dp, start = 8.dp, end = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
@@ -167,26 +167,27 @@ fun PatternsUI(
                     modifier = Modifier
                         .width(rowHeight - 50.dp)
                         .fillMaxHeight()
-                        .padding(top = 8.dp)
                         .border(
-                            2.dp,
-                            Color(0xFF9C27B0),
+                            BorderStroke(
+                                width = 3.dp,
+                                color = Color(0xFF9F2B68) // Couleur Custom pour le bouton d'ajout
+                            ),
                             Shapes.medium
-                        ), // Couleur Custom pour le bouton d'ajout
+                        ),
                     onClick = {
                         if (!isGameRunning) {
-                            showGridCustomPatternDialog = true
+                            showGridCustomPatternDialog = true //Never read but useful for remember
                         } else {
                             showToast(runningText)
                         }
-                    },//Never read but useful for remember
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
                         modifier = Modifier.size(32.dp),
                         painter = painterResource(Res.drawable.add_24px),
                         contentDescription = "Add a pattern",
-                        tint = Color(0xFF9C27B0)
+                        tint = Color(0xFF9F2B68)
                     )
                 }
             }
@@ -196,9 +197,7 @@ fun PatternsUI(
                 val isSelected = buttonsViewModel?.selectedPatternIds?.contains(pattern.id) ?: false
 
                 Pattern(
-                    modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight().border( 2.dp,
-                        Color(0xFF9C27B0),//TODO REMOVE THIS BORDER
-                        Shapes.medium),
+                    modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight(),
                     pattern = pattern,
                     getPattern = { viewModel.getPatternById(pattern.id) },
                     rotatePattern = { viewModel.rotatePattern(pattern.id) },
@@ -328,14 +327,14 @@ fun Pattern(
     val patternColor = when (pattern.type) {
         PatternType.STILL_LIFE -> Color(0xFF2196F3) // Blue
         PatternType.MOVING -> Color(0xFFFF9800)     // Orange
-        PatternType.CUSTOM -> Color(0xFF9C27B0)     // Purple
+        PatternType.CUSTOM -> Color(0xFF9F2B68)     // Pink
     }
 
-    Box(modifier = modifier.padding(top = 8.dp).clickable(enabled = isEditingMode) { onSelect() }) {
+    Box(modifier = modifier.clickable(enabled = isEditingMode) { onSelect() }) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.small,
+                shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(
                     width = if (isSelected) 2.dp else 1.dp,
                     color = if (isSelected) Color.Red else patternColor
