@@ -308,7 +308,7 @@ fun Pattern(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .background(
-                                    if (isAlive) patternColor else patternColor.copy(alpha = 0.05f)
+                                    if (isAlive) patternColor else patternColor.copy(alpha = 0.03f)
                                 )
                                 .border(
                                     BorderStroke(
