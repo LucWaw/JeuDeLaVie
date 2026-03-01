@@ -105,14 +105,15 @@ fun PatternsUI(
                     modifier = Modifier
                         .width(rowHeight - 50.dp)
                         .padding(7.dp)
-                        .border(2.dp, Color.Black, Shapes.medium),
+                        .border(2.dp, Color(0xFF9C27B0), Shapes.medium), // Couleur Custom pour le bouton d'ajout
                     onClick = { showGridCustomPatternDialog = true },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 ) {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
                         painter = painterResource(Res.drawable.add_24px),
-                        contentDescription = "Add a pattern"
+                        contentDescription = "Add a pattern",
+                        tint = Color(0xFF9C27B0)
                     )
                 }
             }
@@ -252,14 +253,23 @@ fun Pattern(
 ) {
     val isInDark = isSystemInDarkTheme()
 
+    val patternColor = when (pattern.type) {
+        PatternType.STILL_LIFE -> Color(0xFF2196F3) // Blue
+        PatternType.MOVING -> Color(0xFFFF9800)     // Orange
+        PatternType.CUSTOM -> Color(0xFF9C27B0)     // Purple
+    }
 
     Column(
         modifier = modifier
-        //.width(patternWidth) // Imposer la même largeur
     ) {
         Button(
-            modifier = Modifier.fillMaxWidth(), // Va prendre toute la largeur imposée par Column
-            onClick = rotatePattern
+            modifier = Modifier.fillMaxWidth(),
+            onClick = rotatePattern,
+            border = BorderStroke(1.dp, patternColor),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = if (isInDark) Color(0xFF303030) else Color.White,
+                contentColor = patternColor
+            )
         ) {
             Icon(
                 painter = painterResource(Res.drawable.rotate_90_degrees_cw_24px),
@@ -269,8 +279,10 @@ fun Pattern(
 
         Box(
             modifier = Modifier
-                .fillMaxWidth() // Même largeur que Button
-                .aspectRatio(1f) // Pour garder un carré
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .border(BorderStroke(2.dp, patternColor), Shapes.medium)
+                .padding(4.dp)
         ) {
             CustomDragTarget(
                 data = getPattern,
@@ -280,7 +292,7 @@ fun Pattern(
             ) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(pattern.gridSize),
-                    modifier = Modifier.fillMaxSize() // Remplit la Box carrée
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(
                         pattern.gridSize * pattern.gridSize,
@@ -295,13 +307,11 @@ fun Pattern(
                                 .aspectRatio(1f)
                                 .background(
                                     if (pattern.cells.contains(cellCoord)) {
-                                        if (isInDark) Color.White else Color.Black
+                                        patternColor
                                     } else Color.Transparent
                                 )
                                 .border(
-                                    if (pattern.cells.contains(cellCoord)) {
-                                        BorderStroke(1.dp, Color.DarkGray)
-                                    } else BorderStroke(0.dp, Color.LightGray)
+                                    BorderStroke(1.dp, Color.Gray)
                                 )
                         )
                     }
