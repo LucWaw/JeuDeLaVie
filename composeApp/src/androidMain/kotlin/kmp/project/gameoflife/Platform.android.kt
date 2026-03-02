@@ -35,6 +35,9 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import kmp.project.gameoflife.data.GameOfLifeDatabase
 
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
@@ -159,4 +162,17 @@ actual fun DragAndDropEvent.getText(): String? {
 
 actual fun showToast(message: String) {
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+}
+
+fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabase> {
+    val appContext = context.applicationContext
+    val dbFile = appContext.getDatabasePath(GameOfLifeDatabase.DB_NAME)
+    return Room.databaseBuilder<GameOfLifeDatabase>(
+        context = appContext,
+        name = dbFile.absolutePath
+    )
+}
+
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
+    return getDatabaseBuilder(applicationContext)
 }

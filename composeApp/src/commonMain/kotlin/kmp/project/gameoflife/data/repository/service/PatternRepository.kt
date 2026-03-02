@@ -1,15 +1,22 @@
 package kmp.project.gameoflife.data.repository.service
 
-import kmp.project.gameoflife.data.service.PatternAPI
-import kmp.project.gameoflife.ui.pattern.PatternUIState
+import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.domain.modele.PatternMovable
+import kmp.project.gameoflife.domain.modele.toDomain
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class PatternRepository(private val patternAPI: PatternAPI) {
-
-
-    fun addPattern(pattern: PatternUIState) {
+class PatternRepository(private val database: GameOfLifeDatabase) {
+    suspend fun addPattern(pattern: PatternMovable) {
+        database.patternDao().insert(pattern.toEntity())
     }
 
-    fun getAllPatterns(): List<PatternUIState> {
-        return patternAPI.getAllPatterns()
+    val patterns: Flow<List<PatternMovable>> = database.patternDao().getAllPatterns().map { pattern ->
+        pattern.map { it.toDomain() }
     }
+
+    suspend fun deletePattern(pattern: PatternMovable) {
+        database.patternDao().delete(pattern.toEntity())
+    }
+
 }

@@ -11,11 +11,16 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
 import androidx.compose.ui.geometry.Offset
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import java.io.File
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
@@ -72,4 +77,11 @@ actual fun DragAndDropEvent.getText(): String? {
 
 actual fun showToast(message: String) {
     // No-op for desktop as requested
+}
+
+actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
+    val dbFile = File(System.getProperty("java.io.tmpdir"), GameOfLifeDatabase.DB_NAME)
+    return Room.databaseBuilder<GameOfLifeDatabase>(
+        name = dbFile.absolutePath,
+    ).setDriver(BundledSQLiteDriver())
 }

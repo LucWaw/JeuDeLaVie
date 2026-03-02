@@ -106,7 +106,6 @@ object RleParser {
             }
             if (y < height - 1) sb.append('$') else sb.append('!')
         }
-        println(sb.toString())
         return sb.toString()
     }
 }

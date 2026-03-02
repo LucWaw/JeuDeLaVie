@@ -1,8 +1,8 @@
 package kmp.project.gameoflife.data.service
 
 import kmp.project.gameoflife.data.utils.RleParser
-import kmp.project.gameoflife.ui.pattern.PatternType
-import kmp.project.gameoflife.ui.pattern.PatternUIState
+import kmp.project.gameoflife.domain.modele.PatternType
+import kmp.project.gameoflife.domain.modele.PatternMovable
 
 class PatternFakeAPI : PatternAPI {
 
@@ -89,8 +89,8 @@ class PatternFakeAPI : PatternAPI {
         )
     )
 
-    private fun createPattern(id: Int, rleWithMetadata: String, patternType: PatternType): PatternUIState {
-        return PatternUIState(
+    private fun createPattern(id: Long, rleWithMetadata: String, patternType: PatternType): PatternMovable {//TODO DELETE FROM HERE
+        return PatternMovable(
             id = id,
             name = RleParser.getName(rleWithMetadata) ?: "Unnamed",
             gridSize = RleParser.getGridSize(rleWithMetadata),
@@ -99,11 +99,11 @@ class PatternFakeAPI : PatternAPI {
         )
     }
 
-    override fun addPattern(pattern: PatternUIState) {
-        TODO("Not yet implemented") //Should be first
+    override fun addPattern(pattern: PatternMovable) {
+        //Should be added in first
     }
 
-    override fun getAllPatterns(): List<PatternUIState> {
+    override fun getAllPatterns(): List<PatternMovable> {
         return patternList
     }
 }

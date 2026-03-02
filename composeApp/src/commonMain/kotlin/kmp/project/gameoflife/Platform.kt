@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.geometry.Offset
+import androidx.room.RoomDatabase
+import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -27,3 +29,5 @@ expect fun DragAndDropEvent.getText(): String?
  * Interface for platform-specific toasts
  */
 expect fun showToast(message: String)
+
+expect fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase>
