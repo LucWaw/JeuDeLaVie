@@ -2,6 +2,7 @@ package kmp.project.gameoflife.di
 
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.data.repository.service.PatternRepository
+import kmp.project.gameoflife.data.utils.DatabaseCallback
 import kmp.project.gameoflife.domain.usecase.AddAPattern
 import kmp.project.gameoflife.domain.usecase.DeletePattern
 import kmp.project.gameoflife.domain.usecase.GetAllPatterns
@@ -22,6 +23,7 @@ val appModule = module {
     single<GameOfLifeDatabase> {
         getDatabaseBuilder()
             .setQueryCoroutineContext(Dispatchers.IO)
+            .addCallback(DatabaseCallback)
             .build()
     }
 

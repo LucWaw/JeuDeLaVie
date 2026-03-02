@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PatternDao {
 
-    @Query("SELECT * FROM Pattern")
+    @Query("SELECT * FROM Pattern ORDER BY id DESC")
     fun getAllPatterns(): Flow<List<Pattern>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
