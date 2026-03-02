@@ -1,73 +1,107 @@
 package kmp.project.gameoflife.data.service
 
+import kmp.project.gameoflife.data.utils.RleParser
+import kmp.project.gameoflife.ui.pattern.PatternType
 import kmp.project.gameoflife.ui.pattern.PatternUIState
 
 class PatternFakeAPI : PatternAPI {
 
     private val patternList = listOf(
-        PatternUIState(1, "Square", 4, listOf(Pair(0, 0), Pair(0, 1), Pair(1, 0), Pair(1, 1))),
-        PatternUIState(
-            2, "Glider", 5, listOf(Pair(1, 0), Pair(2, 1), Pair(0, 2), Pair(1, 2), Pair(2, 2))
+        createPattern(
+            1, $$"""
+            #N Glider
+            x = 3, y = 3, rule = B3/S23
+            bob$2bo$3o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            3, "Blinker", 5, listOf(Pair(0, 0), Pair(1, 0), Pair(2, 0))
+        createPattern(
+            2, """
+            #N Blinker
+            x = 3, y = 1, rule = B3/S23
+            3o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            4, "Toad", 5, listOf(Pair(0, 0), Pair(1, 0), Pair(2, 0), Pair(0, 1), Pair(1, 1), Pair(2, 1))
+        createPattern(
+            3, $$"""
+            #N Toad
+            x = 6, y = 2, rule = B3/S23
+            b3o$3o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            5, "Beacon", 6,
-            listOf(Pair(0, 0), Pair(1, 0), Pair(0, 1), Pair(3, 2), Pair(2, 3), Pair(3, 3))
+        createPattern(
+            4, $$"""
+            #N Beacon
+            x = 4, y = 4, rule = B3/S23
+            2o2b$o3b$3bo$2b2o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            7, "Pentadecathlon", 10,
-            listOf(
-                Pair(1, 0), Pair(2, 0), Pair(3, 0), Pair(4, 0), Pair(5, 0), Pair(6, 0), Pair(7, 0), Pair(8, 0), Pair(9, 0),
-                Pair(1, 1), Pair(2, 1), Pair(3, 1), Pair(4, 1), Pair(5, 1), Pair(6, 1), Pair(7, 1), Pair(8, 1), Pair(9, 1)
-            )
+        createPattern(
+            5, $$"""
+            #N Pentadecathlon
+            x = 10, y = 3, rule = B3/S23
+            2bo4bo2b$2ob4ob2o$2bo4bo!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            id = 8, "Heavy-Weight Spaceship", gridSize = 7,
-            listOf(
-                Pair(0, 2), Pair(0, 3), //Première ligne
-                Pair (1, 0), Pair(1, 5), //Deuxième ligne
-                Pair(2, 6), //Troisième ligne
-                Pair(3, 0), Pair(3, 6), //Quatrième ligne
-                Pair(4, 1), Pair(4, 2), Pair(4, 3), Pair(4, 4), Pair(4, 5), Pair(4,6) //Cinquième ligne
-            )
+        createPattern(
+            6, $$"""
+            #N Heavy-Weight Spaceship
+            x = 5, y = 7, rule = B3/S23
+            bobob$4bo$o3bo$o3bo$4bo$bo2bo$2b3o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            id = 9, "Light-Weight Spaceship", gridSize = 6,
-            listOf(
-                Pair(0, 1), Pair(0, 4), //Première ligne
-                Pair (1, 0), //Deuxième ligne
-                Pair(2, 0), Pair(2, 4), //Quatrième ligne
-                Pair(3, 0),Pair(3, 1), Pair(3, 2), Pair(3, 3) //Cinquième ligne
-            )
+        createPattern(
+            7, $$"""
+            #N Light-Weight Spaceship
+            x = 4, y = 5, rule = B3/S23
+            obo$3bo$3bo$o2bo$b3o!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            id = 10, name = "T-tetromino", gridSize = 4,
-            listOf(
-                Pair(0,1),// Première ligne
-                Pair(1,0), Pair(1,1), Pair(1,2) //Deuxième ligne
-            )
+        createPattern(
+            8, $$"""
+            #N T-tetromino
+            x = 3, y = 2, rule = B3/S23
+            3o$bo!
+        """.trimIndent(),
+            PatternType.MOVING
         ),
-        PatternUIState(
-            id = 11,
-            name = "Boat",
-            gridSize = 4,
-            cells = listOf(
-                Pair(0, 1),
-                Pair(1, 0),
-                Pair(2, 1),
-                Pair(0, 2),
-                Pair(1, 2)
-            )
+        createPattern(
+            9, $$"""
+            #N Boat
+            x = 3, y = 3, rule = B3/S23
+            2ob$obo$bo!
+        """.trimIndent(),
+            PatternType.STILL_LIFE
+        ),
+        createPattern(
+            10, $$"""
+            #N Square
+            x = 2, y = 2, rule = B3/S23
+            2o$2o!
+        """.trimIndent(),
+            PatternType.STILL_LIFE
         )
-
-
-
     )
+
+    private fun createPattern(id: Int, rleWithMetadata: String, patternType: PatternType): PatternUIState {
+        return PatternUIState(
+            id = id,
+            name = RleParser.getName(rleWithMetadata) ?: "Unnamed",
+            gridSize = RleParser.getGridSize(rleWithMetadata),
+            cells = RleParser.decode(rleWithMetadata),
+            type = patternType
+        )
+    }
+
+    override fun addPattern(pattern: PatternUIState) {
+        TODO("Not yet implemented") //Should be first
+    }
 
     override fun getAllPatterns(): List<PatternUIState> {
         return patternList

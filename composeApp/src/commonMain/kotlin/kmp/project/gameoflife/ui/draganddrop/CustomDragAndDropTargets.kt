@@ -40,81 +40,84 @@ fun CustomDragTarget(
     modifier: Modifier = Modifier,
     gridSize: Int = 1,
     tileSize: Size = Size(20f, 20f),
+    isEnabled: Boolean,
     visual: @Composable () -> Unit,
 ) {
     val isInDark = isSystemInDarkTheme()
 
     val ghostSizePx = remember(gridSize, tileSize) {
-        Size(tileSize.width * gridSize *2 , tileSize.height * gridSize *2) //YOU CAN MODIFY HERE
+        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2) //YOU CAN MODIFY HERE
     }
 
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark, boxSize) {
-        Modifier.dragAndDropSource(
-            drawDragDecoration = {
-                val currentState = data()
-                if (currentState != null) {
-                    val patternGridSize = currentState.gridSize
+    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark, boxSize, isEnabled) {
+        if (!isEnabled) Modifier else {
+            Modifier.dragAndDropSource(
+                drawDragDecoration = {
+                    val currentState = data()
+                    if (currentState != null) {
+                        val patternGridSize = currentState.gridSize
 
-                    // Appliquer la même réduction que dans le Modifier.layout
-                    val gWidth = ghostSizePx.width
-                    val gHeight = ghostSizePx.height
-                    // 'size' est la taille de la zone allouée au drag
-                    val scale = min(size.width / gWidth, size.height / gHeight)
+                        // Appliquer la même réduction que dans le Modifier.layout
+                        val gWidth = ghostSizePx.width
+                        val gHeight = ghostSizePx.height
+                        // 'size' est la taille de la zone allouée au drag
+                        val scale = min(size.width / gWidth, size.height / gHeight)
 
-                    // La vraie taille d'une case, adaptée à l'écran
-                    val tileW = tileSize.width * scale
-                    val tileH = tileSize.height * scale
+                        // La vraie taille d'une case, adaptée à l'écran
+                        val tileW = tileSize.width * scale
+                        val tileH = tileSize.height * scale
 
-                    // Calculer le point central de la case en bas à droite
-                    val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
-                    val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
+                        // Calculer le point central de la case en bas à droite
+                        val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
+                        val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
 
-                    // Calculer le décalage pour que ce point soit EXACTEMENT
-                    //    au milieu de la zone de drag (là où se trouve le pointeur)
-                    val startX = (size.width / 2f) - bottomRightCenterX
-                    val startY = (size.height / 2f) - bottomRightCenterY
+                        // Calculer le décalage pour que ce point soit EXACTEMENT
+                        //    au milieu de la zone de drag (là où se trouve le pointeur)
+                        val startX = (size.width / 2f) - bottomRightCenterX
+                        val startY = (size.height / 2f) - bottomRightCenterY
 
-                    for (i in 0 until patternGridSize) {
-                        for (j in 0 until patternGridSize) {
-                            // Plus de risque de négatif, on part de startX et startY !
-                            val topLeft = Offset(startX + j * tileW, startY + i * tileH)
-                            val rectSize = Size(tileW, tileH)
+                        for (i in 0 until patternGridSize) {
+                            for (j in 0 until patternGridSize) {
+                                // Plus de risque de négatif, on part de startX et startY !
+                                val topLeft = Offset(startX + j * tileW, startY + i * tileH)
+                                val rectSize = Size(tileW, tileH)
 
-                            if (currentState.cells.contains(Pair(i, j))) {
+                                if (currentState.cells.contains(Pair(i, j))) {
+                                    drawRect(
+                                        color = if (isInDark) Color.White else Color.Black,
+                                        topLeft = topLeft,
+                                        size = rectSize,
+                                        style = Fill
+                                    )
+                                }
                                 drawRect(
-                                    color = if (isInDark) Color.White else Color.Black,
+                                    color = Color.Gray,
                                     topLeft = topLeft,
                                     size = rectSize,
-                                    style = Fill
+                                    style = Stroke(width = 1.dp.toPx())
                                 )
                             }
-                            drawRect(
-                                color = Color.Gray,
-                                topLeft = topLeft,
-                                size = rectSize,
-                                style = Stroke(width = 1.dp.toPx())
-                            )
                         }
                     }
                 }
-            }
-        ) { pointerOffset ->
-            val currentState = data()
-            if (currentState != null) {
-                LocalDragDropState.draggedPattern = currentState
+            ) { pointerOffset ->
+                val currentState = data()
+                if (currentState != null) {
+                    LocalDragDropState.draggedPattern = currentState
 
-                //On calcule le centre exact de la Box pour y accrocher la souris Desktop
-                val centerOffset = if (boxSize != IntSize.Zero) {
-                    Offset(boxSize.width / 2f, boxSize.height / 2f)
+                    //On calcule le centre exact de la Box pour y accrocher la souris Desktop
+                    val centerOffset = if (boxSize != IntSize.Zero) {
+                        Offset(boxSize.width / 2f, boxSize.height / 2f)
+                    } else {
+                        pointerOffset // Sécurité si la taille n'est pas encore calculée
+                    }
+
+                    buildTextTransferData("LOCAL_PATTERN", dragOffset = centerOffset)
                 } else {
-                    pointerOffset // Sécurité si la taille n'est pas encore calculée
+                    null
                 }
-
-                buildTextTransferData("LOCAL_PATTERN", dragOffset = centerOffset)
-            } else {
-                null
             }
         }
     }

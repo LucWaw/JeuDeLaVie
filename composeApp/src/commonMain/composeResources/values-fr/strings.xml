@@ -16,4 +16,21 @@
 
     <string name="fifth_page_title">Lancer l'animation !</string>
     <string name="fifth_page_description">Lancez l'animation en cliquant sur le bouton démarrer en bas a droite.</string>
+
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <string name="custom_pattern">Choisissez le motif que vous souhaitez enregistrer.</string>
+    <string name="custom_pattern_current_grid">Contenu de la grille actuelle</string>
+    <string name="custom_pattern_previous_grid">Contenu de la grille précédente, c'est-à-dire lors du dernier lancement</string>
+
+    <string name="custom_pattern_empty_error">La grille et la grille précédente sont vides, impossibles de créer un pattern.</string>
+    <string name="custom_pattern_saved">Pattern %1$s enregistré !</string>
+    <string name="current_grid_short">Grille actuelle</string>
+    <string name="previous_grid_short">Grille précédente</string>
+
+    <string name="cant_add_pattern_while_game_running">Impossible d'ajouter un motif pendant que le jeu est en cours</string>
+
+    <string name="delete_selected_patterns_title">Supprimer les patterns</string>
+    <string name="delete_selected_patterns_confirmation">Voulez-vous vraiment supprimer les patterns sélectionnés ?</string>
 </resources>

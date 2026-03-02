@@ -29,12 +29,12 @@ import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
 import android.content.ClipData
 import android.content.ClipDescription
+import android.widget.Toast
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
-
 
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
@@ -155,4 +155,8 @@ actual fun DragAndDropEvent.getText(): String? {
         return clipData.getItemAt(0).text?.toString()
     }
     return null
+}
+
+actual fun showToast(message: String) {
+    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

@@ -1,13 +1,14 @@
 package kmp.project.gameoflife.ui
 
 import androidx.compose.ui.geometry.Size
+import androidx.lifecycle.ViewModel
 import kmp.project.gameoflife.spacing.CellularSpace
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class GameOfLifeViewModel {
+class GameOfLifeViewModel : ViewModel() {
 
     private val _mutableGameUiState =
         MutableStateFlow(GameUiState())
@@ -15,10 +16,11 @@ class GameOfLifeViewModel {
 
     val mutableGameUiState: StateFlow<GameUiState> = _mutableGameUiState.asStateFlow()
 
-
-
     private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
     val cellularSpace: StateFlow<CellularSpace> = _cellularSpace.asStateFlow()
+
+    private var _previousGrid: List<Pair<Int, Int>> = emptyList()
+    val previousGrid: List<Pair<Int, Int>> get() = _previousGrid
 
     private val _speedGeneration = MutableStateFlow(1f)
     val speedState : StateFlow<Float> = _speedGeneration.asStateFlow()
@@ -77,5 +79,9 @@ class GameOfLifeViewModel {
 
     fun modifyGridSize(gridSize: Size){
         _gridSize.value = gridSize
+    }
+
+    fun capturePreviousGrid() {
+        _previousGrid = _mutableGameUiState.value.colored
     }
 }

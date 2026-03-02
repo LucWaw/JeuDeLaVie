@@ -5,17 +5,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import kmp.project.gameoflife.ui.onboard.OnboardingUtils
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.draganddrop.DragAndDropEvent
-import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferAction
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
 import androidx.compose.ui.geometry.Offset
+import kmp.project.gameoflife.ui.onboard.OnboardingUtils
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
 }
@@ -67,4 +68,8 @@ actual fun DragAndDropEvent.getText(): String? {
     } else {
         null
     }
+}
+
+actual fun showToast(message: String) {
+    // No-op for desktop as requested
 }

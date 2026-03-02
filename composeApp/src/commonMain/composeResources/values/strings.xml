@@ -16,4 +16,21 @@
 
     <string name="fifth_page_title">Start the animation!</string>
     <string name="fifth_page_description">Start the animation by clicking on the start button at the bottom right.</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="custom_pattern">Choose which pattern you want to save</string>
+    <string name="custom_pattern_current_grid">Current grid content</string>
+    <string name="custom_pattern_previous_grid">Previous grid content, i.e. from the last launch</string>
+
+    <string name="custom_pattern_empty_error">Both the current and previous grids are empty, impossible to create a pattern.</string>
+    <string name="custom_pattern_saved">Pattern %1$s saved!</string>
+    <string name="current_grid_short">Current grid</string>
+    <string name="previous_grid_short">Previous grid</string>
+
+    <string name="cant_add_pattern_while_game_running">Can't add pattern while game is running</string>
+
+    <string name="delete_selected_patterns_title">Delete patterns</string>
+    <string name="delete_selected_patterns_confirmation">Do you really want to remove selected patterns?</string>
 </resources>

@@ -22,3 +22,8 @@ expect fun GifImage(ressources: DrawableResource, modifier: Modifier = Modifier)
 expect fun buildTextTransferData(text: String,dragOffset: Offset = Offset.Zero): DragAndDropTransferData
 expect fun DragAndDropEvent.hasText(): Boolean
 expect fun DragAndDropEvent.getText(): String?
+
+/**
+ * Interface for platform-specific toasts
+ */
+expect fun showToast(message: String)
