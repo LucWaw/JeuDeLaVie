@@ -7,4 +7,6 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.koin.compiler) apply false
+    alias(libs.plugins.androidKmpLibrary) apply false
+    alias(libs.plugins.kotlin.android) apply false
 }

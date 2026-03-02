@@ -36,7 +36,6 @@ import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
 
-
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
 }

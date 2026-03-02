@@ -1,25 +1,25 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     kotlin("plugin.serialization") version "2.3.0"
     alias(libs.plugins.koin.compiler)
+    alias(libs.plugins.androidKmpLibrary)
 }
 
 kotlin {
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+    androidLibrary {
+        compileSdk = 36
+        minSdk = 26
+        namespace = "kmp.project.gameoflife"
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
     }
 
     jvm("desktop")
+
+
 
     sourceSets {
         val desktopMain by getting
@@ -55,41 +55,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "kmp.project.gameoflife"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "kmp.project.gameoflife"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 7
-        versionName = "7.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = false
-            ndk {
-                ndk.debugSymbolLevel = "FULL"
-            }
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-dependencies {
-    debugImplementation(libs.ui.tooling)
-}
 
 compose.desktop {
     application {

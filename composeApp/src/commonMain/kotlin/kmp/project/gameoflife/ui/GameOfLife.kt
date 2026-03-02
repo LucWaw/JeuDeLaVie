@@ -77,41 +77,41 @@ fun GameOfLife(
             .fillMaxSize()
     ) {
 
-        Column {
-
-            //Game board
-            val gridUiSize by gameOfLifeViewModel.gridSize.collectAsState()
-            gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
-                Board(
-                    isTablet = isTablet,
-                    gameUIState = gameUiState,
-                    onCellClick = gameOfLifeViewModel.onCellClick,
-                    gridUiSize = gridUiSize,
-                    gridChange ={ gameOfLifeViewModel.modifyGridSize(it) }
-                )
-            }
-
-
-
-
-
-            val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
-            val patterns by patternViewModel.patterns.collectAsState()
-            PatternsUI(
-                boardGridSize = boardGridSize,
-                patterns = patterns,
-                onAddCustomPattern = { cells, text -> patternViewModel.addCustomPattern(cells, doneText = text) },
-                onGetPatternById = patternViewModel::getPatternById,
-                onRotatePattern = patternViewModel::rotatePattern,
-                onTogglePatternSelection = buttonsViewModel::togglePatternSelection,
-                isEditingMode = buttonsViewModel.isEditingMode,
-                selectedPatternIds = buttonsViewModel.selectedPatternIds,
-                currentGrid = gameUIState.colored,
-                previousGrid = gameOfLifeViewModel.previousGrid,
+        //Game board
+        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsState()
+        gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
+            Board(
                 isTablet = isTablet,
-                isGameRunning = buttonsViewModel.isRunning,
+                gameUIState = gameUiState,
+                onCellClick = gameOfLifeViewModel.onCellClick,
+                gridUiSize = gridUiSize,
+                gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
             )
         }
+
+
+        val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
+        val patterns by patternViewModel.patterns.collectAsState()
+        PatternsUI(
+            boardGridSize = boardGridSize,
+            patterns = patterns,
+            onAddCustomPattern = { cells, text ->
+                patternViewModel.addCustomPattern(
+                    cells,
+                    doneText = text
+                )
+            },
+            onGetPatternById = patternViewModel::getPatternById,
+            onRotatePattern = patternViewModel::rotatePattern,
+            onTogglePatternSelection = buttonsViewModel::togglePatternSelection,
+            isEditingMode = buttonsViewModel.isEditingMode,
+            selectedPatternIds = buttonsViewModel.selectedPatternIds,
+            currentGrid = gameUIState.colored,
+            previousGrid = gameOfLifeViewModel.previousGrid,
+            isTablet = isTablet,
+            isGameRunning = buttonsViewModel.isRunning,
+        )
+
 
         //Play pause button
         Buttons(
@@ -128,7 +128,10 @@ fun GameOfLife(
         )
 
 
-        Row(Modifier.padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
             Spacer(Modifier.weight(1f))
             IconButton(

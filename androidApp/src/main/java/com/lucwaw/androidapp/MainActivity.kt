@@ -1,4 +1,4 @@
-package kmp.project.gameoflife
+package com.lucwaw.androidapp
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -9,7 +9,8 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
+import kmp.project.gameoflife.App
+import kmp.project.gameoflife.initOnboardingUtils
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
@@ -32,9 +33,4 @@ class MainActivity : ComponentActivity() {
         }
 
     }
-}
-
-@Composable
-fun AppAndroidPreview() {
-    App()
 }

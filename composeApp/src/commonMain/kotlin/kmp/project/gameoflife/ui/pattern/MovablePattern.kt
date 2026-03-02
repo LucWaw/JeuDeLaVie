@@ -70,6 +70,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PatternsUI(
+    modifier: Modifier = Modifier,
     boardGridSize: Size,
     patterns: List<PatternUIState>,
     onAddCustomPattern: (List<Pair<Int, Int>>, String) -> Unit,
@@ -148,7 +149,7 @@ fun PatternsUI(
         }
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val screenHeight = maxHeight
         val rowHeight = 130.dp
 
@@ -159,7 +160,7 @@ fun PatternsUI(
         LazyHorizontalGrid(
             rows = GridCells.Fixed(visibleRows),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.height(gridHeight).padding(top = 8.dp, start = 8.dp, end = 8.dp),
+            modifier = Modifier.height(gridHeight).padding(top = 4.dp, start = 8.dp, end = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             item {
