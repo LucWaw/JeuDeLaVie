@@ -15,12 +15,17 @@ import androidx.compose.ui.Modifier
 import kmp.project.gameoflife.ui.GameOfLife
 import kmp.project.gameoflife.ui.draganddrop.DragAndDropTheme
 import kmp.project.gameoflife.ui.onboard.OnboardingScreen
+import org.koin.core.context.startKoin
+import kmp.project.gameoflife.di.appModule
 
 @Composable
 fun App(isTablet: Boolean = false) {
     val onboardingUtils = getOnboardingUtils()
     var showOnboarding by rememberSaveable { mutableStateOf(!onboardingUtils.isOnboardingCompleted()) }
     DragAndDropTheme {
+        startKoin {
+            modules(appModule)
+        }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
@@ -40,4 +45,3 @@ fun App(isTablet: Boolean = false) {
         }
     }
 }
-

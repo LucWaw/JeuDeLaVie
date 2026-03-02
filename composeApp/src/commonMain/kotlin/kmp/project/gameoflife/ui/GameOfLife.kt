@@ -33,6 +33,7 @@ import kmp.project.gameoflife.ui.game.runGameLoop
 import kmp.project.gameoflife.ui.pattern.MovablePatternViewModel
 import kmp.project.gameoflife.ui.pattern.PatternsUI
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
@@ -41,10 +42,10 @@ fun GameOfLife(
     isTablet: Boolean = false,
     showOnboarding: () -> Unit,
 ) {
-    val gameOfLifeViewModel = remember { GameOfLifeViewModel() }
+    val gameOfLifeViewModel = koinViewModel<GameOfLifeViewModel>()
     val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
-    val buttonsViewModel = remember { ButtonsViewModel() }
-    val patternViewModel = remember { MovablePatternViewModel() }
+    val buttonsViewModel = koinViewModel<ButtonsViewModel>()
+    val patternViewModel = koinViewModel<MovablePatternViewModel>()
 
     val gridRow = getGridRow()
     val gridColumn = getGridColumn()
