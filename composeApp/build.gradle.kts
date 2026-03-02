@@ -14,7 +14,7 @@ kotlin {
         compileSdk = 36
         minSdk = 26
         namespace = "kmp.project.gameoflife"
-        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+        androidResources.enable = true
     }
 
     jvm("desktop")
