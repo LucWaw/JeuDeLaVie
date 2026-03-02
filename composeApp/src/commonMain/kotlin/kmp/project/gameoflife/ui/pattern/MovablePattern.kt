@@ -59,6 +59,8 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
+import kmp.project.gameoflife.domain.modele.PatternType
+import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.draganddrop.Shapes
@@ -72,13 +74,13 @@ import org.jetbrains.compose.resources.stringResource
 fun PatternsUI(
     modifier: Modifier = Modifier,
     boardGridSize: Size,
-    patterns: List<PatternUIState>,
+    patterns: List<PatternMovable>,
     onAddCustomPattern: (List<Pair<Int, Int>>, String) -> Unit,
-    onGetPatternById: (Int) -> PatternUIState?,
-    onRotatePattern: (Int) -> Unit,
-    onTogglePatternSelection: (Int) -> Unit,
+    onGetPatternById: (Long) -> PatternMovable?,
+    onRotatePattern: (Long) -> Unit,
+    onTogglePatternSelection: (Long) -> Unit,
     isEditingMode: Boolean,
-    selectedPatternIds: List<Int>,
+    selectedPatternIds: List<Long>,
     currentGrid: List<Pair<Int, Int>> = emptyList(),
     previousGrid: List<Pair<Int, Int>> = emptyList(),
     isTablet: Boolean = false,
@@ -314,9 +316,9 @@ fun GridDialogContent(
 
 @Composable
 fun Pattern(
-    pattern: PatternUIState,
+    pattern: PatternMovable,
     rotatePattern: () -> Unit,
-    getPattern: () -> PatternUIState?,
+    getPattern: () -> PatternMovable?,
     modifier: Modifier = Modifier,
     tileSize: Size = Size(20f, 20f),
     isEditingMode: Boolean = false,

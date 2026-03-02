@@ -26,17 +26,17 @@ import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.buildTextTransferData
 import kmp.project.gameoflife.getText
 import kmp.project.gameoflife.hasText
-import kmp.project.gameoflife.ui.pattern.PatternUIState
+import kmp.project.gameoflife.domain.modele.PatternMovable
 import kotlin.math.min
 
 
 object LocalDragDropState {
-    var draggedPattern: PatternUIState? = null
+    var draggedPattern: PatternMovable? = null
 }
 
 @Composable
 fun CustomDragTarget(
-    data: () -> PatternUIState?,
+    data: () -> PatternMovable?,
     modifier: Modifier = Modifier,
     gridSize: Int = 1,
     tileSize: Size = Size(20f, 20f),
@@ -159,7 +159,7 @@ fun CustomDragTarget(
 @Composable
 fun CustomDropTarget(
     modifier: Modifier = Modifier,
-    onDropPattern: (PatternUIState) -> Unit,
+    onDropPattern: (PatternMovable) -> Unit,
     visual: @Composable () -> Unit
 ) {
     val dropTarget = remember(onDropPattern) {

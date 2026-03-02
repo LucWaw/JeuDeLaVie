@@ -14,7 +14,7 @@ class ButtonsViewModel : ViewModel() {
     val isEditingMode: Boolean
         get() = _isEditingMode.value
 
-    val selectedPatternIds = mutableStateListOf<Int>()
+    val selectedPatternIds = mutableStateListOf<Long>()
 
 
     fun togglePause() {
@@ -28,7 +28,7 @@ class ButtonsViewModel : ViewModel() {
         }
     }
 
-    fun togglePatternSelection(id: Int) {
+    fun togglePatternSelection(id: Long) {
         if (selectedPatternIds.contains(id)) {
             selectedPatternIds.remove(id)
         } else {

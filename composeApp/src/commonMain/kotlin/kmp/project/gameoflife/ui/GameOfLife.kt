@@ -98,7 +98,7 @@ fun GameOfLife(
             onAddCustomPattern = { cells, text ->
                 patternViewModel.addCustomPattern(
                     cells,
-                    doneText = text
+                    text
                 )
             },
             onGetPatternById = patternViewModel::getPatternById,

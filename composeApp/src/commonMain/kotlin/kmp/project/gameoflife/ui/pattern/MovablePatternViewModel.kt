@@ -1,51 +1,67 @@
 package kmp.project.gameoflife.ui.pattern
 
 import androidx.lifecycle.ViewModel
-import kmp.project.gameoflife.data.repository.service.PatternRepository
-import kmp.project.gameoflife.data.service.PatternFakeAPI
+import androidx.lifecycle.viewModelScope
+import kmp.project.gameoflife.domain.modele.PatternType
+import kmp.project.gameoflife.domain.modele.PatternMovable
+import kmp.project.gameoflife.domain.usecase.AddAPattern
+import kmp.project.gameoflife.domain.usecase.DeletePattern
+import kmp.project.gameoflife.domain.usecase.GetAllPatterns
 import kmp.project.gameoflife.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 
-class MovablePatternViewModel: ViewModel()  {
+class MovablePatternViewModel(
+    getAllPatterns: GetAllPatterns,
+    private val addPattern: AddAPattern,
+    private val deletePattern: DeletePattern
+): ViewModel()  {
 
+    // Stocke les patterns modifiés (rotation) uniquement en mémoire
+    private val _rotatedPatterns = MutableStateFlow<Map<Long, PatternMovable>>(emptyMap())
 
-    private val _patterns = MutableStateFlow(PatternRepository(PatternFakeAPI()).getAllPatterns().toMutableList())
-    val patterns: StateFlow<List<PatternUIState>> = _patterns.asStateFlow()
+    // Combine les patterns de Room avec les rotations en mémoire
+    val patterns: StateFlow<List<PatternMovable>> = getAllPatterns()
+        .combine(_rotatedPatterns) { roomPatterns, rotatedMap ->
+            roomPatterns.map { roomPattern ->
+                rotatedMap[roomPattern.id] ?: roomPattern
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-
-    fun getPatternById(id: Int): PatternUIState? {
+    fun getPatternById(id: Long): PatternMovable? {
         return patterns.value.find { it.id == id }
     }
 
     /**
-     * Tourner les cellules du pattern de 90 degrés dans le sens horaire
+     * Tourner les cellules du pattern de 90 degrés dans le sens horaire.
+     * La rotation reste uniquement en mémoire.
      */
-    fun rotatePattern(id : Int) {
-        _patterns.update { patterns ->
-            patterns.map { pattern ->
-                if (pattern.id == id) {
-                    val newCells = pattern.cells.map { (y, x) ->
-                        Pair(x, pattern.gridSize - 1 - y)
-                    }
-                    pattern.copy(cells = newCells)
-                } else {
-                    pattern
-                }
-            }.toMutableList()
+    fun rotatePattern(id : Long) {
+        val currentPattern = getPatternById(id) ?: return
+        val newCells = currentPattern.cells.map { (y, x) ->
+            Pair(x, currentPattern.gridSize - 1 - y)
         }
+        _rotatedPatterns.update { it + (id to currentPattern.copy(cells = newCells)) }
     }
 
     /**
      * Ajoute un nouveau pattern personnalisé.
-     * Calcule le "carré minimal" pour normaliser les cellules.
+     * L'ajout est persisté via Room.
      */
-    fun addCustomPattern(cells: List<Pair<Int, Int>>, emptyGridText : String = "", doneText: String = "") {
+    fun addCustomPattern(cells: List<Pair<Int, Int>>, text: String = "") {
         if (cells.isEmpty()) {
-            showToast(emptyGridText)
+            showToast(text)
             return
         }
 
@@ -64,28 +80,35 @@ class MovablePatternViewModel: ViewModel()  {
         val height = maxY - minY + 1
         val gridSize = maxOf(width, height)
 
-        val newId = (_patterns.value.maxOfOrNull { it.id } ?: 0) + 1
-        val name = "Custom #$newId"
+        val nextIdSuffix = (patterns.value.maxOfOrNull { it.id } ?: 0) + 1
+        val name = "Custom #$nextIdSuffix"
 
-        val newPattern = PatternUIState(
-            id = newId,
+        val newPattern = PatternMovable(
             name = name,
             gridSize = gridSize,
             cells = normalizedCells,
             type = PatternType.CUSTOM
         )
 
-        _patterns.update { currentList ->
-            // On place 'newPattern' en premier dans la nouvelle liste
-            (listOf(newPattern) + currentList).toMutableList()
+        viewModelScope.launch {
+            addPattern.invoke(newPattern)
+            showToast(text)
         }
-        
-        showToast(doneText)
     }
 
-    fun deletePatterns(ids: List<Int>) {
-        _patterns.update { currentList ->
-            currentList.filterNot { it.id in ids }.toMutableList()
+    /**
+     * Supprime les patterns spécifiés.
+     * La suppression est gérée par Room.
+     */
+    fun deletePatterns(ids: List<Long>) {
+        viewModelScope.launch {
+            // Nettoyage de la mémoire
+            _rotatedPatterns.update { it - ids.toSet() }
+            
+            val patternsToDelete = patterns.value.filter { it.id in ids }
+            patternsToDelete.forEach { 
+                deletePattern.invoke(it)
+            }
         }
     }
 }
