@@ -35,7 +35,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +62,6 @@ import gameoflife.composeapp.generated.resources.yes
 import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.draganddrop.Shapes
-import kmp.project.gameoflife.ui.game.ButtonsViewModel
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import org.jetbrains.compose.resources.painterResource
@@ -73,15 +71,18 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PatternsUI(
     boardGridSize: Size,
+    patterns: List<PatternUIState>,
+    onAddCustomPattern: (List<Pair<Int, Int>>, String) -> Unit,
+    onGetPatternById: (Int) -> PatternUIState?,
+    onRotatePattern: (Int) -> Unit,
+    onTogglePatternSelection: (Int) -> Unit,
+    isEditingMode: Boolean,
+    selectedPatternIds: List<Int>,
     currentGrid: List<Pair<Int, Int>> = emptyList(),
     previousGrid: List<Pair<Int, Int>> = emptyList(),
     isTablet: Boolean = false,
     isGameRunning: Boolean = false,
-    buttonsViewModel: ButtonsViewModel? = null,
-    viewModel: MovablePatternViewModel = remember { MovablePatternViewModel() }
 ) {
-    val patternsUiState by viewModel.patterns.collectAsState()
-
     val gridRow = if (isTablet) 20 else getGridRow()
     val gridColumn = if (isTablet) 80 else getGridColumn()
 
@@ -107,7 +108,7 @@ fun PatternsUI(
 
         when {
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
-                viewModel.addCustomPattern(
+                onAddCustomPattern(
                     emptyList(),
                     customPatternEmptyError
                 ) // Déclenchera le toast "vide"
@@ -115,12 +116,12 @@ fun PatternsUI(
             }
 
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
-                viewModel.addCustomPattern(currentGrid, doneText = customPatternCurrentShortSaved)
+                onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
 
             currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
-                viewModel.addCustomPattern(previousGrid, doneText = customPatternPreviousShortSaved)
+                onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
                 showGridCustomPatternDialog = false//Never read but useful for remember
             }
 
@@ -128,18 +129,18 @@ fun PatternsUI(
                 // Les deux sont remplies, on affiche le dialogue
                 SelectGridForCustomPatternDialogCustom(
                     onDismissRequest = {
-                        showGridCustomPatternDialog = false
-                    },//Never read but useful for remember
+                        showGridCustomPatternDialog = false //Never read but useful for remember
+                    },
                     onConfirmCurrentGridPattern = {
-                        viewModel.addCustomPattern(
+                        onAddCustomPattern(
                             currentGrid,
-                            doneText = customPatternCurrentShortSaved
+                            customPatternCurrentShortSaved
                         )
                     },
                     onConfirmPreviousGridPattern = {
-                        viewModel.addCustomPattern(
+                        onAddCustomPattern(
                             previousGrid,
-                            doneText = customPatternPreviousShortSaved
+                            customPatternPreviousShortSaved
                         )
                     }
                 )
@@ -191,20 +192,19 @@ fun PatternsUI(
                     )
                 }
             }
-            items(patternsUiState.size) { index ->
-                val pattern = patternsUiState[index]
-                val isEditing = buttonsViewModel?.isEditingMode ?: false
-                val isSelected = buttonsViewModel?.selectedPatternIds?.contains(pattern.id) ?: false
+            items(patterns.size) { index ->
+                val pattern = patterns[index]
+                val isSelected = selectedPatternIds.contains(pattern.id)
 
                 Pattern(
                     modifier = Modifier.width(rowHeight - 50.dp).fillMaxHeight(),
                     pattern = pattern,
-                    getPattern = { viewModel.getPatternById(pattern.id) },
-                    rotatePattern = { viewModel.rotatePattern(pattern.id) },
+                    getPattern = { onGetPatternById(pattern.id) },
+                    rotatePattern = { onRotatePattern(pattern.id) },
                     tileSize = tileSize,
-                    isEditingMode = isEditing,
+                    isEditingMode = isEditingMode,
                     isSelected = isSelected,
-                    onSelect = { buttonsViewModel?.togglePatternSelection(pattern.id) }
+                    onSelect = { onTogglePatternSelection(pattern.id) }
                 )
             }
         }

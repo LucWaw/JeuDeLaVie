@@ -19,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +29,7 @@ import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.game.ButtonsViewModel
+import kmp.project.gameoflife.ui.game.runGameLoop
 import kmp.project.gameoflife.ui.pattern.MovablePatternViewModel
 import kmp.project.gameoflife.ui.pattern.PatternsUI
 import org.jetbrains.compose.resources.painterResource
@@ -49,22 +49,27 @@ fun GameOfLife(
     val gridRow = getGridRow()
     val gridColumn = getGridColumn()
 
-    if (isTablet) {
-        LaunchedEffect(Unit) {
-            gameOfLifeViewModel.initCellularSpace(
-                20,
-                80
-            )
-        }
-    } else {
-        LaunchedEffect(Unit) {
-            gameOfLifeViewModel.initCellularSpace(
-                gridRow,
-                gridColumn
-            )
+    LaunchedEffect(isTablet) {
+        if (isTablet) {
+            gameOfLifeViewModel.initCellularSpace(20, 80)
+        } else {
+            gameOfLifeViewModel.initCellularSpace(gridRow, gridColumn)
         }
     }
 
+    // Game Loop logic
+    val cellularSpace by gameOfLifeViewModel.cellularSpace.collectAsState()
+    LaunchedEffect(buttonsViewModel.isRunning, cellularSpace) {
+        if (buttonsViewModel.isRunning) {
+            gameOfLifeViewModel.capturePreviousGrid()
+            runGameLoop(
+                updateCells = { gameOfLifeViewModel.updateCells(it) },
+                addToCounter = { gameOfLifeViewModel.addToCounter() },
+                cellularSpace = cellularSpace,
+                speedFlow = gameOfLifeViewModel.speedState
+            )
+        }
+    }
 
     Column(
         modifier
@@ -74,12 +79,13 @@ fun GameOfLife(
         Column {
 
             //Game board
+            val gridUiSize by gameOfLifeViewModel.gridSize.collectAsState()
             gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
                 Board(
                     isTablet = isTablet,
                     gameUIState = gameUiState,
                     onCellClick = gameOfLifeViewModel.onCellClick,
-                    gridUiSize = gameOfLifeViewModel.gridSize,
+                    gridUiSize = gridUiSize,
                     gridChange ={ gameOfLifeViewModel.modifyGridSize(it) }
                 )
             }
@@ -89,27 +95,32 @@ fun GameOfLife(
 
 
             val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
+            val patterns by patternViewModel.patterns.collectAsState()
             PatternsUI(
                 boardGridSize = boardGridSize,
+                patterns = patterns,
+                onAddCustomPattern = { cells, text -> patternViewModel.addCustomPattern(cells, doneText = text) },
+                onGetPatternById = patternViewModel::getPatternById,
+                onRotatePattern = patternViewModel::rotatePattern,
+                onTogglePatternSelection = buttonsViewModel::togglePatternSelection,
+                isEditingMode = buttonsViewModel.isEditingMode,
+                selectedPatternIds = buttonsViewModel.selectedPatternIds,
                 currentGrid = gameUIState.colored,
                 previousGrid = gameOfLifeViewModel.previousGrid,
                 isTablet = isTablet,
                 isGameRunning = buttonsViewModel.isRunning,
-                buttonsViewModel = buttonsViewModel,
-                viewModel = patternViewModel
             )
         }
 
         //Play pause button
-        val playScope = rememberCoroutineScope()
         Buttons(
-            playScope,
-            gameOfLifeViewModel.cellularSpace.collectAsState().value,
-            { gameOfLifeViewModel.updateCells(it) },
-            { gameOfLifeViewModel.addToCounter() },
-            gameOfLifeViewModel.speedState,
-            { gameOfLifeViewModel.capturePreviousGrid() },
-            buttonsViewModel = buttonsViewModel,
+            cellularSpace = cellularSpace,
+            updateCells = { gameOfLifeViewModel.updateCells(it) },
+            addToCounter = { gameOfLifeViewModel.addToCounter() },
+            isEditingMode = buttonsViewModel.isEditingMode,
+            isRunning = buttonsViewModel.isRunning,
+            onToggleEditingMode = { buttonsViewModel.toggleEditingMode() },
+            onTogglePause = { buttonsViewModel.togglePause() },
             onDeleteSelectedPatterns = {
                 patternViewModel.deletePatterns(buttonsViewModel.selectedPatternIds.toList())
             }

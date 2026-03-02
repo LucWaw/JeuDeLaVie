@@ -27,20 +27,18 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.play_arrow_24px
 import gameoflife.composeapp.generated.resources.yes
 import kmp.project.gameoflife.spacing.CellularSpace
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Buttons(
-    playScope: CoroutineScope,
     cellularSpace: CellularSpace,
     updateCells: (List<Pair<Int, Int>>) -> Unit,
     addToCounter: () -> Unit,
-    speedValue: StateFlow<Float>,
-    capturePreviousGrid: () -> Unit,
-    buttonsViewModel: ButtonsViewModel,
+    isEditingMode: Boolean,
+    isRunning: Boolean,
+    onToggleEditingMode: () -> Unit,
+    onTogglePause: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteSelectedPatterns: () -> Unit = {}
 ) {
@@ -49,15 +47,15 @@ fun Buttons(
 
     if (showDeleteConfirmation) {
         AlertDialog(
-            onDismissRequest = { showDeleteConfirmation = false },
+            onDismissRequest = { showDeleteConfirmation = false },//Not really never read
             title = { Text(text = stringResource(Res.string.delete_selected_patterns_title)) },
             text = { Text(text = stringResource(Res.string.delete_selected_patterns_confirmation)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         onDeleteSelectedPatterns()
-                        buttonsViewModel.toggleEditingMode()
-                        showDeleteConfirmation = false
+                        onToggleEditingMode()
+                        showDeleteConfirmation = false //Not really never read
                     }
                 ) {
                     Text(text = stringResource(Res.string.yes))
@@ -65,7 +63,7 @@ fun Buttons(
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showDeleteConfirmation = false }
+                    onClick = { showDeleteConfirmation = false }//Not really never read
                 ) {
                     Text(text = stringResource(Res.string.no))
                 }
@@ -76,7 +74,7 @@ fun Buttons(
     Row(modifier = modifier.fillMaxWidth()) {
         Button(
             onClick = {
-                buttonsViewModel.toggleEditingMode()
+                onToggleEditingMode()
             },
             modifier = modifier.weight(0.5f).padding(8.dp)
         ) {
@@ -86,10 +84,10 @@ fun Buttons(
             )
         }
 
-        if (buttonsViewModel.isEditingMode) {
+        if (isEditingMode) {
             Button(
                 onClick = {
-                    showDeleteConfirmation = true
+                    showDeleteConfirmation = true //Not really never read
                 },
                 modifier = modifier.weight(0.5f).padding(8.dp)
             ) {
@@ -115,24 +113,12 @@ fun Buttons(
             }
             Button(
                 onClick = {
-                    buttonsViewModel.togglePause() // Met le jeu en pause ou en marche
-
-                    if (buttonsViewModel.isRunning) {
-                        capturePreviousGrid() // On enregistre l'état actuel comme "précédent" avant de lancer la boucle
-                        runGameLoop(
-                            playScope,
-                            { updateCells(it) },
-                            addToCounter,
-                            cellularSpace,
-                            buttonsViewModel,
-                            speedValue
-                        )
-                    }
+                    onTogglePause()
                 },
                 modifier = modifier.weight(0.5f).padding(8.dp)
             ) {
                 val painter = painterResource(Res.drawable.baseline_pause_24)
-                if (buttonsViewModel.isRunning) {
+                if (isRunning) {
                     Icon(painter, contentDescription = "pause")
                 } else {
                     Icon(
@@ -142,14 +128,5 @@ fun Buttons(
                 }
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }
