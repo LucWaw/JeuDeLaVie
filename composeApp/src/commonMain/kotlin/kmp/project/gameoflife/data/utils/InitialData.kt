@@ -44,9 +44,9 @@ object InitialData {
         Pattern(
             id = 5,
             rle = $$"""
-            #N Pentadecathlon
-            x = 10, y = 3, rule = B3/S23
-            2bo4bo2b$2ob4ob2o$2bo4bo!
+            #N 2x9 Column
+            x = 2, y = 9, rule = B3/S23
+            9o$9o$!
         """.trimIndent(),
             type = PatternType.MOVING
         ),
