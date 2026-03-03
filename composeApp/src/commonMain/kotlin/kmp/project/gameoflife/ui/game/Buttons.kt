@@ -29,15 +29,13 @@ import gameoflife.composeapp.generated.resources.edit_24px
 import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.play_arrow_24px
 import gameoflife.composeapp.generated.resources.yes
-import kmp.project.gameoflife.spacing.CellularSpace
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Buttons(
-    cellularSpace: CellularSpace,
-    updateCells: (List<Pair<Int, Int>>) -> Unit,
-    addToCounter: () -> Unit,
+    aliveCells: List<Pair<Int, Int>>,
+    onResetGrid: () -> Unit,
     isEditingMode: Boolean,
     isRunning: Boolean,
     onToggleEditingMode: () -> Unit,
@@ -95,7 +93,7 @@ fun Buttons(
         if (isEditingMode) {
             Button(
                 onClick = {
-                    showDeleteConfirmation = true //Never read but useful for remember
+                    showDeleteConfirmation = true//Never read but useful for remember
                 },
                 modifier = Modifier.weight(1f).padding(4.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -109,23 +107,22 @@ fun Buttons(
                 )
             }
         } else {
-            FilledTonalButton(
-                onClick = {
-                    cellularSpace.resetGrid()
-                    updateCells(mutableListOf())
-                    addToCounter()
-                },
-                modifier = Modifier.weight(1f).padding(4.dp),
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                )
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.delete_24px),
-                    contentDescription = "Delete All"
-                )
+            if(aliveCells.isNotEmpty()){
+                FilledTonalButton(
+                    onClick = onResetGrid,
+                    modifier = Modifier.weight(1f).padding(4.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.delete_24px),
+                        contentDescription = "Delete All"
+                    )
+                }
             }
+
             Button(
                 onClick = {
                     onTogglePause()

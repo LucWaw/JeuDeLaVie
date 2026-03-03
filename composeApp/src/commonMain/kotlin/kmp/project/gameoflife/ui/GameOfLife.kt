@@ -81,15 +81,13 @@ fun GameOfLife(
 
         //Game board
         val gridUiSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
-        gameOfLifeViewModel.mutableGameUiState.collectAsStateWithLifecycle().value.let { gameUiState -> //ou if stateElement.value != null
-            Board(
-                isTablet = isTablet,
-                gameUIState = gameUiState,
-                onCellClick = gameOfLifeViewModel.onCellClick,
-                gridUiSize = gridUiSize,
-                gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
-            )
-        }
+        Board(
+            isTablet = isTablet,
+            gameUIState = gameUIState,
+            onCellClick = gameOfLifeViewModel.onCellClick,
+            gridUiSize = gridUiSize,
+            gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
+        )
 
 
         val boardGridSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
@@ -117,9 +115,12 @@ fun GameOfLife(
 
         //Play pause button
         Buttons(
-            cellularSpace = cellularSpace,
-            updateCells = { gameOfLifeViewModel.updateCells(it) },
-            addToCounter = { gameOfLifeViewModel.addToCounter() },
+            aliveCells = gameUIState.colored,
+            onResetGrid = { gameOfLifeViewModel.resetGrid()
+                          if (buttonsViewModel.isRunning){
+                              buttonsViewModel.togglePause()
+                          }
+                          },
             isEditingMode = buttonsViewModel.isEditingMode,
             isRunning = buttonsViewModel.isRunning,
             onToggleEditingMode = { buttonsViewModel.toggleEditingMode() },
@@ -139,7 +140,7 @@ fun GameOfLife(
                 modifier = Modifier.weight(1f),
                 onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) }
             )
-            
+
             IconButton(
                 onClick = {
                     showOnboarding()

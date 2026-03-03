@@ -412,7 +412,7 @@ fun Pattern(
                                     .border(
                                         BorderStroke(
                                             width = 0.4.dp,
-                                            color = Color.White.copy(alpha = 0.4f)
+                                            color = MaterialTheme.colorScheme.outlineVariant
                                         )
                                     )
                             )
