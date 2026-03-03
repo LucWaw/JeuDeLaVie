@@ -191,7 +191,7 @@ fun PatternsUI(
                         modifier = Modifier.size(32.dp),
                         painter = painterResource(Res.drawable.add_24px),
                         contentDescription = "Add a pattern",
-                        tint = Color(0xFF9F2B68)
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }

@@ -15,7 +15,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.ui.board.Board
@@ -43,7 +43,7 @@ fun GameOfLife(
     showOnboarding: () -> Unit,
 ) {
     val gameOfLifeViewModel = koinViewModel<GameOfLifeViewModel>()
-    val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
+    val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsStateWithLifecycle()
     val buttonsViewModel = koinViewModel<ButtonsViewModel>()
     val patternViewModel = koinViewModel<MovablePatternViewModel>()
 
@@ -59,7 +59,7 @@ fun GameOfLife(
     }
 
     // Game Loop logic
-    val cellularSpace by gameOfLifeViewModel.cellularSpace.collectAsState()
+    val cellularSpace by gameOfLifeViewModel.cellularSpace.collectAsStateWithLifecycle()
     LaunchedEffect(buttonsViewModel.isRunning, cellularSpace) {
         if (buttonsViewModel.isRunning) {
             gameOfLifeViewModel.capturePreviousGrid()
@@ -78,8 +78,8 @@ fun GameOfLife(
     ) {
 
         //Game board
-        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsState()
-        gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
+        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
+        gameOfLifeViewModel.mutableGameUiState.collectAsStateWithLifecycle().value.let { gameUiState -> //ou if stateElement.value != null
             Board(
                 isTablet = isTablet,
                 gameUIState = gameUiState,
@@ -90,8 +90,8 @@ fun GameOfLife(
         }
 
 
-        val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
-        val patterns by patternViewModel.patterns.collectAsState()
+        val boardGridSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
+        val patterns by patternViewModel.patterns.collectAsStateWithLifecycle()
         PatternsUI(
             boardGridSize = boardGridSize,
             patterns = patterns,
