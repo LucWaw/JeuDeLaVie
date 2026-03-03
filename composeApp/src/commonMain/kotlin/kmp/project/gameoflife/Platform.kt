@@ -1,5 +1,6 @@
 package kmp.project.gameoflife
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -31,3 +32,6 @@ expect fun DragAndDropEvent.getText(): String?
 expect fun showToast(message: String)
 
 expect fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase>
+
+@Composable
+expect fun platformColors(useDarkTheme: Boolean): ColorScheme

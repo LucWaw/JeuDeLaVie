@@ -1,4 +1,4 @@
-package kmp.project.gameoflife.ui.draganddrop
+package kmp.project.gameoflife.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
