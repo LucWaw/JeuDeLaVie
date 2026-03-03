@@ -15,7 +15,6 @@ import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layout
@@ -51,6 +50,7 @@ fun CustomDragTarget(
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
     val colorOfColoredCells = MaterialTheme.colorScheme.primary
+    val outlineColor = MaterialTheme.colorScheme.outline
 
     val dragSourceModifier = remember(data, tileSize, ghostSizePx, boxSize, isEnabled) {
         if (!isEnabled) Modifier else {
@@ -94,7 +94,7 @@ fun CustomDragTarget(
                                     )
                                 }
                                 drawRect(
-                                    color = Color.Gray,
+                                    color = outlineColor,
                                     topLeft = topLeft,
                                     size = rectSize,
                                     style = Stroke(width = 1.dp.toPx())

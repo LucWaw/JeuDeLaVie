@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,7 +50,7 @@ fun Buttons(
 
     if (showDeleteConfirmation) {
         AlertDialog(
-            onDismissRequest = { showDeleteConfirmation = false },//Not really never read
+            onDismissRequest = { showDeleteConfirmation = false },//Never read but useful for remember
             title = { Text(text = stringResource(Res.string.delete_selected_patterns_title)) },
             text = { Text(text = stringResource(Res.string.delete_selected_patterns_confirmation)) },
             confirmButton = {
@@ -55,15 +58,16 @@ fun Buttons(
                     onClick = {
                         onDeleteSelectedPatterns()
                         onToggleEditingMode()
-                        showDeleteConfirmation = false //Not really never read
-                    }
+                        showDeleteConfirmation = false//Never read but useful for remember
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
                     Text(text = stringResource(Res.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showDeleteConfirmation = false }//Not really never read
+                    onClick = { showDeleteConfirmation = false }//Never read but useful for remember
                 ) {
                     Text(text = stringResource(Res.string.no))
                 }
@@ -71,12 +75,16 @@ fun Buttons(
         )
     }
 
-    Row(modifier = modifier.fillMaxWidth()) {
-        Button(
+    Row(modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+        FilledTonalButton(
             onClick = {
                 onToggleEditingMode()
             },
-            modifier = modifier.weight(0.5f).padding(8.dp)
+            modifier = Modifier.weight(1f).padding(4.dp),
+            colors = ButtonDefaults.filledTonalButtonColors(
+                containerColor = if (isEditingMode) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = if (isEditingMode) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+            )
         ) {
             Icon(
                 painter = painterResource(Res.drawable.edit_24px),
@@ -87,9 +95,13 @@ fun Buttons(
         if (isEditingMode) {
             Button(
                 onClick = {
-                    showDeleteConfirmation = true //Not really never read
+                    showDeleteConfirmation = true //Never read but useful for remember
                 },
-                modifier = modifier.weight(0.5f).padding(8.dp)
+                modifier = Modifier.weight(1f).padding(4.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.delete_forever_24px),
@@ -97,14 +109,17 @@ fun Buttons(
                 )
             }
         } else {
-            Button(
+            FilledTonalButton(
                 onClick = {
-                    //effacer la grille
                     cellularSpace.resetGrid()
                     updateCells(mutableListOf())
                     addToCounter()
                 },
-                modifier = modifier.weight(0.5f).padding(8.dp)
+                modifier = Modifier.weight(1f).padding(4.dp),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                )
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.delete_24px),
@@ -115,17 +130,17 @@ fun Buttons(
                 onClick = {
                     onTogglePause()
                 },
-                modifier = modifier.weight(0.5f).padding(8.dp)
+                modifier = Modifier.weight(1f).padding(4.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isRunning) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
+                )
             ) {
-                val painter = painterResource(Res.drawable.baseline_pause_24)
-                if (isRunning) {
-                    Icon(painter, contentDescription = "pause")
-                } else {
-                    Icon(
-                        painter = painterResource(Res.drawable.play_arrow_24px),
-                        contentDescription = "Play"
-                    )
-                }
+                val painter = if (isRunning) 
+                    painterResource(Res.drawable.baseline_pause_24) 
+                else 
+                    painterResource(Res.drawable.play_arrow_24px)
+                
+                Icon(painter, contentDescription = if (isRunning) "pause" else "Play")
             }
         }
     }

@@ -1,17 +1,18 @@
 package kmp.project.gameoflife.ui
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +76,7 @@ fun GameOfLife(
     Column(
         modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         //Game board
@@ -129,11 +131,15 @@ fun GameOfLife(
 
 
         Row(
-            Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
-            Spacer(Modifier.weight(1f))
+            SliderSpeed(
+                modifier = Modifier.weight(1f),
+                onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) }
+            )
+            
             IconButton(
                 onClick = {
                     showOnboarding()
@@ -141,21 +147,20 @@ fun GameOfLife(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.info_24px),
-                    contentDescription = "Refresh",
+                    contentDescription = "Info",
+                    tint = MaterialTheme.colorScheme.primary
                 )
-
-
             }
-            Spacer(Modifier.weight(1f))
+
             GenerationCounter(gameUIState)
         }
     }
 }
 
 @Composable
-fun SliderSpeed(onPositionChange: (Float) -> Unit) {
+fun SliderSpeed(modifier: Modifier = Modifier, onPositionChange: (Float) -> Unit) {
     var sliderPosition by remember { mutableFloatStateOf(1f) }
-    Column(Modifier.width(150.dp)) {
+    Column(modifier = modifier.padding(horizontal = 8.dp)) {
         Slider(
             value = sliderPosition,
             onValueChange = {
@@ -169,26 +174,17 @@ fun SliderSpeed(onPositionChange: (Float) -> Unit) {
 
 @Composable
 private fun GenerationCounter(gameUIState: GameUiState) {
-    Row(
-        modifier = Modifier
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    bottomStartPercent = 50,
-                    topEndPercent = 50,
-                    bottomEndPercent = 50
-                )
-            ),
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
     ) {
-        Spacer(Modifier.width(12.dp))
         Text(
-            text = "Generation #${gameUIState.generationCounter}",
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            text = "Gen #${gameUIState.generationCounter}",
+            style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold
         )
-        Spacer(Modifier.width(12.dp))
-
     }
 }

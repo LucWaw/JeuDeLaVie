@@ -172,8 +172,8 @@ fun PatternsUI(
                         .fillMaxHeight()
                         .border(
                             BorderStroke(
-                                width = 3.dp,
-                                color = MaterialTheme.colorScheme.tertiary // Couleur Custom pour le bouton d'ajout
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.tertiary
                             ),
                             MaterialTheme.shapes.medium
                         ),
@@ -185,13 +185,15 @@ fun PatternsUI(
                             showToast(runningText)
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.tertiary
+                    )
                 ) {
                     Icon(
                         modifier = Modifier.size(32.dp),
                         painter = painterResource(Res.drawable.add_24px),
                         contentDescription = "Add a pattern",
-                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -225,7 +227,9 @@ fun SelectGridForCustomPatternDialogCustom(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             GridDialogContent(
                 onDismissRequest,
@@ -252,7 +256,7 @@ fun GridDialogContent(
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = title)
+        Text(text = title, style = MaterialTheme.typography.titleLarge)
         val previousGrid = stringResource(Res.string.custom_pattern_previous_grid)
         val currentGrid = stringResource(Res.string.custom_pattern_current_grid)
 
@@ -274,7 +278,7 @@ fun GridDialogContent(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
+                        .height(56.dp)
                         .selectable(
                             selected = (options.name == selectedOption),
                             onClick = { onOptionSelected(options.name) },
@@ -287,7 +291,11 @@ fun GridDialogContent(
                         selected = (options.name == selectedOption),
                         onClick = { onOptionSelected(options.name) }
                     )
-                    Text(text = options.name)
+                    Text(
+                        text = options.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
                 }
             }
         }
@@ -325,7 +333,7 @@ fun Pattern(
 ) {
 
     val patternColor = when (pattern.type) {
-        PatternType.STILL_LIFE -> Color.Gray
+        PatternType.STILL_LIFE -> MaterialTheme.colorScheme.outline
         PatternType.MOVING -> MaterialTheme.colorScheme.secondary
         PatternType.CUSTOM -> MaterialTheme.colorScheme.tertiary
     }
@@ -339,6 +347,7 @@ fun Pattern(
                     width = if (isSelected) 2.dp else 1.dp,
                     color = if (isSelected) MaterialTheme.colorScheme.error else patternColor
                 ),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor
             ) {
                 Box(
@@ -365,10 +374,11 @@ fun Pattern(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, Shapes.medium)
                     .border(
                         BorderStroke(
-                            width = if (isSelected) 4.dp else 2.dp,
-                            color = if (isSelected) MaterialTheme.colorScheme.error else patternColor
+                            width = if (isSelected) 3.dp else 1.dp,
+                            color = if (isSelected) MaterialTheme.colorScheme.error else patternColor.copy(alpha = 0.5f)
                         ),
                         Shapes.medium
                     )
@@ -399,14 +409,12 @@ fun Pattern(
                                 modifier = Modifier
                                     .aspectRatio(1f)
                                     .background(
-                                        if (isAlive) patternColor else patternColor.copy(alpha = 0.03f)
+                                        if (isAlive) patternColor else Color.Transparent
                                     )
                                     .border(
                                         BorderStroke(
-                                            width = 0.5.dp,
-                                            color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(
-                                                alpha = 0.1f
-                                            )
+                                            width = 0.4.dp,
+                                            color = Color.White.copy(alpha = 0.4f)
                                         )
                                     )
                             )
