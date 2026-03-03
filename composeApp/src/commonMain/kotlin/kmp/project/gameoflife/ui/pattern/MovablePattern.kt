@@ -226,8 +226,7 @@ fun SelectGridForCustomPatternDialogCustom(
         Surface(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
@@ -273,12 +272,11 @@ fun GridDialogContent(
 
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(gridRadioOptions[0].name) }
 
-        Column(Modifier.selectableGroup()) {
+        Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             gridRadioOptions.forEach { options ->
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
                         .selectable(
                             selected = (options.name == selectedOption),
                             onClick = { onOptionSelected(options.name) },
