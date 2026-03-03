@@ -2,57 +2,62 @@ package kmp.project.gameoflife.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary
-val PrimaryLight = Color(0xFF0061A4)
-val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFD1E4FF)
-val OnPrimaryContainerLight = Color(0xFF001D36)
+// --- LIGHT THEME (Matte & Vibrant) ---
+val primaryLight = Color(0xFF0061A4) // Blue
+val onPrimaryLight = Color(0xFFFFFFFF)
+val primaryContainerLight = Color(0xFFD1E4FF)
+val onPrimaryContainerLight = Color(0xFF001D36)
 
-val PrimaryDark = Color(0xFF9ECAFF)
-val OnPrimaryDark = Color(0xFF003258)
-val PrimaryContainerDark = Color(0xFF00497D)
-val OnPrimaryContainerDark = Color(0xFFD1E4FF)
+val secondaryLight = Color(0xFFFF9800) // Orange (pour MOVING)
+val onSecondaryLight = Color(0xFFFFFFFF)
+val secondaryContainerLight = Color(0xFFFFDBC9)
+val onSecondaryContainerLight = Color(0xFF330B00)
 
-// Secondary
-val SecondaryLight = Color(0xFF535F70)
-val OnSecondaryLight = Color(0xFFFFFFFF)
-val SecondaryContainerLight = Color(0xFFD7E3F7)
-val OnSecondaryContainerLight = Color(0xFF101C2B)
+val tertiaryLight = Color(0xFF9F2B68) // Pink/Prune (pour CUSTOM)
+val onTertiaryLight = Color(0xFFFFFFFF)
+val tertiaryContainerLight = Color(0xFFFFD8E4)
+val onTertiaryContainerLight = Color(0xFF3D0023)
 
-val SecondaryDark = Color(0xFFBBC7DB)
-val OnSecondaryDark = Color(0xFF253140)
-val SecondaryContainerDark = Color(0xFF3B4858)
-val OnSecondaryContainerDark = Color(0xFFD7E3F7)
+val errorLight = Color(0xFFBA1A1A)
+val onErrorLight = Color(0xFFFFFFFF)
+val errorContainerLight = Color(0xFFFFDAD6)
+val onErrorContainerLight = Color(0xFF410002)
 
-// Tertiary
-val TertiaryLight = Color(0xFF6B5778)
-val OnTertiaryLight = Color(0xFFFFFFFF)
-val TertiaryContainerLight = Color(0xFFF2DAFF)
-val OnTertiaryContainerLight = Color(0xFF251431)
+val backgroundLight = Color(0xFFFDFCFF)
+val onBackgroundLight = Color(0xFF1A1C1E)
+val surfaceLight = Color(0xFFFDFCFF)
+val onSurfaceLight = Color(0xFF1A1C1E)
+val surfaceVariantLight = Color(0xFFDFE2EB)
+val onSurfaceVariantLight = Color(0xFF43474E)
+val outlineLight = Color(0xFF73777F) // Gris (pour STILL_LIFE)
+val outlineVariantLight = Color(0xFFC3C6CF)
 
-val TertiaryDark = Color(0xFFD6BEE4)
-val OnTertiaryDark = Color(0xFF3B2948)
-val TertiaryContainerDark = Color(0xFF523F5F)
-val OnTertiaryContainerDark = Color(0xFFF2DAFF)
+// --- DARK THEME (Matte & Vibrant) ---
+val primaryDark = Color(0xFF9ECAFF) // Lighter Blue
+val onPrimaryDark = Color(0xFF003258)
+val primaryContainerDark = Color(0xFF00497D)
+val onPrimaryContainerDark = Color(0xFFD1E4FF)
 
-// Error
-val ErrorLight = Color(0xFFBA1A1A)
-val OnErrorLight = Color(0xFFFFFFFF)
-val ErrorContainerLight = Color(0xFFFFDAD6)
-val OnErrorContainerLight = Color(0xFF410002)
+val secondaryDark = Color(0xFFFFCC80) // Lighter Orange
+val onSecondaryDark = Color(0xFF4D2200)
+val secondaryContainerDark = Color(0xFF6E3200)
+val onSecondaryContainerDark = Color(0xFFFFDBC9)
 
-val ErrorDark = Color(0xFFFFB4AB)
-val OnErrorDark = Color(0xFF690005)
-val ErrorContainerDark = Color(0xFF93000A)
-val OnErrorContainerDark = Color(0xFFFFDAD6)
+val tertiaryDark = Color(0xFFFFB0D0) // Lighter Pink
+val onTertiaryDark = Color(0xFF5F003A)
+val tertiaryContainerDark = Color(0xFF810D4F)
+val onTertiaryContainerDark = Color(0xFFFFD8E4)
 
-// Neutral
-val BackgroundLight = Color(0xFFFDFCFF)
-val OnBackgroundLight = Color(0xFF1A1C1E)
-val SurfaceLight = Color(0xFFFDFCFF)
-val OnSurfaceLight = Color(0xFF1A1C1E)
+val errorDark = Color(0xFFFFB4AB)
+val onErrorDark = Color(0xFF690005)
+val errorContainerDark = Color(0xFF93000A)
+val onErrorContainerDark = Color(0xFFFFDAD6)
 
-val BackgroundDark = Color(0xFF1A1C1E)
-val OnBackgroundDark = Color(0xFFE2E2E6)
-val SurfaceDark = Color(0xFF1A1C1E)
-val OnSurfaceDark = Color(0xFFE2E2E6)
+val backgroundDark = Color(0xFF111318)
+val onBackgroundDark = Color(0xFFE2E2E6)
+val surfaceDark = Color(0xFF111318)
+val onSurfaceDark = Color(0xFFE2E2E6)
+val surfaceVariantDark = Color(0xFF43474E)
+val onSurfaceVariantDark = Color(0xFFC3C6CF)
+val outlineDark = Color(0xFF8D9199)
+val outlineVariantDark = Color(0xFF43474E)
