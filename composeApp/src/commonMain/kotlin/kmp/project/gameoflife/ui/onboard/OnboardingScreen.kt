@@ -3,7 +3,6 @@ package kmp.project.gameoflife.ui.onboard
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -58,7 +56,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp),
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -70,8 +68,8 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                     ButtonUi(
                         modifier = Modifier.alpha(if(buttonState.value[0].isNotEmpty()) 1f else 0f),
                         text = buttonState.value[0],
-                        backgroundColor = Color.White,
-                        textColor = Color.Gray
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        textColor = MaterialTheme.colorScheme.secondary
                     ) {
                         scope.launch {
                             if (pagerState.currentPage > 0) {
@@ -98,8 +96,8 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                 ) {
                     ButtonUi(
                         text = buttonState.value[1],
-                        backgroundColor = MaterialTheme.colors.primary,
-                        textColor = MaterialTheme.colors.onPrimary
+                        backgroundColor = MaterialTheme.colorScheme.primary,
+                        textColor = MaterialTheme.colorScheme.onPrimary
                     ) {
                         scope.launch {
                             if (pagerState.currentPage < pages.size - 1) {
@@ -112,13 +110,11 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                 }
 
             }
-        }, content = {
-            Column(Modifier.padding(it)) {
+        }, content = { paddingValues ->
+            Box(Modifier.padding(paddingValues)) {
                 HorizontalPager(state = pagerState) { index ->
                     OnboardingGraphUI(onboardingModel = pages[index])
                 }
             }
         })
-
-
 }

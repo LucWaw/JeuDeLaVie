@@ -1,18 +1,32 @@
 package kmp.project.gameoflife
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipDescription
 import android.content.Context
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
+import androidx.compose.ui.draganddrop.mimeTypes
+import androidx.compose.ui.draganddrop.toAndroidDragEvent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import coil3.ImageLoader
 import coil3.compose.rememberAsyncImagePainter
 import coil3.gif.AnimatedImageDecoder
@@ -25,19 +39,11 @@ import gameoflife.composeapp.generated.resources.page2
 import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
-import kmp.project.gameoflife.ui.onboard.OnboardingUtils
-import org.jetbrains.compose.resources.DrawableResource
-import android.content.ClipData
-import android.content.ClipDescription
-import android.widget.Toast
-import androidx.compose.ui.draganddrop.DragAndDropEvent
-import androidx.compose.ui.draganddrop.DragAndDropTransferData
-import androidx.compose.ui.draganddrop.mimeTypes
-import androidx.compose.ui.draganddrop.toAndroidDragEvent
-import androidx.compose.ui.geometry.Offset
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.ui.onboard.OnboardingUtils
+import kmp.project.gameoflife.ui.theme.DarkColorScheme
+import kmp.project.gameoflife.ui.theme.LightColorScheme
+import org.jetbrains.compose.resources.DrawableResource
 
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
@@ -175,4 +181,20 @@ fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabas
 
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
     return getDatabaseBuilder(applicationContext)
+}
+
+
+// Dans androidMain/.../Theme.android.kt
+
+@Composable
+actual fun platformColors(
+    useDarkTheme: Boolean
+): ColorScheme {
+    val dynamicColor = SDK_INT >= Build.VERSION_CODES.S
+    return when {
+        dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        dynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
+        useDarkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
 }

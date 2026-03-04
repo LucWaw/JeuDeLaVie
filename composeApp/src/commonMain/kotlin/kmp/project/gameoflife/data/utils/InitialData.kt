@@ -6,7 +6,7 @@ import kmp.project.gameoflife.domain.modele.PatternType
 object InitialData {
     val patterns = listOf(
         Pattern(
-            id = 1,
+            id = 10,
             rle = $$"""
             #N Glider
             x = 3, y = 3, rule = B3/S23
@@ -15,7 +15,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 2,
+            id = 9,
             rle = """
             #N Blinker
             x = 3, y = 1, rule = B3/S23
@@ -24,7 +24,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 3,
+            id = 8,
             rle = $$"""
             #N Toad
             x = 6, y = 2, rule = B3/S23
@@ -33,7 +33,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 4,
+            id = 7,
             rle = $$"""
             #N Beacon
             x = 4, y = 4, rule = B3/S23
@@ -42,7 +42,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 5,
+            id = 6,
             rle = $$"""
             #N 2x9 Column
             x = 2, y = 9, rule = B3/S23
@@ -51,7 +51,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 6,
+            id = 5,
             rle = $$"""
             #N Heavy-Weight Spaceship
             x = 5, y = 7, rule = B3/S23
@@ -60,7 +60,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 7,
+            id = 4,
             rle = $$"""
             #N Light-Weight Spaceship
             x = 4, y = 5, rule = B3/S23
@@ -69,7 +69,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 8,
+            id = 3,
             rle = $$"""
             #N T-tetromino
             x = 3, y = 2, rule = B3/S23
@@ -78,7 +78,7 @@ object InitialData {
             type = PatternType.MOVING
         ),
         Pattern(
-            id = 9,
+            id = 2,
             rle = $$"""
             #N Boat
             x = 3, y = 3, rule = B3/S23
@@ -87,7 +87,7 @@ object InitialData {
             type = PatternType.STILL_LIFE
         ),
         Pattern(
-            id = 10,
+            id = 1,
             rle = $$"""
             #N Square
             x = 2, y = 2, rule = B3/S23

@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,16 +23,16 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,13 +58,13 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
-import kmp.project.gameoflife.domain.modele.PatternType
 import kmp.project.gameoflife.domain.modele.PatternMovable
+import kmp.project.gameoflife.domain.modele.PatternType
 import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
-import kmp.project.gameoflife.ui.draganddrop.Shapes
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
+import kmp.project.gameoflife.ui.theme.Shapes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -173,11 +172,12 @@ fun PatternsUI(
                         .fillMaxHeight()
                         .border(
                             BorderStroke(
-                                width = 3.dp,
-                                color = Color(0xFF9F2B68) // Couleur Custom pour le bouton d'ajout
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.tertiary
                             ),
-                            Shapes.medium
+                            MaterialTheme.shapes.medium
                         ),
+                    shape = MaterialTheme.shapes.medium,
                     onClick = {
                         if (!isGameRunning) {
                             showGridCustomPatternDialog = true //Never read but useful for remember
@@ -185,13 +185,15 @@ fun PatternsUI(
                             showToast(runningText)
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.tertiary
+                    )
                 ) {
                     Icon(
                         modifier = Modifier.size(32.dp),
                         painter = painterResource(Res.drawable.add_24px),
                         contentDescription = "Add a pattern",
-                        tint = Color(0xFF9F2B68)
                     )
                 }
             }
@@ -220,14 +222,13 @@ fun SelectGridForCustomPatternDialogCustom(
     onConfirmCurrentGridPattern: () -> Unit,
     onConfirmPreviousGridPattern: () -> Unit
 ) {
-    val isInDark = isSystemInDarkTheme()
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = if (isInDark) Color(0xFF303030) else Color.White,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+                .fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             GridDialogContent(
                 onDismissRequest,
@@ -254,7 +255,7 @@ fun GridDialogContent(
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = title)
+        Text(text = title, style = MaterialTheme.typography.titleLarge)
         val previousGrid = stringResource(Res.string.custom_pattern_previous_grid)
         val currentGrid = stringResource(Res.string.custom_pattern_current_grid)
 
@@ -271,12 +272,11 @@ fun GridDialogContent(
 
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(gridRadioOptions[0].name) }
 
-        Column(Modifier.selectableGroup()) {
+        Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             gridRadioOptions.forEach { options ->
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
                         .selectable(
                             selected = (options.name == selectedOption),
                             onClick = { onOptionSelected(options.name) },
@@ -289,7 +289,11 @@ fun GridDialogContent(
                         selected = (options.name == selectedOption),
                         onClick = { onOptionSelected(options.name) }
                     )
-                    Text(text = options.name)
+                    Text(
+                        text = options.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
                 }
             }
         }
@@ -325,12 +329,11 @@ fun Pattern(
     isSelected: Boolean = false,
     onSelect: () -> Unit = {}
 ) {
-    val isInDark = isSystemInDarkTheme()
 
     val patternColor = when (pattern.type) {
-        PatternType.STILL_LIFE -> Color(0xFF2196F3) // Blue
-        PatternType.MOVING -> Color(0xFFFF9800)     // Orange
-        PatternType.CUSTOM -> Color(0xFF9F2B68)     // Pink
+        PatternType.STILL_LIFE -> MaterialTheme.colorScheme.outline
+        PatternType.MOVING -> MaterialTheme.colorScheme.secondary
+        PatternType.CUSTOM -> MaterialTheme.colorScheme.tertiary
     }
 
     Box(modifier = modifier.clickable(enabled = isEditingMode) { onSelect() }) {
@@ -340,11 +343,10 @@ fun Pattern(
                 shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(
                     width = if (isSelected) 2.dp else 1.dp,
-                    color = if (isSelected) Color.Red else patternColor
+                    color = if (isSelected) MaterialTheme.colorScheme.error else patternColor
                 ),
-                color = if (isInDark) Color(0xFF303030) else Color.White,
-                contentColor = if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor,
-                elevation = 0.dp
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = if (isEditingMode) patternColor.copy(alpha = 0.5f) else patternColor
             ) {
                 Box(
                     modifier = Modifier
@@ -370,10 +372,11 @@ fun Pattern(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, Shapes.medium)
                     .border(
                         BorderStroke(
-                            width = if (isSelected) 4.dp else 2.dp,
-                            color = if (isSelected) Color.Red else patternColor
+                            width = if (isSelected) 3.dp else 1.dp,
+                            color = if (isSelected) MaterialTheme.colorScheme.error else patternColor.copy(alpha = 0.5f)
                         ),
                         Shapes.medium
                     )
@@ -404,14 +407,12 @@ fun Pattern(
                                 modifier = Modifier
                                     .aspectRatio(1f)
                                     .background(
-                                        if (isAlive) patternColor else patternColor.copy(alpha = 0.03f)
+                                        if (isAlive) patternColor else Color.Transparent
                                     )
                                     .border(
                                         BorderStroke(
-                                            width = 0.5.dp,
-                                            color = if (isAlive) Color.White.copy(alpha = 0.4f) else patternColor.copy(
-                                                alpha = 0.1f
-                                            )
+                                            width = 0.4.dp,
+                                            color = MaterialTheme.colorScheme.outlineVariant
                                         )
                                     )
                             )
@@ -430,7 +431,7 @@ fun Pattern(
                 checked = isSelected,
                 onCheckedChange = { onSelect() },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color.Red
+                    checkedColor = MaterialTheme.colorScheme.error
                 )
             )
         }

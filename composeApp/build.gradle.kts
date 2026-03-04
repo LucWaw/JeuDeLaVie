@@ -35,7 +35,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.runtime)
             implementation(libs.foundation)
-            implementation(libs.material)
             implementation(libs.ui)
             implementation(libs.components.resources)
             implementation(libs.ui.tooling.preview)
@@ -51,6 +50,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.material3)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

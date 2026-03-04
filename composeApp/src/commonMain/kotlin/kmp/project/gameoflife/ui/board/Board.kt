@@ -7,18 +7,17 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -103,17 +102,16 @@ fun Board(
                     }
                 }
             ) {
-                val isInDark = isSystemInDarkTheme()
 
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .background(
                             if (gameUIState.colored.contains(cellCoordinates) || interactionSource.collectIsHoveredAsState().value)
-                                if (isInDark) Color.White else Color.Black
-                            else Color.Transparent
+                                MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surface
                         )
-                        .border(1.dp, Color.Gray)
+                        .border(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
                         .clickable { onCellClick(cellCoordinates) }
                         .hoverable(interactionSource = interactionSource)
                         .semantics {

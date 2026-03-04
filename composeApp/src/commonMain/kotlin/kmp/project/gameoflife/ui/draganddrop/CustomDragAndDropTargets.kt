@@ -2,8 +2,8 @@ package kmp.project.gameoflife.ui.draganddrop
 
 import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +15,6 @@ import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layout
@@ -24,9 +23,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.buildTextTransferData
+import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.getText
 import kmp.project.gameoflife.hasText
-import kmp.project.gameoflife.domain.modele.PatternMovable
 import kotlin.math.min
 
 
@@ -43,7 +42,6 @@ fun CustomDragTarget(
     isEnabled: Boolean,
     visual: @Composable () -> Unit,
 ) {
-    val isInDark = isSystemInDarkTheme()
 
     val ghostSizePx = remember(gridSize, tileSize) {
         Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2) //YOU CAN MODIFY HERE
@@ -51,7 +49,10 @@ fun CustomDragTarget(
 
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val dragSourceModifier = remember(data, tileSize, ghostSizePx, isInDark, boxSize, isEnabled) {
+    val colorOfColoredCells = MaterialTheme.colorScheme.primary
+    val outlineColor = MaterialTheme.colorScheme.outline
+
+    val dragSourceModifier = remember(data, tileSize, ghostSizePx, boxSize, isEnabled) {
         if (!isEnabled) Modifier else {
             Modifier.dragAndDropSource(
                 drawDragDecoration = {
@@ -86,14 +87,14 @@ fun CustomDragTarget(
 
                                 if (currentState.cells.contains(Pair(i, j))) {
                                     drawRect(
-                                        color = if (isInDark) Color.White else Color.Black,
+                                        color = colorOfColoredCells,
                                         topLeft = topLeft,
                                         size = rectSize,
                                         style = Fill
                                     )
                                 }
                                 drawRect(
-                                    color = Color.Gray,
+                                    color = outlineColor,
                                     topLeft = topLeft,
                                     size = rectSize,
                                     style = Stroke(width = 1.dp.toPx())

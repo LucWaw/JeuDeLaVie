@@ -2,6 +2,7 @@ package kmp.project.gameoflife
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -16,6 +17,8 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
+import kmp.project.gameoflife.ui.theme.DarkColorScheme
+import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import java.awt.datatransfer.DataFlavor
@@ -84,4 +87,11 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
     return Room.databaseBuilder<GameOfLifeDatabase>(
         name = dbFile.absolutePath,
     ).setDriver(BundledSQLiteDriver())
+}
+
+@Composable
+actual fun platformColors(
+    useDarkTheme: Boolean
+): ColorScheme {
+    return if (useDarkTheme) DarkColorScheme else LightColorScheme
 }

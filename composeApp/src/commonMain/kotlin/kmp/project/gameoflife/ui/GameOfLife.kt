@@ -1,21 +1,21 @@
 package kmp.project.gameoflife.ui
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Slider
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.info_24px
 import kmp.project.gameoflife.ui.board.Board
@@ -43,7 +44,7 @@ fun GameOfLife(
     showOnboarding: () -> Unit,
 ) {
     val gameOfLifeViewModel = koinViewModel<GameOfLifeViewModel>()
-    val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsState()
+    val gameUIState by gameOfLifeViewModel.mutableGameUiState.collectAsStateWithLifecycle()
     val buttonsViewModel = koinViewModel<ButtonsViewModel>()
     val patternViewModel = koinViewModel<MovablePatternViewModel>()
 
@@ -59,7 +60,7 @@ fun GameOfLife(
     }
 
     // Game Loop logic
-    val cellularSpace by gameOfLifeViewModel.cellularSpace.collectAsState()
+    val cellularSpace by gameOfLifeViewModel.cellularSpace.collectAsStateWithLifecycle()
     LaunchedEffect(buttonsViewModel.isRunning, cellularSpace) {
         if (buttonsViewModel.isRunning) {
             gameOfLifeViewModel.capturePreviousGrid()
@@ -75,23 +76,22 @@ fun GameOfLife(
     Column(
         modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         //Game board
-        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsState()
-        gameOfLifeViewModel.mutableGameUiState.collectAsState().value.let { gameUiState -> //ou if stateElement.value != null
-            Board(
-                isTablet = isTablet,
-                gameUIState = gameUiState,
-                onCellClick = gameOfLifeViewModel.onCellClick,
-                gridUiSize = gridUiSize,
-                gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
-            )
-        }
+        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
+        Board(
+            isTablet = isTablet,
+            gameUIState = gameUIState,
+            onCellClick = gameOfLifeViewModel.onCellClick,
+            gridUiSize = gridUiSize,
+            gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
+        )
 
 
-        val boardGridSize by gameOfLifeViewModel.gridSize.collectAsState()
-        val patterns by patternViewModel.patterns.collectAsState()
+        val boardGridSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
+        val patterns by patternViewModel.patterns.collectAsStateWithLifecycle()
         PatternsUI(
             boardGridSize = boardGridSize,
             patterns = patterns,
@@ -115,9 +115,12 @@ fun GameOfLife(
 
         //Play pause button
         Buttons(
-            cellularSpace = cellularSpace,
-            updateCells = { gameOfLifeViewModel.updateCells(it) },
-            addToCounter = { gameOfLifeViewModel.addToCounter() },
+            aliveCells = gameUIState.colored,
+            onResetGrid = { gameOfLifeViewModel.resetGrid()
+                          if (buttonsViewModel.isRunning){
+                              buttonsViewModel.togglePause()
+                          }
+                          },
             isEditingMode = buttonsViewModel.isEditingMode,
             isRunning = buttonsViewModel.isRunning,
             onToggleEditingMode = { buttonsViewModel.toggleEditingMode() },
@@ -129,11 +132,15 @@ fun GameOfLife(
 
 
         Row(
-            Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            SliderSpeed(onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) })
-            Spacer(Modifier.weight(1f))
+            SliderSpeed(
+                modifier = Modifier.weight(1f),
+                onPositionChange = { gameOfLifeViewModel.changeSpeedGeneration(it) }
+            )
+
             IconButton(
                 onClick = {
                     showOnboarding()
@@ -141,21 +148,20 @@ fun GameOfLife(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.info_24px),
-                    contentDescription = "Refresh",
+                    contentDescription = "Info",
+                    tint = MaterialTheme.colorScheme.primary
                 )
-
-
             }
-            Spacer(Modifier.weight(1f))
+
             GenerationCounter(gameUIState)
         }
     }
 }
 
 @Composable
-fun SliderSpeed(onPositionChange: (Float) -> Unit) {
+fun SliderSpeed(modifier: Modifier = Modifier, onPositionChange: (Float) -> Unit) {
     var sliderPosition by remember { mutableFloatStateOf(1f) }
-    Column(Modifier.width(150.dp)) {
+    Column(modifier = modifier.padding(horizontal = 8.dp)) {
         Slider(
             value = sliderPosition,
             onValueChange = {
@@ -169,26 +175,17 @@ fun SliderSpeed(onPositionChange: (Float) -> Unit) {
 
 @Composable
 private fun GenerationCounter(gameUIState: GameUiState) {
-    Row(
-        modifier = Modifier
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colors.primary,
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    bottomStartPercent = 50,
-                    topEndPercent = 50,
-                    bottomEndPercent = 50
-                )
-            ),
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
     ) {
-        Spacer(Modifier.width(12.dp))
         Text(
-            text = "Generation #${gameUIState.generationCounter}",
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            text = "Gen #${gameUIState.generationCounter}",
+            style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold
         )
-        Spacer(Modifier.width(12.dp))
-
     }
 }

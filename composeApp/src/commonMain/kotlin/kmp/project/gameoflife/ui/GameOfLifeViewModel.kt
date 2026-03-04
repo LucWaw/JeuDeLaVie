@@ -34,8 +34,11 @@ class GameOfLifeViewModel : ViewModel() {
 
     val onCellClick: (Pair<Int, Int>) -> Unit = { cellCoordinates ->
         cellularSpace.value[cellCoordinates]?.isAlive = !cellularSpace.value[cellCoordinates]?.isAlive!!
-        _mutableGameUiState.value =
-            GameUiState(cellularSpace.value.getAliveCells().map { Pair(it.first, it.second) })
+        _mutableGameUiState.update { currentState ->
+            currentState.copy(
+                colored = cellularSpace.value.getAliveCells()
+            )
+        }
     }
 
 
@@ -43,6 +46,16 @@ class GameOfLifeViewModel : ViewModel() {
         _mutableGameUiState.update { currentState ->
             currentState.copy(
                 colored = colored
+            )
+        }
+    }
+
+    fun resetGrid() {
+        cellularSpace.value.resetGrid()
+        _mutableGameUiState.update { currentState ->
+            currentState.copy(
+                colored = emptyList(),
+                generationCounter = 0
             )
         }
     }
@@ -74,7 +87,7 @@ class GameOfLifeViewModel : ViewModel() {
         }
     }
 
-    private val _gridSize : MutableStateFlow<Size> = MutableStateFlow(Size.Zero) // To store the actual size of the grid
+    private val _gridSize : MutableStateFlow<Size> = MutableStateFlow(Size.Zero)
     val gridSize : StateFlow<Size> = _gridSize.asStateFlow()
 
     fun modifyGridSize(gridSize: Size){
