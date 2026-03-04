@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -37,9 +38,8 @@ fun Board(
     val gridColumn = if (isTablet) 80 else getGridColumn()
 
     var lastToggledCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-    var dragModeForceAlive by remember { mutableStateOf<Boolean?>(null) }
     var hoverCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-
+    
     val colorPrimary = MaterialTheme.colorScheme.primary
     val colorSurface = MaterialTheme.colorScheme.surface
     val colorOutline = MaterialTheme.colorScheme.outlineVariant
@@ -60,8 +60,12 @@ fun Board(
                 .fillMaxSize()
                 .onSizeChanged { gridChange(it.toSize()) },
             onDropPattern = { pattern, dropOffset ->
-                val dropRow = ((dropOffset.y - offsetY) / tileSize).toInt().coerceIn(0, gridRow - 1)
-                val dropCol = ((dropOffset.x - offsetX) / tileSize).toInt().coerceIn(0, gridColumn - 1)
+                // Ensure dropOffset is relative to the grid start
+                val relativeX = dropOffset.x - offsetX
+                val relativeY = dropOffset.y - offsetY
+                
+                val dropRow = (relativeY / tileSize).toInt().coerceIn(0, gridRow - 1)
+                val dropCol = (relativeX / tileSize).toInt().coerceIn(0, gridColumn - 1)
                 
                 val patternOffset = pattern.gridSize - 1
                 pattern.cells.forEach { patternCell ->
@@ -87,28 +91,29 @@ fun Board(
                             onDragStart = { offset ->
                                 val cell = cellCoordinatesAtOffset(offset, tileSize, gridRow, gridColumn, offsetX, offsetY)
                                 if (cell != null) {
-                                    val isCurrentlyAlive = gameUIState.colored.contains(cell)
-                                    dragModeForceAlive = !isCurrentlyAlive
-                                    onToggleCell(cell, dragModeForceAlive)
+                                    onToggleCell(cell, null) // Invert state
                                     lastToggledCell = cell
                                 }
+                                hoverCell = null // Clear hover on drag start
                             },
                             onDrag = { change, _ ->
                                 val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
-                                if (cell != null && cell != lastToggledCell && lastToggledCell != null) {
-                                    interpolateCells(lastToggledCell!!, cell).forEach { interpolatedCell ->
-                                        onToggleCell(interpolatedCell, dragModeForceAlive)
+                                if (cell != null && cell != lastToggledCell) {
+                                    interpolateCells(lastToggledCell ?: cell, cell).forEach { interpolatedCell ->
+                                        if (interpolatedCell != lastToggledCell) {
+                                            onToggleCell(interpolatedCell, null) // Invert state
+                                        }
                                     }
                                     lastToggledCell = cell
                                 }
                             },
                             onDragEnd = { 
                                 lastToggledCell = null
-                                dragModeForceAlive = null
+                                hoverCell = null // Fix ghosting
                             },
                             onDragCancel = { 
                                 lastToggledCell = null
-                                dragModeForceAlive = null
+                                hoverCell = null // Fix ghosting
                             }
                         )
                     }
@@ -117,7 +122,15 @@ fun Board(
                             while (true) {
                                 val event = awaitPointerEvent()
                                 val position = event.changes.first().position
-                                hoverCell = cellCoordinatesAtOffset(position, tileSize, gridRow, gridColumn, offsetX, offsetY)
+                                
+                                when (event.type) {
+                                    PointerEventType.Move, PointerEventType.Enter -> {
+                                        hoverCell = cellCoordinatesAtOffset(position, tileSize, gridRow, gridColumn, offsetX, offsetY)
+                                    }
+                                    PointerEventType.Exit, PointerEventType.Release -> {
+                                        hoverCell = null // Fix ghosting
+                                    }
+                                }
                             }
                         }
                     }

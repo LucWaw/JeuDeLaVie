@@ -79,8 +79,6 @@ fun GameOfLife(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        //Game board
-        val gridUiSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
         Board(
             modifier = Modifier.weight(1f),
             isTablet = isTablet,

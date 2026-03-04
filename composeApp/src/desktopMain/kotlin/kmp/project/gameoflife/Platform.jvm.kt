@@ -24,7 +24,10 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import java.awt.dnd.DropTargetDragEvent
+import java.awt.dnd.DropTargetDropEvent
 import java.io.File
+import java.lang.reflect.Field
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
@@ -65,28 +68,51 @@ actual fun buildTextTransferData(text: String, dragOffset: Offset): DragAndDropT
 // Check if AWT payload contains a string
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun DragAndDropEvent.hasText(): Boolean {
-    return this.awtTransferable.isDataFlavorSupported(DataFlavor.stringFlavor)
+    return try {
+        this.awtTransferable.isDataFlavorSupported(DataFlavor.stringFlavor)
+    } catch (_: Exception) {
+        false
+    }
 }
 
 // Extract the string using AWT DataFlavors
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun DragAndDropEvent.getText(): String? {
-    val transferable = this.awtTransferable
-    return if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        transferable.getTransferData(DataFlavor.stringFlavor) as? String
-    } else {
+    return try {
+        val transferable = this.awtTransferable
+        if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            transferable.getTransferData(DataFlavor.stringFlavor) as? String
+        } else {
+            null
+        }
+    } catch (_: Exception) {
         null
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
-    // In Desktop, we might need a different way to get the position if it's not directly in the event
-    // For now, let's assume we can get it or use a default if not easily available via standard DND event in Compose Desktop
-    // Actually, DragAndDropEvent in Compose doesn't expose position easily across all platforms.
-    // However, on Desktop/AWT, we might have issues.
-    // Let's try to see if there's a common way.
-    return Offset.Zero // Placeholder if not easily accessible without more complex AWT interop
+    return try {
+        // Compose DragAndDropEvent on Desktop wraps AWT events.
+        // We use reflection to access the underlying AWT event location.
+        val field: Field = this.javaClass.getDeclaredField("nativeEvent")
+        field.isAccessible = true
+        val nativeEvent = field.get(this)
+        
+        val point = when (nativeEvent) {
+            is DropTargetDragEvent -> nativeEvent.location
+            is DropTargetDropEvent -> nativeEvent.location
+            else -> null
+        }
+        
+        if (point != null) {
+            container.windowToLocal(Offset(point.x.toFloat(), point.y.toFloat()))
+        } else {
+            Offset.Zero
+        }
+    } catch (_: Exception) {
+        Offset.Zero
+    }
 }
 
 actual fun showToast(message: String) {

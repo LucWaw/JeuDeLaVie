@@ -46,8 +46,10 @@ fun CustomDragTarget(
     visual: @Composable () -> Unit,
 ) {
 
+    Box(modifier = modifier) { visual() }
+
     val ghostSizePx = remember(gridSize, tileSize) {
-        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2) //YOU CAN MODIFY HERE
+        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2)
     }
 
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
@@ -71,11 +73,11 @@ fun CustomDragTarget(
 
                         // La vraie taille d'une case, adaptée à l'écran
                         val tileW = tileSize.width * scale
-                        val tileH = tileSize.height * scale
+                        //val tileH = tileSize.width * scale
 
                         // Calculer le point central de la case en bas à droite
                         val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
-                        val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
+                        val bottomRightCenterY = (patternGridSize * tileW) - (tileW / 2)
 
                         // Calculer le décalage pour que ce point soit EXACTEMENT
                         //    au milieu de la zone de drag (là où se trouve le pointeur)
@@ -85,8 +87,8 @@ fun CustomDragTarget(
                         for (i in 0 until patternGridSize) {
                             for (j in 0 until patternGridSize) {
                                 // Plus de risque de négatif, on part de startX et startY !
-                                val topLeft = Offset(startX + j * tileW, startY + i * tileH)
-                                val rectSize = Size(tileW, tileH)
+                                val topLeft = Offset(startX + j * tileW, startY + i * tileW)
+                                val rectSize = Size(tileW, tileW)
 
                                 if (currentState.cells.contains(Pair(i, j))) {
                                     drawRect(
@@ -155,7 +157,6 @@ fun CustomDragTarget(
             .then(dragSourceModifier),
         contentAlignment = Alignment.Center
     ) {
-        visual()
     }
 }
 

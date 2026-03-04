@@ -169,7 +169,7 @@ actual fun DragAndDropEvent.getText(): String? {
 
 actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
     val event = this.toAndroidDragEvent()
-    return container.windowToLocal(Offset(event.x, event.y))
+    return Offset(event.x, event.y)
 }
 
 actual fun showToast(message: String) {
