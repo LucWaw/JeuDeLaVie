@@ -46,7 +46,6 @@ fun CustomDragTarget(
     visual: @Composable () -> Unit,
 ) {
 
-    Box(modifier = modifier) { visual() }
 
     val ghostSizePx = remember(gridSize, tileSize) {
         Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2)
@@ -73,11 +72,11 @@ fun CustomDragTarget(
 
                         // La vraie taille d'une case, adaptée à l'écran
                         val tileW = tileSize.width * scale
-                        //val tileH = tileSize.width * scale
+                        val tileH = tileSize.width * scale
 
                         // Calculer le point central de la case en bas à droite
                         val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
-                        val bottomRightCenterY = (patternGridSize * tileW) - (tileW / 2)
+                        val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
 
                         // Calculer le décalage pour que ce point soit EXACTEMENT
                         //    au milieu de la zone de drag (là où se trouve le pointeur)
@@ -87,8 +86,8 @@ fun CustomDragTarget(
                         for (i in 0 until patternGridSize) {
                             for (j in 0 until patternGridSize) {
                                 // Plus de risque de négatif, on part de startX et startY !
-                                val topLeft = Offset(startX + j * tileW, startY + i * tileW)
-                                val rectSize = Size(tileW, tileW)
+                                val topLeft = Offset(startX + j * tileW, startY + i * tileH)
+                                val rectSize = Size(tileW, tileH)
 
                                 if (currentState.cells.contains(Pair(i, j))) {
                                     drawRect(
@@ -127,10 +126,11 @@ fun CustomDragTarget(
             }
         }
     }
+    Box { visual() } //BOX for Visual
 
-    Box(
+    Box( //Box for dragdecoration size
         modifier = modifier
-            .layout { measurable, constraints ->
+            .layout { measurable, constraints -> //Avoir de la place pour dragDecoration
                 val width = constraints.maxWidth
                 val height = constraints.maxHeight
 
@@ -141,22 +141,23 @@ fun CustomDragTarget(
                     Constraints.fixed(gWidth, gHeight)
                 )
 
-                val scale = min(width.toFloat() / gWidth, height.toFloat() / gHeight)
 
                 layout(width, height) {
                     placeable.placeWithLayer(
                         (width - gWidth) / 2,
                         (height - gHeight) / 2
                     ) {
-                        scaleX = scale
-                        scaleY = scale
+                        scaleX = width.toFloat() / gWidth
+                        scaleY = height.toFloat() / gHeight
                     }
                 }
             }
             .onSizeChanged { boxSize = it }
             .then(dragSourceModifier),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
+        //if visual() here size before any drag is bad
+        //Need to be as big as possible to have a big dragTarget
     }
 }
 
