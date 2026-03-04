@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.room.RoomDatabase
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
@@ -25,6 +26,9 @@ expect fun GifImage(ressources: DrawableResource, modifier: Modifier = Modifier)
 expect fun buildTextTransferData(text: String,dragOffset: Offset = Offset.Zero): DragAndDropTransferData
 expect fun DragAndDropEvent.hasText(): Boolean
 expect fun DragAndDropEvent.getText(): String?
+
+// Added to support single board drop target
+expect fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset
 
 /**
  * Interface for platform-specific toasts

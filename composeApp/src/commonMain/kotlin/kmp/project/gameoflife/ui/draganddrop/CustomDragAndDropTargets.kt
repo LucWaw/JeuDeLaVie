@@ -17,13 +17,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.buildTextTransferData
 import kmp.project.gameoflife.domain.modele.PatternMovable
+import kmp.project.gameoflife.getPositionIn
 import kmp.project.gameoflife.getText
 import kmp.project.gameoflife.hasText
 import kotlin.math.min
@@ -160,9 +163,11 @@ fun CustomDragTarget(
 @Composable
 fun CustomDropTarget(
     modifier: Modifier = Modifier,
-    onDropPattern: (PatternMovable) -> Unit,
+    onDropPattern: (PatternMovable, Offset) -> Unit,
     visual: @Composable () -> Unit
 ) {
+    var layoutCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    
     val dropTarget = remember(onDropPattern) {
         object : DragAndDropTarget {
             override fun onDrop(event: DragAndDropEvent): Boolean {
@@ -170,7 +175,8 @@ fun CustomDropTarget(
                 if (textReceived == "LOCAL_PATTERN") {
                     val pattern = LocalDragDropState.draggedPattern
                     if (pattern != null) {
-                        onDropPattern(pattern)
+                        val dropPosition = layoutCoordinates?.let { event.getPositionIn(it) } ?: Offset.Zero
+                        onDropPattern(pattern, dropPosition)
 
                         // Clean up memory after the drop
                         LocalDragDropState.draggedPattern = null
@@ -185,10 +191,12 @@ fun CustomDropTarget(
     val shouldStartDrag = remember { { event: DragAndDropEvent -> event.hasText() } }
 
     Box(
-        modifier = modifier.dragAndDropTarget(
-            shouldStartDragAndDrop = shouldStartDrag,
-            target = dropTarget
-        ),
+        modifier = modifier
+            .onGloballyPositioned { layoutCoordinates = it }
+            .dragAndDropTarget(
+                shouldStartDragAndDrop = shouldStartDrag,
+                target = dropTarget
+            ),
         contentAlignment = Alignment.Center
     ) {
         visual()

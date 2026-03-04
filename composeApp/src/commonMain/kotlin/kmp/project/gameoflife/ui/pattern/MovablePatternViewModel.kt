@@ -59,7 +59,7 @@ class MovablePatternViewModel(
      * Ajoute un nouveau pattern personnalisé.
      * L'ajout est persisté via Room.
      */
-    fun addCustomPattern(cells: List<Pair<Int, Int>>, text: String = "") {
+    fun addCustomPattern(cells: Set<Pair<Int, Int>>, text: String = "") {
         if (cells.isEmpty()) {
             showToast(text)
             return

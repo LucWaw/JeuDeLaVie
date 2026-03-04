@@ -74,14 +74,14 @@ fun PatternsUI(
     modifier: Modifier = Modifier,
     boardGridSize: Size,
     patterns: List<PatternMovable>,
-    onAddCustomPattern: (List<Pair<Int, Int>>, String) -> Unit,
+    onAddCustomPattern: (Set<Pair<Int, Int>>, String) -> Unit,
     onGetPatternById: (Long) -> PatternMovable?,
     onRotatePattern: (Long) -> Unit,
     onTogglePatternSelection: (Long) -> Unit,
     isEditingMode: Boolean,
     selectedPatternIds: List<Long>,
-    currentGrid: List<Pair<Int, Int>> = emptyList(),
-    previousGrid: List<Pair<Int, Int>> = emptyList(),
+    currentGrid: Set<Pair<Int, Int>> = emptySet(),
+    previousGrid: Set<Pair<Int, Int>> = emptySet(),
     isTablet: Boolean = false,
     isGameRunning: Boolean = false,
 ) {
@@ -111,27 +111,27 @@ fun PatternsUI(
         when {
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(
-                    emptyList(),
+                    emptySet(),
                     customPatternEmptyError
                 ) // Déclenchera le toast "vide"
-                showGridCustomPatternDialog = false //Never read but useful for remember
+                showGridCustomPatternDialog = false 
             }
 
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
-                showGridCustomPatternDialog = false//Never read but useful for remember
+                showGridCustomPatternDialog = false
             }
 
-            currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
+            currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { 
                 onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
-                showGridCustomPatternDialog = false//Never read but useful for remember
+                showGridCustomPatternDialog = false
             }
 
             else -> {
                 // Les deux sont remplies, on affiche le dialogue
                 SelectGridForCustomPatternDialogCustom(
                     onDismissRequest = {
-                        showGridCustomPatternDialog = false //Never read but useful for remember
+                        showGridCustomPatternDialog = false 
                     },
                     onConfirmCurrentGridPattern = {
                         onAddCustomPattern(
@@ -180,7 +180,7 @@ fun PatternsUI(
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
                         if (!isGameRunning) {
-                            showGridCustomPatternDialog = true //Never read but useful for remember
+                            showGridCustomPatternDialog = true
                         } else {
                             showToast(runningText)
                         }

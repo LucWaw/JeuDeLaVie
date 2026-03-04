@@ -5,7 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 suspend fun runGameLoop(
-    updateCells: (List<Pair<Int, Int>>) -> Unit,
+    updateCells: (Set<Pair<Int, Int>>) -> Unit,
     addToCounter: () -> Unit,
     cellularSpace: CellularSpace,
     speedFlow: StateFlow<Float>
@@ -17,7 +17,7 @@ suspend fun runGameLoop(
         val delayTime = (150 / adjustedSpeed).toLong()
 
         cellularSpace.evolve()
-        updateCells(cellularSpace.getAliveCells().map { Pair(it.first, it.second) })
+        updateCells(cellularSpace.getAliveCells())
         addToCounter()
 
         delay(delayTime) // Attente en fonction de la vitesse actuelle

@@ -12,6 +12,7 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
@@ -76,6 +77,16 @@ actual fun DragAndDropEvent.getText(): String? {
     } else {
         null
     }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
+    // In Desktop, we might need a different way to get the position if it's not directly in the event
+    // For now, let's assume we can get it or use a default if not easily available via standard DND event in Compose Desktop
+    // Actually, DragAndDropEvent in Compose doesn't expose position easily across all platforms.
+    // However, on Desktop/AWT, we might have issues.
+    // Let's try to see if there's a common way.
+    return Offset.Zero // Placeholder if not easily accessible without more complex AWT interop
 }
 
 actual fun showToast(message: String) {

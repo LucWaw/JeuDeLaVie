@@ -22,6 +22,7 @@ import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -164,6 +165,11 @@ actual fun DragAndDropEvent.getText(): String? {
         return clipData.getItemAt(0).text?.toString()
     }
     return null
+}
+
+actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
+    val event = this.toAndroidDragEvent()
+    return container.windowToLocal(Offset(event.x, event.y))
 }
 
 actual fun showToast(message: String) {

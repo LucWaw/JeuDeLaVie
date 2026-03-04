@@ -82,10 +82,11 @@ fun GameOfLife(
         //Game board
         val gridUiSize by gameOfLifeViewModel.gridSize.collectAsStateWithLifecycle()
         Board(
+            modifier = Modifier.weight(1f),
             isTablet = isTablet,
             gameUIState = gameUIState,
             onCellClick = gameOfLifeViewModel.onCellClick,
-            gridUiSize = gridUiSize,
+            onToggleCell = gameOfLifeViewModel::toggleCell,
             gridChange = { gameOfLifeViewModel.modifyGridSize(it) }
         )
 
