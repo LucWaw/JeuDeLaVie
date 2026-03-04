@@ -42,7 +42,7 @@ fun Board(
     
     val colorPrimary = MaterialTheme.colorScheme.primary
     val colorSurface = MaterialTheme.colorScheme.surface
-    val colorOutline = MaterialTheme.colorScheme.outlineVariant
+    val colorOutline = MaterialTheme.colorScheme.outline
     val density = LocalDensity.current
 
     BoxWithConstraints(modifier = modifier.fillMaxSize().background(colorSurface)) {
