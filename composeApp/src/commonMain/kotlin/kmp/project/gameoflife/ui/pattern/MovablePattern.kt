@@ -109,26 +109,27 @@ fun PatternsUI(
         )
 
         when {
+            //Show simple save toast when previous and current are empty
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(
                     emptySet(),
                     customPatternEmptyError
-                ) // Déclenchera le toast "vide"
+                )
                 showGridCustomPatternDialog = false 
             }
-
+            //Show current grid save dialog
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
                 showGridCustomPatternDialog = false
             }
-
-            currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { 
+            //show previous grid save dialog
+            currentGrid.isEmpty() /*previousGrid.isNotEmpty() done with sequence  */ -> {
                 onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
                 showGridCustomPatternDialog = false
             }
 
             else -> {
-                // Les deux sont remplies, on affiche le dialogue
+                // Tho grid with active cells, show choice dialog
                 SelectGridForCustomPatternDialogCustom(
                     onDismissRequest = {
                         showGridCustomPatternDialog = false 
@@ -402,18 +403,24 @@ fun Pattern(
                         ) {
                             val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
                             val isAlive = pattern.cells.contains(cellCoord)
-
+                            
                             Box(
                                 modifier = Modifier
                                     .aspectRatio(1f)
                                     .background(
                                         if (isAlive) patternColor else Color.Transparent
                                     )
-                                    .border(
-                                        BorderStroke(
-                                            width = 0.4.dp,
-                                            color = MaterialTheme.colorScheme.outlineVariant
-                                        )
+                                    .then(
+                                        if (isAlive) {
+                                            Modifier.border(
+                                                BorderStroke(
+                                                    width = 0.4.dp,
+                                                    color = MaterialTheme.colorScheme.outlineVariant
+                                                )
+                                            )
+                                        } else {
+                                            Modifier
+                                        }
                                     )
                             )
                         }
