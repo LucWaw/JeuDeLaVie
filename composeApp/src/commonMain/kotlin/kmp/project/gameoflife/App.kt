@@ -12,31 +12,52 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kmp.project.gameoflife.ui.GameOfLife
 import kmp.project.gameoflife.ui.theme.DragAndDropTheme
 import kmp.project.gameoflife.ui.onboard.OnboardingScreen
+import kmp.project.gameoflife.ui.settings.Settings
 
 @Composable
 fun App(isTablet: Boolean = false) {
     val onboardingUtils = getOnboardingUtils()
     var showOnboarding by rememberSaveable { mutableStateOf(!onboardingUtils.isOnboardingCompleted()) }
+
+    val navController = rememberNavController()
+    //val viewModelColor
+
     DragAndDropTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            if (showOnboarding) {
-                OnboardingScreen(
-                    onFinished = {
-                        onboardingUtils.setOnboardingCompleted()
-                        showOnboarding = false
+
+        NavHost(navController, startDestination = Game) {
+            composable<Game> {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    if (showOnboarding) {
+                        OnboardingScreen(
+                            onFinished = {
+                                onboardingUtils.setOnboardingCompleted()
+                                showOnboarding = false
+                            }
+                        )
+                    } else {
+                        GameOfLife(
+                            isTablet = isTablet, showOnboarding = {
+                                showOnboarding = true
+                            }, modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+                            goToSettings = { navController.navigate(Settings) }
+                        )
                     }
-                )
-            } else {
-                GameOfLife(isTablet = isTablet, showOnboarding = {
-                    showOnboarding = true
-                }, modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars))
+                }
+            }
+            composable<Settings> {
+                Settings(goBack = { navController.popBackStack() }/*Lambda color change*/)
             }
         }
+
+
     }
 }

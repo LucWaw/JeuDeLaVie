@@ -33,4 +33,7 @@
 
     <string name="delete_selected_patterns_title">Supprimer les patterns</string>
     <string name="delete_selected_patterns_confirmation">Voulez-vous vraiment supprimer les patterns sélectionnés ?</string>
+
+    <string name="settings">Paramètres</string>
+
 </resources>

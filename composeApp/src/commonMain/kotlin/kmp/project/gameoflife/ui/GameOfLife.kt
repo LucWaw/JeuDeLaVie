@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.info_24px
+import gameoflife.composeapp.generated.resources.settings_24px
 import kmp.project.gameoflife.ui.board.Board
 import kmp.project.gameoflife.ui.game.Buttons
 import kmp.project.gameoflife.ui.game.ButtonsViewModel
@@ -41,6 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun GameOfLife(
     modifier: Modifier = Modifier,
     isTablet: Boolean = false,
+    goToSettings: ()-> Unit,
     showOnboarding: () -> Unit,
 ) {
     val gameOfLifeViewModel = koinViewModel<GameOfLifeViewModel>()
@@ -148,6 +150,18 @@ fun GameOfLife(
                 Icon(
                     painter = painterResource(Res.drawable.info_24px),
                     contentDescription = "Info",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    goToSettings()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.settings_24px),
+                    contentDescription = "Settings",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

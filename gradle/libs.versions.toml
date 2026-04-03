@@ -21,6 +21,7 @@ kotlinxCollectionsImmutable = "0.4.0"
 kotlinxSerializationJson = "1.10.0"
 material = "1.10.1"
 material3 = "1.9.0"
+navigationCompose = "2.9.2"
 runtime = "1.10.1"
 uiToolingPreview = "1.10.1"
 koin = "4.2.0-RC1"
@@ -57,6 +58,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 material = { module = "org.jetbrains.compose.material:material", version.ref = "material" }
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 material3-window-size-class1 = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "runtime" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "uiToolingPreview" }
 ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "uiToolingPreview" }

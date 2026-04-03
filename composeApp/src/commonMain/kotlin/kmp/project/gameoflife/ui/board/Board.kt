@@ -25,6 +25,23 @@ import kmp.project.gameoflife.ui.getGridRow
 import kotlin.math.abs
 import kotlin.math.min
 
+/**
+ * A composable that renders the Game of Life grid and handles user interactions.
+ *
+ * This component manages the drawing of the grid lines, alive cells, and hover highlights.
+ * It supports various input methods including tapping to toggle cells, dragging to draw/erase
+ * paths (using Bresenham's line algorithm for interpolation), and drag-and-drop support
+ * for placing predefined patterns.
+ *
+ * @param modifier The [Modifier] to be applied to the board container.
+ * @param isTablet A boolean flag to determine if the grid should use a fixed tablet-optimized
+ * dimensions or dynamically calculated ones.
+ * @param gameUIState The current state of the game, containing the set of currently alive (colored) cells.
+ * @param onCellClick Callback triggered when a cell is tapped. Returns the (row, column) coordinates.
+ * @param onToggleCell Callback triggered when a cell's state should be modified.
+ * Returns the (row, column) coordinates and an optional boolean for the forced state (null for toggle).
+ * @param gridChange Callback triggered when the board size changes, providing the new [Size].
+ */
 @Composable
 fun Board(
     modifier: Modifier = Modifier,
