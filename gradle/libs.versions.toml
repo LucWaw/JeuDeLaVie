@@ -33,6 +33,7 @@ material3WindowSizeClassVersion = "1.4.0"
 room = "2.8.4"
 ksp = "2.3.5"
 sqlite = "2.6.2"
+composeHotReload = "1.0.0"
 
 [libraries]
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
@@ -93,3 +94,4 @@ androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.r
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload"}

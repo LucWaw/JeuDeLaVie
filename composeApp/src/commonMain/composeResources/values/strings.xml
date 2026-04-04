@@ -36,4 +36,15 @@
 
     <string name="settings">Settings</string>
 
+    <string name="go_back">Go back</string>
+
+    <string name="theme">Choose a color scheme</string>
+
+    <string name="theme_force_black">Force Black</string>
+    <string name="theme_force_white">Force White</string>
+    <string name="theme_system_classic">System Classic</string>
+    <string name="theme_system_dynamic">System Dynamic</string>
+    <string name="dynamic_color_info">Dynamic colors automatically adapt to your device's wallpaper and system theme.</string>
+    <string name="selectedColor">Selected Color</string>
+
 </resources>

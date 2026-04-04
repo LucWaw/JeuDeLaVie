@@ -9,6 +9,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
+            alwaysOnTop = true,
             title = "GameOfLife",
         ) {
             window.minimumSize = java.awt.Dimension(400, 1000)
