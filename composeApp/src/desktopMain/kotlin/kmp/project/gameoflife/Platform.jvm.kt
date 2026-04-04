@@ -132,3 +132,6 @@ actual fun platformColors(
 ): ColorScheme {
     return if (useDarkTheme) DarkColorScheme else LightColorScheme
 }
+
+@Composable
+actual fun isAnAndroidAppAboveAndroid12(): Boolean = false

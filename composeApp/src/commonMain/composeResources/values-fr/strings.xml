@@ -40,11 +40,11 @@
 
     <string name="theme">Choisissez un thème</string>
 
-    <string name="theme_force_black">Noir forcé</string>
-    <string name="theme_force_white">Blanc forcé</string>
+    <string name="theme_force_black">Forcer le thème sombre</string>
+    <string name="theme_force_white">Forcer le thème clair</string>
     <string name="theme_system_classic">Système classique</string>
     <string name="theme_system_dynamic">Système dynamique</string>
-    <string name="dynamic_color_info">Les couleurs dynamiques s'adaptent automatiquement au fond d'écran et au thème du système.</string>
-    <string name="selectedColor">Couleur sélectionnée</string>
+    <string name="dynamic_color_info">Les couleurs dynamiques s'adaptent automatiquement au fond d'écran et au thème du système. Votre appareil est compatible car il fonctionne sous Android 12 ou une version ultérieure.</string>
+    <string name="selectedColor">Thème sélectionné</string>
 
 </resources>

@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.widget.Toast
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -203,4 +204,10 @@ actual fun platformColors(
         useDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+}
+
+@ChecksSdkIntAtLeast(api=Build.VERSION_CODES.S)
+@Composable
+actual fun isAnAndroidAppAboveAndroid12() : Boolean{
+        return SDK_INT >= Build.VERSION_CODES.S
 }

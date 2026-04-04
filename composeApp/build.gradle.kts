@@ -53,6 +53,8 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.material3)
             implementation(libs.navigation.compose)
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

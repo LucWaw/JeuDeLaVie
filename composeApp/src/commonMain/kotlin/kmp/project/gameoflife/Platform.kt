@@ -39,3 +39,6 @@ expect fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase>
 
 @Composable
 expect fun platformColors(useDarkTheme: Boolean): ColorScheme
+
+@Composable
+expect fun isAnAndroidAppAboveAndroid12(): Boolean

@@ -39,6 +39,7 @@ import gameoflife.composeapp.generated.resources.theme_force_black
 import gameoflife.composeapp.generated.resources.theme_force_white
 import gameoflife.composeapp.generated.resources.theme_system_classic
 import gameoflife.composeapp.generated.resources.theme_system_dynamic
+import kmp.project.gameoflife.isAnAndroidAppAboveAndroid12
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,11 +65,20 @@ fun Settings(goBack: () -> Boolean) {
             )
         }
     ) { paddingValues ->
-        val colorOptions =
-            listOf(stringResource(Res.string.theme_system_dynamic),stringResource(Res.string.theme_system_classic), stringResource(Res.string.theme_force_black), stringResource(Res.string.theme_force_white))
+        val baseOptions = listOf(
+            stringResource(Res.string.theme_system_classic),
+            stringResource(Res.string.theme_force_black),
+            stringResource(Res.string.theme_force_white)
+        )
 
+        val dynamicThemeLabel = stringResource(Res.string.theme_system_dynamic)
+        val colorOptions = if (isAnAndroidAppAboveAndroid12()) {
+            listOf(dynamicThemeLabel) + baseOptions
+        } else {
+            baseOptions
+        }
 
-        var selectedColor by remember { mutableStateOf(colorOptions[0]) }
+        var selectedColorName by remember(colorOptions) { mutableStateOf(colorOptions[0]) }
 
         Column(
             modifier = Modifier
@@ -78,18 +88,15 @@ fun Settings(goBack: () -> Boolean) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(stringResource(Res.string.theme))
+                Text(stringResource(Res.string.theme),
+                    modifier = Modifier.weight(1f))
                 var isColorDropdownExpanded by remember {
-                    mutableStateOf(
-                        false
-                    )
+                    mutableStateOf(false)
                 }
 
-
                 ExposedDropdownMenuBox(
-
                     expanded = isColorDropdownExpanded,
                     onExpandedChange = {
                         isColorDropdownExpanded = !isColorDropdownExpanded
@@ -99,9 +106,9 @@ fun Settings(goBack: () -> Boolean) {
                         modifier = Modifier
                             .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
                         readOnly = true,
-                        value = selectedColor,
+                        value = selectedColorName,
                         onValueChange = {},
-                        label = { stringResource(Res.string.selectedColor) },
+                        label = { Text(stringResource(Res.string.selectedColor)) },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(
                                 expanded = isColorDropdownExpanded
@@ -111,7 +118,6 @@ fun Settings(goBack: () -> Boolean) {
                     )
 
                     ExposedDropdownMenu(
-
                         expanded = isColorDropdownExpanded,
                         onDismissRequest = {
                             isColorDropdownExpanded = false
@@ -121,18 +127,18 @@ fun Settings(goBack: () -> Boolean) {
                             DropdownMenuItem(
                                 text = { Text(selectionOption) },
                                 onClick = {
-                                    selectedColor = selectionOption
-                                    //TODO ACTUALY CHANGE THEME
+                                    selectedColorName = selectionOption
+                                    //TODO ACTUALLY CHANGE THEME
                                     isColorDropdownExpanded = false
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             )
                         }
-
                     }
                 }
             }
-            if (selectedColor == colorOptions[0]) {
+
+            if (selectedColorName == dynamicThemeLabel) {
                 Row(
                     modifier = Modifier
                         .padding(top = 8.dp)
