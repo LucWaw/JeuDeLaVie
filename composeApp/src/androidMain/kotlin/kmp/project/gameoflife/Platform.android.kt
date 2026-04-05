@@ -7,7 +7,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.widget.Toast
-import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +26,10 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import coil3.ImageLoader
@@ -46,9 +49,13 @@ import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
+import org.koin.dsl.module
+
+private val IS_DYNAMIC_COLOR_SUPPORTED = SDK_INT >= Build.VERSION_CODES.S
 
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
+    override val isDynamicColorSupported: Boolean = IS_DYNAMIC_COLOR_SUPPORTED
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
@@ -197,17 +204,28 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
 actual fun platformColors(
     useDarkTheme: Boolean
 ): ColorScheme {
-    val dynamicColor = SDK_INT >= Build.VERSION_CODES.S
     return when {
-        dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        dynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
+        IS_DYNAMIC_COLOR_SUPPORTED && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        IS_DYNAMIC_COLOR_SUPPORTED && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
         useDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 }
 
-@ChecksSdkIntAtLeast(api=Build.VERSION_CODES.S)
-@Composable
-actual fun isAnAndroidAppAboveAndroid12() : Boolean{
-        return SDK_INT >= Build.VERSION_CODES.S
+actual fun platformModule() = module {
+    single<DataStore<Preferences>> {
+        // Koin injecte automatiquement le Context ici via get()
+        createDataStore(get())
+    }
+
+    single {
+        // Même chose pour la DB si besoin
+        getDatabaseBuilder(get())
+    }
+}
+
+fun createDataStore(context: Context): DataStore<Preferences> {
+    return PreferenceDataStoreFactory.create(
+        produceFile = { context.preferencesDataStoreFile(dataStoreFileName) }
+    )
 }

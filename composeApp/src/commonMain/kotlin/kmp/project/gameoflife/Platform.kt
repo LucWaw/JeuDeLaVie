@@ -11,9 +11,11 @@ import androidx.room.RoomDatabase
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import org.jetbrains.compose.resources.DrawableResource
+import org.koin.core.module.Module
 
 interface Platform {
     val name: String
+    val isDynamicColorSupported: Boolean
 }
 
 expect fun getPlatform(): Platform
@@ -40,5 +42,7 @@ expect fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase>
 @Composable
 expect fun platformColors(useDarkTheme: Boolean): ColorScheme
 
-@Composable
-expect fun isAnAndroidAppAboveAndroid12(): Boolean
+
+expect fun platformModule(): Module
+
+internal const val dataStoreFileName = "gameoflife-preferences"

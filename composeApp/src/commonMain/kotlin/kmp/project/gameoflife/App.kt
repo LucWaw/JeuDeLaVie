@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,6 +20,8 @@ import kmp.project.gameoflife.ui.GameOfLife
 import kmp.project.gameoflife.ui.theme.DragAndDropTheme
 import kmp.project.gameoflife.ui.onboard.OnboardingScreen
 import kmp.project.gameoflife.ui.settings.Settings
+import kmp.project.gameoflife.ui.theme.ThemeViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(isTablet: Boolean = false) {
@@ -26,9 +29,10 @@ fun App(isTablet: Boolean = false) {
     var showOnboarding by rememberSaveable { mutableStateOf(!onboardingUtils.isOnboardingCompleted()) }
 
     val navController = rememberNavController()
-    //val viewModelColor
+    val themeViewModel: ThemeViewModel = koinViewModel()
+    val theme by themeViewModel.themeState.collectAsState()
 
-    DragAndDropTheme {
+    DragAndDropTheme(theme = theme) {
 
         NavHost(navController, startDestination = Game) {
             composable<Game> {
@@ -54,10 +58,8 @@ fun App(isTablet: Boolean = false) {
                 }
             }
             composable<Settings> {
-                Settings(goBack = { navController.popBackStack() }/*Lambda color change*/)
+                Settings(goBack = { navController.popBackStack() })
             }
         }
-
-
     }
 }

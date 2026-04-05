@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,14 +40,22 @@ import gameoflife.composeapp.generated.resources.theme_force_black
 import gameoflife.composeapp.generated.resources.theme_force_white
 import gameoflife.composeapp.generated.resources.theme_system_classic
 import gameoflife.composeapp.generated.resources.theme_system_dynamic
-import kmp.project.gameoflife.isAnAndroidAppAboveAndroid12
+import kmp.project.gameoflife.getPlatform
+import kmp.project.gameoflife.ui.theme.ColorTheme
+import kmp.project.gameoflife.ui.theme.ThemeViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(goBack: () -> Boolean) {
+fun Settings(
+    goBack: () -> Boolean,
+    viewModel: ThemeViewModel = koinViewModel()
+) {
+    val currentTheme by viewModel.themeState.collectAsState()
+
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         topBar = {
@@ -65,20 +74,20 @@ fun Settings(goBack: () -> Boolean) {
             )
         }
     ) { paddingValues ->
-        val baseOptions = listOf(
-            stringResource(Res.string.theme_system_classic),
-            stringResource(Res.string.theme_force_black),
-            stringResource(Res.string.theme_force_white)
-        )
-
         val dynamicThemeLabel = stringResource(Res.string.theme_system_dynamic)
-        val colorOptions = if (isAnAndroidAppAboveAndroid12()) {
-            listOf(dynamicThemeLabel) + baseOptions
-        } else {
-            baseOptions
-        }
+        val systemClassicLabel = stringResource(Res.string.theme_system_classic)
+        val forceBlackLabel = stringResource(Res.string.theme_force_black)
+        val forceWhiteLabel = stringResource(Res.string.theme_force_white)
 
-        var selectedColorName by remember(colorOptions) { mutableStateOf(colorOptions[0]) }
+        val options = mutableListOf<Pair<String, ColorTheme>>()
+        if (getPlatform().isDynamicColorSupported) {
+            options.add(dynamicThemeLabel to ColorTheme.DYNAMIC)
+        }
+        options.add(systemClassicLabel to ColorTheme.SYSTEM)
+        options.add(forceBlackLabel to ColorTheme.BLACK)
+        options.add(forceWhiteLabel to ColorTheme.WHITE)
+
+        val selectedOption = options.find { it.second == currentTheme } ?: options.first()
 
         Column(
             modifier = Modifier
@@ -106,7 +115,7 @@ fun Settings(goBack: () -> Boolean) {
                         modifier = Modifier
                             .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
                         readOnly = true,
-                        value = selectedColorName,
+                        value = selectedOption.first,
                         onValueChange = {},
                         label = { Text(stringResource(Res.string.selectedColor)) },
                         trailingIcon = {
@@ -123,12 +132,11 @@ fun Settings(goBack: () -> Boolean) {
                             isColorDropdownExpanded = false
                         },
                     ) {
-                        colorOptions.forEach { selectionOption ->
+                        options.forEach { (label, theme) ->
                             DropdownMenuItem(
-                                text = { Text(selectionOption) },
+                                text = { Text(label) },
                                 onClick = {
-                                    selectedColorName = selectionOption
-                                    //TODO ACTUALLY CHANGE THEME
+                                    viewModel.updateTheme(theme)
                                     isColorDropdownExpanded = false
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -138,7 +146,7 @@ fun Settings(goBack: () -> Boolean) {
                 }
             }
 
-            if (selectedColorName == dynamicThemeLabel) {
+            if (currentTheme == ColorTheme.DYNAMIC) {
                 Row(
                     modifier = Modifier
                         .padding(top = 8.dp)

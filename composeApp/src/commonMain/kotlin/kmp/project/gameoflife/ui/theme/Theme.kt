@@ -63,9 +63,25 @@ val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun DragAndDropTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun DragAndDropTheme(
+    theme: ColorTheme = ColorTheme.SYSTEM,
+    content: @Composable () -> Unit
+) {
+    val useDarkTheme = when (theme) {
+        ColorTheme.SYSTEM -> isSystemInDarkTheme()
+        ColorTheme.DYNAMIC -> isSystemInDarkTheme()
+        ColorTheme.BLACK -> true
+        ColorTheme.WHITE -> false
+    }
+
+    val colorScheme = if (theme == ColorTheme.DYNAMIC) {
+        platformColors(useDarkTheme)
+    } else {
+        if (useDarkTheme) DarkColorScheme else LightColorScheme
+    }
+
     MaterialTheme(
-        colorScheme = platformColors(darkTheme),
+        colorScheme = colorScheme,
         content = content,
         shapes = Shapes,
         typography = Typography,

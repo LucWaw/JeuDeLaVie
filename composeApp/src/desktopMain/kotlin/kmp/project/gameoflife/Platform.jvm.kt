@@ -13,6 +13,9 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
@@ -22,6 +25,8 @@ import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 import java.awt.dnd.DropTargetDragEvent
@@ -31,6 +36,7 @@ import java.lang.reflect.Field
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
+    override val isDynamicColorSupported: Boolean = false
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
@@ -133,5 +139,18 @@ actual fun platformColors(
     return if (useDarkTheme) DarkColorScheme else LightColorScheme
 }
 
-@Composable
-actual fun isAnAndroidAppAboveAndroid12(): Boolean = false
+actual fun platformModule(): Module = module {
+    single<DataStore<Preferences>> {
+        createDataStore()
+    }
+}
+
+fun createDataStore(): DataStore<Preferences> {
+    return PreferenceDataStoreFactory.create(
+        produceFile = {
+            // Sur Desktop, on utilise le dossier temporaire ou un dossier utilisateur
+            val directory = System.getProperty("java.io.tmpdir")
+            File(directory, dataStoreFileName)
+        }
+    )
+}
