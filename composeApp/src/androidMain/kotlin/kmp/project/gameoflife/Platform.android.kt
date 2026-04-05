@@ -45,6 +45,7 @@ import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
 import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
@@ -60,15 +61,6 @@ class AndroidPlatform : Platform {
 
 actual fun getPlatform(): Platform = AndroidPlatform()
 
-lateinit var applicationContext: Context
-
-fun initOnboardingUtils(context: Context) {
-    applicationContext = context.applicationContext
-}
-
-actual fun getOnboardingUtils(): OnboardingUtils {
-    return AndroidOnboardingUtils(applicationContext)
-}
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -180,8 +172,10 @@ actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset 
     return Offset(event.x, event.y)
 }
 
-actual fun showToast(message: String) {
-    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+class AndroidToastManager(private val context: Context) : ToastManager {
+    override fun show(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabase> {
@@ -191,10 +185,6 @@ fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabas
         context = appContext,
         name = dbFile.absolutePath
     )
-}
-
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
-    return getDatabaseBuilder(applicationContext)
 }
 
 
@@ -214,12 +204,16 @@ actual fun platformColors(
 
 actual fun platformModule() = module {
     single<DataStore<Preferences>> {
-        // Koin injecte automatiquement le Context ici via get()
+        // Koin inject context with get()
         createDataStore(get())
     }
 
+    single<ToastManager> { AndroidToastManager(get()) }
+
+    single<OnboardingUtils> { AndroidOnboardingUtils(get()) }
+
     single {
-        // Même chose pour la DB si besoin
+        // Koin inject context with get()
         getDatabaseBuilder(get())
     }
 }

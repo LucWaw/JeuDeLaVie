@@ -24,7 +24,7 @@
     <string name="custom_pattern_current_grid">Current grid content</string>
     <string name="custom_pattern_previous_grid">Previous grid content, i.e. from the last launch</string>
 
-    <string name="custom_pattern_empty_error">Both the current and previous grids are empty, impossible to create a pattern.</string>
+    <string name="custom_pattern_empty_error">Both the current and previous grids are empty, impossible to save a pattern.</string>
     <string name="custom_pattern_saved">Pattern %1$s saved!</string>
     <string name="current_grid_short">Current grid</string>
     <string name="previous_grid_short">Previous grid</string>
@@ -38,10 +38,10 @@
 
     <string name="go_back">Go back</string>
 
-    <string name="theme">Choose a color scheme</string>
+    <string name="theme">Color Scheme</string>
 
-    <string name="theme_force_black">Force Black</string>
-    <string name="theme_force_white">Force White</string>
+    <string name="theme_force_black">Always Black</string>
+    <string name="theme_force_white">Always White</string>
     <string name="theme_system_classic">System Classic</string>
     <string name="theme_system_dynamic">System Dynamic</string>
     <string name="dynamic_color_info">Dynamic colors automatically adapt to your device's wallpaper and system theme. Your device is compatible because it runs Android 12 or higher.</string>

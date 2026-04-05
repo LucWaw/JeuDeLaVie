@@ -58,15 +58,16 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.domain.modele.PatternType
-import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import kmp.project.gameoflife.ui.theme.Shapes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -85,6 +86,7 @@ fun PatternsUI(
     isTablet: Boolean = false,
     isGameRunning: Boolean = false,
 ) {
+    val toastManager: ToastManager = koinInject()
     val gridRow = if (isTablet) 20 else getGridRow()
     val gridColumn = if (isTablet) 80 else getGridColumn()
 
@@ -183,7 +185,7 @@ fun PatternsUI(
                         if (!isGameRunning) {
                             showGridCustomPatternDialog = true
                         } else {
-                            showToast(runningText)
+                            toastManager.show(runningText)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(

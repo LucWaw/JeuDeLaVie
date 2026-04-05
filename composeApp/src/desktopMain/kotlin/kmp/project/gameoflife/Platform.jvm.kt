@@ -20,6 +20,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
@@ -40,10 +41,6 @@ class JVMPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
-
-actual fun getOnboardingUtils(): OnboardingUtils {
-    return DesktopOnboardingUtils()
-}
 
 @Composable
 actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
@@ -104,13 +101,13 @@ actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset 
         val field: Field = this.javaClass.getDeclaredField("nativeEvent")
         field.isAccessible = true
         val nativeEvent = field.get(this)
-        
+
         val point = when (nativeEvent) {
             is DropTargetDragEvent -> nativeEvent.location
             is DropTargetDropEvent -> nativeEvent.location
             else -> null
         }
-        
+
         if (point != null) {
             container.windowToLocal(Offset(point.x.toFloat(), point.y.toFloat()))
         } else {
@@ -121,11 +118,7 @@ actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset 
     }
 }
 
-actual fun showToast(message: String) {
-    // No-op for desktop as requested
-}
-
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
+fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
     val dbFile = File(System.getProperty("java.io.tmpdir"), GameOfLifeDatabase.DB_NAME)
     return Room.databaseBuilder<GameOfLifeDatabase>(
         name = dbFile.absolutePath,
@@ -143,6 +136,16 @@ actual fun platformModule(): Module = module {
     single<DataStore<Preferences>> {
         createDataStore()
     }
+
+    single<ToastManager> { DesktopToastManager() }
+
+
+    single {
+        getDatabaseBuilder()
+    }
+
+    single<OnboardingUtils> { DesktopOnboardingUtils() }
+
 }
 
 fun createDataStore(): DataStore<Preferences> {
@@ -153,4 +156,11 @@ fun createDataStore(): DataStore<Preferences> {
             File(directory, dataStoreFileName)
         }
     )
+}
+
+
+class DesktopToastManager() : ToastManager {
+    override fun show(message: String) {
+        //Not planned
+    }
 }

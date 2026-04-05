@@ -19,13 +19,15 @@ import androidx.navigation.compose.rememberNavController
 import kmp.project.gameoflife.ui.GameOfLife
 import kmp.project.gameoflife.ui.theme.DragAndDropTheme
 import kmp.project.gameoflife.ui.onboard.OnboardingScreen
+import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.settings.Settings
 import kmp.project.gameoflife.ui.theme.ThemeViewModel
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(isTablet: Boolean = false) {
-    val onboardingUtils = getOnboardingUtils()
+    val onboardingUtils: OnboardingUtils = koinInject()
     var showOnboarding by rememberSaveable { mutableStateOf(!onboardingUtils.isOnboardingCompleted()) }
 
     val navController = rememberNavController()

@@ -2,12 +2,12 @@ package kmp.project.gameoflife.ui.pattern
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.domain.modele.PatternType
 import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.domain.usecase.AddAPattern
 import kmp.project.gameoflife.domain.usecase.DeletePattern
 import kmp.project.gameoflife.domain.usecase.GetAllPatterns
-import kmp.project.gameoflife.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 
 
 class MovablePatternViewModel(
+    private val toastManager: ToastManager,
     getAllPatterns: GetAllPatterns,
     private val addPattern: AddAPattern,
     private val deletePattern: DeletePattern
@@ -61,7 +62,7 @@ class MovablePatternViewModel(
      */
     fun addCustomPattern(cells: Set<Pair<Int, Int>>, text: String = "") {
         if (cells.isEmpty()) {
-            showToast(text)
+            toastManager.show(text)
             return
         }
 
@@ -92,7 +93,7 @@ class MovablePatternViewModel(
 
         viewModelScope.launch {
             addPattern.invoke(newPattern)
-            showToast(text)
+            toastManager.show(text)
         }
     }
 
