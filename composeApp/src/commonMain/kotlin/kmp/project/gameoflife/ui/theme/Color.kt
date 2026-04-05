@@ -8,7 +8,7 @@ val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFD1E4FF)
 val onPrimaryContainerLight = Color(0xFF001D36)
 
-val secondaryLight = Color(0xFFFF9800) // Orange (pour MOVING)
+val secondaryLight = Color(0xFFE39C34) // Orange (pour MOVING)
 val onSecondaryLight = Color(0xFFFFFFFF)
 val secondaryContainerLight = Color(0xFFFFDBC9)
 val onSecondaryContainerLight = Color(0xFF330B00)

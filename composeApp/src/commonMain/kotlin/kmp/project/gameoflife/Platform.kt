@@ -45,4 +45,4 @@ expect fun platformColors(useDarkTheme: Boolean): ColorScheme
 
 expect fun platformModule(): Module
 
-internal const val dataStoreFileName = "gameoflife-preferences"
+internal const val dataStoreFileName = "gameoflife-preferences.preferences_pb"
