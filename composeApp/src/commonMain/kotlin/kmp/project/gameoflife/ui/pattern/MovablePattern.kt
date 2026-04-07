@@ -58,15 +58,16 @@ import gameoflife.composeapp.generated.resources.no
 import gameoflife.composeapp.generated.resources.previous_grid_short
 import gameoflife.composeapp.generated.resources.rotate_90_degrees_cw_24px
 import gameoflife.composeapp.generated.resources.yes
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.domain.modele.PatternType
-import kmp.project.gameoflife.showToast
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
 import kmp.project.gameoflife.ui.theme.Shapes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -74,17 +75,18 @@ fun PatternsUI(
     modifier: Modifier = Modifier,
     boardGridSize: Size,
     patterns: List<PatternMovable>,
-    onAddCustomPattern: (List<Pair<Int, Int>>, String) -> Unit,
+    onAddCustomPattern: (Set<Pair<Int, Int>>, String) -> Unit,
     onGetPatternById: (Long) -> PatternMovable?,
     onRotatePattern: (Long) -> Unit,
     onTogglePatternSelection: (Long) -> Unit,
     isEditingMode: Boolean,
     selectedPatternIds: List<Long>,
-    currentGrid: List<Pair<Int, Int>> = emptyList(),
-    previousGrid: List<Pair<Int, Int>> = emptyList(),
+    currentGrid: Set<Pair<Int, Int>> = emptySet(),
+    previousGrid: Set<Pair<Int, Int>> = emptySet(),
     isTablet: Boolean = false,
     isGameRunning: Boolean = false,
 ) {
+    val toastManager: ToastManager = koinInject()
     val gridRow = if (isTablet) 20 else getGridRow()
     val gridColumn = if (isTablet) 80 else getGridColumn()
 
@@ -109,29 +111,30 @@ fun PatternsUI(
         )
 
         when {
+            //Show simple save toast when previous and current are empty
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(
-                    emptyList(),
+                    emptySet(),
                     customPatternEmptyError
-                ) // Déclenchera le toast "vide"
-                showGridCustomPatternDialog = false //Never read but useful for remember
+                )
+                showGridCustomPatternDialog = false 
             }
-
+            //Show current grid save dialog
             currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
                 onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
-                showGridCustomPatternDialog = false//Never read but useful for remember
+                showGridCustomPatternDialog = false
             }
-
-            currentGrid.isEmpty() && previousGrid.isNotEmpty() -> { //Not always true when reached
+            //show previous grid save dialog
+            currentGrid.isEmpty() /*previousGrid.isNotEmpty() done with sequence  */ -> {
                 onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
-                showGridCustomPatternDialog = false//Never read but useful for remember
+                showGridCustomPatternDialog = false
             }
 
             else -> {
-                // Les deux sont remplies, on affiche le dialogue
+                // Tho grid with active cells, show choice dialog
                 SelectGridForCustomPatternDialogCustom(
                     onDismissRequest = {
-                        showGridCustomPatternDialog = false //Never read but useful for remember
+                        showGridCustomPatternDialog = false 
                     },
                     onConfirmCurrentGridPattern = {
                         onAddCustomPattern(
@@ -180,9 +183,9 @@ fun PatternsUI(
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
                         if (!isGameRunning) {
-                            showGridCustomPatternDialog = true //Never read but useful for remember
+                            showGridCustomPatternDialog = true
                         } else {
-                            showToast(runningText)
+                            toastManager.show(runningText)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -402,18 +405,24 @@ fun Pattern(
                         ) {
                             val cellCoord = Pair(it / pattern.gridSize, it % pattern.gridSize)
                             val isAlive = pattern.cells.contains(cellCoord)
-
+                            
                             Box(
                                 modifier = Modifier
                                     .aspectRatio(1f)
                                     .background(
                                         if (isAlive) patternColor else Color.Transparent
                                     )
-                                    .border(
-                                        BorderStroke(
-                                            width = 0.4.dp,
-                                            color = MaterialTheme.colorScheme.outlineVariant
-                                        )
+                                    .then(
+                                        if (isAlive) {
+                                            Modifier.border(
+                                                BorderStroke(
+                                                    width = 0.4.dp,
+                                                    color = MaterialTheme.colorScheme.outlineVariant
+                                                )
+                                            )
+                                        } else {
+                                            Modifier
+                                        }
                                     )
                             )
                         }

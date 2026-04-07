@@ -12,28 +12,35 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.DragAndDropTransferable
 import androidx.compose.ui.draganddrop.awtTransferable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import java.awt.dnd.DropTargetDragEvent
+import java.awt.dnd.DropTargetDropEvent
 import java.io.File
+import java.lang.reflect.Field
 
 class JVMPlatform: Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
+    override val isDynamicColorSupported: Boolean = false
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
-
-actual fun getOnboardingUtils(): OnboardingUtils {
-    return DesktopOnboardingUtils()
-}
 
 @Composable
 actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
@@ -64,25 +71,54 @@ actual fun buildTextTransferData(text: String, dragOffset: Offset): DragAndDropT
 // Check if AWT payload contains a string
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun DragAndDropEvent.hasText(): Boolean {
-    return this.awtTransferable.isDataFlavorSupported(DataFlavor.stringFlavor)
+    return try {
+        this.awtTransferable.isDataFlavorSupported(DataFlavor.stringFlavor)
+    } catch (_: Exception) {
+        false
+    }
 }
 
 // Extract the string using AWT DataFlavors
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun DragAndDropEvent.getText(): String? {
-    val transferable = this.awtTransferable
-    return if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        transferable.getTransferData(DataFlavor.stringFlavor) as? String
-    } else {
+    return try {
+        val transferable = this.awtTransferable
+        if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            transferable.getTransferData(DataFlavor.stringFlavor) as? String
+        } else {
+            null
+        }
+    } catch (_: Exception) {
         null
     }
 }
 
-actual fun showToast(message: String) {
-    // No-op for desktop as requested
+@OptIn(ExperimentalComposeUiApi::class)
+actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
+    return try {
+        // Compose DragAndDropEvent on Desktop wraps AWT events.
+        // We use reflection to access the underlying AWT event location.
+        val field: Field = this.javaClass.getDeclaredField("nativeEvent")
+        field.isAccessible = true
+        val nativeEvent = field.get(this)
+
+        val point = when (nativeEvent) {
+            is DropTargetDragEvent -> nativeEvent.location
+            is DropTargetDropEvent -> nativeEvent.location
+            else -> null
+        }
+
+        if (point != null) {
+            container.windowToLocal(Offset(point.x.toFloat(), point.y.toFloat()))
+        } else {
+            Offset.Zero
+        }
+    } catch (_: Exception) {
+        Offset.Zero
+    }
 }
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
+fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
     val dbFile = File(System.getProperty("java.io.tmpdir"), GameOfLifeDatabase.DB_NAME)
     return Room.databaseBuilder<GameOfLifeDatabase>(
         name = dbFile.absolutePath,
@@ -94,4 +130,37 @@ actual fun platformColors(
     useDarkTheme: Boolean
 ): ColorScheme {
     return if (useDarkTheme) DarkColorScheme else LightColorScheme
+}
+
+actual fun platformModule(): Module = module {
+    single<DataStore<Preferences>> {
+        createDataStore()
+    }
+
+    single<ToastManager> { DesktopToastManager() }
+
+
+    single {
+        getDatabaseBuilder()
+    }
+
+    single<OnboardingUtils> { DesktopOnboardingUtils() }
+
+}
+
+fun createDataStore(): DataStore<Preferences> {
+    return PreferenceDataStoreFactory.create(
+        produceFile = {
+            // Sur Desktop, on utilise le dossier temporaire ou un dossier utilisateur
+            val directory = System.getProperty("java.io.tmpdir")
+            File(directory, dataStoreFileName)
+        }
+    )
+}
+
+
+class DesktopToastManager() : ToastManager {
+    override fun show(message: String) {
+        //Not planned
+    }
 }

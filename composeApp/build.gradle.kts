@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.androidKmpLibrary)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
@@ -51,6 +52,9 @@ kotlin {
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.material3)
+            implementation(libs.navigation.compose)
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

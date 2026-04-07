@@ -46,8 +46,8 @@ class CellularSpace private constructor(
         }
     }
 
-    fun getAliveCells(): List<Pair<Int, Int>> {
-        val aliveCells = mutableListOf<Pair<Int, Int>>()
+    fun getAliveCells(): Set<Pair<Int, Int>> {
+        val aliveCells = mutableSetOf<Pair<Int, Int>>()
         for (i in 0..tailleX) {
             for (j in 0..tailleY) {
                 if (this[Pair(i, j)]?.isAlive == true) {

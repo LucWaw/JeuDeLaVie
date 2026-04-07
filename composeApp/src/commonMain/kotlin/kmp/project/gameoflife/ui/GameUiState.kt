@@ -7,7 +7,7 @@ val isDesktop: Boolean = getPlatform().name.startsWith("Java")
 
 
 data class GameUiState(
-    val colored: List<Pair<Int, Int>> = emptyList(),
+    val colored: Set<Pair<Int, Int>> = emptySet(),
     val generationCounter : Int = 0,
     val speedGeneration : Float = 1f
 )
@@ -23,4 +23,3 @@ fun getGridColumn(): Int {
     val gridColumn = if (isDesktop) 80 else 15
     return gridColumn
 }
-

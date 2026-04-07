@@ -6,18 +6,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.geometry.Offset
-import androidx.room.RoomDatabase
-import kmp.project.gameoflife.data.GameOfLifeDatabase
-import kmp.project.gameoflife.ui.onboard.OnboardingUtils
+import androidx.compose.ui.layout.LayoutCoordinates
 import org.jetbrains.compose.resources.DrawableResource
+import org.koin.core.module.Module
 
 interface Platform {
     val name: String
+    val isDynamicColorSupported: Boolean
 }
 
 expect fun getPlatform(): Platform
-
-expect fun getOnboardingUtils(): OnboardingUtils
 
 @Composable
 expect fun GifImage(ressources: DrawableResource, modifier: Modifier = Modifier)
@@ -26,12 +24,13 @@ expect fun buildTextTransferData(text: String,dragOffset: Offset = Offset.Zero):
 expect fun DragAndDropEvent.hasText(): Boolean
 expect fun DragAndDropEvent.getText(): String?
 
-/**
- * Interface for platform-specific toasts
- */
-expect fun showToast(message: String)
-
-expect fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase>
+// Added to support single board drop target
+expect fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset
 
 @Composable
 expect fun platformColors(useDarkTheme: Boolean): ColorScheme
+
+
+expect fun platformModule(): Module
+
+internal const val dataStoreFileName = "gameoflife-preferences.preferences_pb"

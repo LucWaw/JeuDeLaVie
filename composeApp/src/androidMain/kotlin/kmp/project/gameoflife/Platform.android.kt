@@ -22,9 +22,14 @@ import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import coil3.ImageLoader
@@ -40,26 +45,22 @@ import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
 import kmp.project.gameoflife.data.GameOfLifeDatabase
+import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
+import org.koin.dsl.module
+
+private val IS_DYNAMIC_COLOR_SUPPORTED = SDK_INT >= Build.VERSION_CODES.S
 
 class AndroidPlatform : Platform {
     override val name: String = "Android $SDK_INT"
+    override val isDynamicColorSupported: Boolean = IS_DYNAMIC_COLOR_SUPPORTED
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
 
-lateinit var applicationContext: Context
-
-fun initOnboardingUtils(context: Context) {
-    applicationContext = context.applicationContext
-}
-
-actual fun getOnboardingUtils(): OnboardingUtils {
-    return AndroidOnboardingUtils(applicationContext)
-}
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -166,8 +167,15 @@ actual fun DragAndDropEvent.getText(): String? {
     return null
 }
 
-actual fun showToast(message: String) {
-    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
+    val event = this.toAndroidDragEvent()
+    return Offset(event.x, event.y)
+}
+
+class AndroidToastManager(private val context: Context) : ToastManager {
+    override fun show(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabase> {
@@ -179,10 +187,6 @@ fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<GameOfLifeDatabas
     )
 }
 
-actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
-    return getDatabaseBuilder(applicationContext)
-}
-
 
 // Dans androidMain/.../Theme.android.kt
 
@@ -190,11 +194,32 @@ actual fun getDatabaseBuilder(): RoomDatabase.Builder<GameOfLifeDatabase> {
 actual fun platformColors(
     useDarkTheme: Boolean
 ): ColorScheme {
-    val dynamicColor = SDK_INT >= Build.VERSION_CODES.S
     return when {
-        dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        dynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
+        IS_DYNAMIC_COLOR_SUPPORTED && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        IS_DYNAMIC_COLOR_SUPPORTED && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
         useDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+}
+
+actual fun platformModule() = module {
+    single<DataStore<Preferences>> {
+        // Koin inject context with get()
+        createDataStore(get())
+    }
+
+    single<ToastManager> { AndroidToastManager(get()) }
+
+    single<OnboardingUtils> { AndroidOnboardingUtils(get()) }
+
+    single {
+        // Koin inject context with get()
+        getDatabaseBuilder(get())
+    }
+}
+
+fun createDataStore(context: Context): DataStore<Preferences> {
+    return PreferenceDataStoreFactory.create(
+        produceFile = { context.preferencesDataStoreFile(dataStoreFileName) }
+    )
 }

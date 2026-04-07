@@ -17,13 +17,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kmp.project.gameoflife.buildTextTransferData
 import kmp.project.gameoflife.domain.modele.PatternMovable
+import kmp.project.gameoflife.getPositionIn
 import kmp.project.gameoflife.getText
 import kmp.project.gameoflife.hasText
 import kotlin.math.min
@@ -43,8 +46,9 @@ fun CustomDragTarget(
     visual: @Composable () -> Unit,
 ) {
 
+
     val ghostSizePx = remember(gridSize, tileSize) {
-        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2) //YOU CAN MODIFY HERE
+        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2)
     }
 
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
@@ -68,7 +72,7 @@ fun CustomDragTarget(
 
                         // La vraie taille d'une case, adaptée à l'écran
                         val tileW = tileSize.width * scale
-                        val tileH = tileSize.height * scale
+                        val tileH = tileSize.width * scale
 
                         // Calculer le point central de la case en bas à droite
                         val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
@@ -122,10 +126,11 @@ fun CustomDragTarget(
             }
         }
     }
+    Box { visual() } //BOX for Visual
 
-    Box(
+    Box( //Box for dragdecoration size
         modifier = modifier
-            .layout { measurable, constraints ->
+            .layout { measurable, constraints -> //Avoir de la place pour dragDecoration
                 val width = constraints.maxWidth
                 val height = constraints.maxHeight
 
@@ -136,23 +141,23 @@ fun CustomDragTarget(
                     Constraints.fixed(gWidth, gHeight)
                 )
 
-                val scale = min(width.toFloat() / gWidth, height.toFloat() / gHeight)
 
                 layout(width, height) {
                     placeable.placeWithLayer(
                         (width - gWidth) / 2,
                         (height - gHeight) / 2
                     ) {
-                        scaleX = scale
-                        scaleY = scale
+                        scaleX = width.toFloat() / gWidth
+                        scaleY = height.toFloat() / gHeight
                     }
                 }
             }
             .onSizeChanged { boxSize = it }
             .then(dragSourceModifier),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
-        visual()
+        //if visual() here size before any drag is bad
+        //Need to be as big as possible to have a big dragTarget
     }
 }
 
@@ -160,9 +165,11 @@ fun CustomDragTarget(
 @Composable
 fun CustomDropTarget(
     modifier: Modifier = Modifier,
-    onDropPattern: (PatternMovable) -> Unit,
+    onDropPattern: (PatternMovable, Offset) -> Unit,
     visual: @Composable () -> Unit
 ) {
+    var layoutCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    
     val dropTarget = remember(onDropPattern) {
         object : DragAndDropTarget {
             override fun onDrop(event: DragAndDropEvent): Boolean {
@@ -170,7 +177,8 @@ fun CustomDropTarget(
                 if (textReceived == "LOCAL_PATTERN") {
                     val pattern = LocalDragDropState.draggedPattern
                     if (pattern != null) {
-                        onDropPattern(pattern)
+                        val dropPosition = layoutCoordinates?.let { event.getPositionIn(it) } ?: Offset.Zero
+                        onDropPattern(pattern, dropPosition)
 
                         // Clean up memory after the drop
                         LocalDragDropState.draggedPattern = null
@@ -185,10 +193,12 @@ fun CustomDropTarget(
     val shouldStartDrag = remember { { event: DragAndDropEvent -> event.hasText() } }
 
     Box(
-        modifier = modifier.dragAndDropTarget(
-            shouldStartDragAndDrop = shouldStartDrag,
-            target = dropTarget
-        ),
+        modifier = modifier
+            .onGloballyPositioned { layoutCoordinates = it }
+            .dragAndDropTarget(
+                shouldStartDragAndDrop = shouldStartDrag,
+                target = dropTarget
+            ),
         contentAlignment = Alignment.Center
     ) {
         visual()

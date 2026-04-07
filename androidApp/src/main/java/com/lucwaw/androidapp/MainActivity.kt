@@ -10,14 +10,12 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import kmp.project.gameoflife.App
-import kmp.project.gameoflife.initOnboardingUtils
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initOnboardingUtils(this)
 
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)

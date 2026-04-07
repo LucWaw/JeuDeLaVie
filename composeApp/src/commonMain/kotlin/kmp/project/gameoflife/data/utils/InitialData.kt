@@ -27,7 +27,7 @@ object InitialData {
             id = 8,
             rle = $$"""
             #N Toad
-            x = 6, y = 2, rule = B3/S23
+            x = 4, y = 2, rule = B3/S23
             b3o$3o!
         """.trimIndent(),
             type = PatternType.MOVING

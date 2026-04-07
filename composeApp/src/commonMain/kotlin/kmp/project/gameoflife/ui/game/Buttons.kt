@@ -34,7 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Buttons(
-    aliveCells: List<Pair<Int, Int>>,
+    aliveCells: Set<Pair<Int, Int>>,
     onResetGrid: () -> Unit,
     isEditingMode: Boolean,
     isRunning: Boolean,

@@ -13,6 +13,7 @@ androidx-material = "1.13.0"
 coilCompose = "3.3.0"
 componentsResources = "1.10.1"
 compose-multiplatform = "1.10.1"
+datastorePreferences = "1.2.1"
 foundation = "1.10.1"
 junit = "4.13.2"
 kotlin = "2.3.10"
@@ -21,6 +22,7 @@ kotlinxCollectionsImmutable = "0.4.0"
 kotlinxSerializationJson = "1.10.0"
 material = "1.10.1"
 material3 = "1.9.0"
+navigationCompose = "2.9.2"
 runtime = "1.10.1"
 uiToolingPreview = "1.10.1"
 koin = "4.2.0-RC1"
@@ -32,8 +34,11 @@ material3WindowSizeClassVersion = "1.4.0"
 room = "2.8.4"
 ksp = "2.3.5"
 sqlite = "2.6.2"
+composeHotReload = "1.0.0"
 
 [libraries]
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coilCompose" }
@@ -57,6 +62,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 material = { module = "org.jetbrains.compose.material:material", version.ref = "material" }
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 material3-window-size-class1 = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "runtime" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "uiToolingPreview" }
 ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "uiToolingPreview" }
@@ -91,3 +97,4 @@ androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.r
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload"}
