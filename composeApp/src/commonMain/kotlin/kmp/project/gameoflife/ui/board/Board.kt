@@ -2,16 +2,24 @@ package kmp.project.gameoflife.ui.board
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -22,6 +30,10 @@ import kmp.project.gameoflife.ui.GameUiState
 import kmp.project.gameoflife.ui.draganddrop.CustomDropTarget
 import kmp.project.gameoflife.ui.getGridColumn
 import kmp.project.gameoflife.ui.getGridRow
+import kmp.project.gameoflife.ui.isDesktop
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -51,6 +63,18 @@ fun Board(
     onToggleCell: (Pair<Int, Int>, Boolean?) -> Unit = { _, _ -> },
     gridChange: (Size) -> Unit,
 ) {
+    var scale by remember {
+        mutableFloatStateOf(1f)
+    }
+    var offset by remember {
+        mutableStateOf(Offset.Zero)
+    }
+
+    var drawingJob by remember { mutableStateOf<Job?>(null) }
+    val scope = rememberCoroutineScope()
+    var isZoomingActive by remember { mutableStateOf(false) }
+
+
     val gridRow = if (isTablet) 20 else getGridRow()
     val gridColumn = if (isTablet) 80 else getGridColumn()
 
@@ -113,72 +137,131 @@ fun Board(
         ) {
             Canvas(
                 modifier = Modifier
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        translationX = offset.x
+                        translationY = offset.y
+                    }
                     .fillMaxSize()
-                    // pointerInput allows us to handle low-level touch/mouse events.
-                    // We pass keys (tileSize, etc.) to restart the pointer processing if layout changes.
-                    .pointerInput(tileSize, gridRow, gridColumn, offsetX, offsetY) {
-                        detectTapGestures { offset ->
-                            val cell = cellCoordinatesAtOffset(offset, tileSize, gridRow, gridColumn, offsetX, offsetY)
-                            if (cell != null) onCellClick(cell)
+                    .pointerInput(Unit) {
+                        awaitEachGesture {
+                            while (true) {
+                                val event = awaitPointerEvent()
+
+                                if (event.changes.size >= 2) {
+                                    isZoomingActive = true // Globally block drawing
+                                    drawingJob?.cancel()   // Kill any pending draw job
+
+                                    val zoomChange = event.calculateZoom()
+                                    val panChange = event.calculatePan()
+
+                                    if (zoomChange != 1f || panChange != Offset.Zero) {
+                                        scale = (scale * zoomChange).coerceIn(1f, 5f)
+                                        val extraWidth = (scale - 1) * size.width
+                                        val extraHeight = (scale - 1) * size.height
+                                        val maxX = extraWidth / 2
+                                        val maxY = extraHeight / 2
+
+                                        offset = Offset(
+                                            x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                                            y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                                        )
+                                        event.changes.forEach { it.consume() }
+                                    }
+                                }
+
+                                // Reset zooming flag only when ALL fingers are lifted
+                                if (event.changes.none { it.pressed }) {
+                                    isZoomingActive = false
+                                    break
+                                }
+                            }
                         }
                     }
+                    // GESTURE 2: Drawing Logic with Delay
                     .pointerInput(tileSize, gridRow, gridColumn, offsetX, offsetY) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                val cell = cellCoordinatesAtOffset(offset, tileSize, gridRow, gridColumn, offsetX, offsetY)
-                                if (cell != null) {
-                                    onToggleCell(cell, null) // Invert state
-                                    lastToggledCell = cell
-                                }
-                                hoverCell = null // Clear hover on drag start
-                            },
-                            onDrag = { change, _ ->
-                                val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
-                                if (cell != null && cell != lastToggledCell) {
-                                    // When dragging fast, some cells might be skipped. 
-                                    // interpolateCells uses a line algorithm to find all cells between the last and current position.
-                                    interpolateCells(lastToggledCell ?: cell, cell).forEach { interpolatedCell ->
-                                        if (interpolatedCell != lastToggledCell) {
-                                            onToggleCell(interpolatedCell, null) // Invert state
-                                        }
-                                    }
-                                    lastToggledCell = cell
-                                }
-                            },
-                            onDragEnd = { 
-                                lastToggledCell = null
-                                hoverCell = null // Fix ghosting
-                            },
-                            onDragCancel = { 
-                                lastToggledCell = null
-                                hoverCell = null // Fix ghosting
-                            }
-                        )
-                    }
-
-                    //Useful for desktop target
-                    .pointerInput(tileSize, gridRow, gridColumn, offsetX, offsetY) {
-                        // awaitPointerEventScope provides a suspendable scope to listen for raw pointer events.
-                        // This is useful for events like Move or Enter/Exit that aren't covered by standard gesture detectors.
                         awaitPointerEventScope {
                             while (true) {
-                                // Suspend until a pointer event (mouse move, touch, etc.) occurs.
                                 val event = awaitPointerEvent()
-                                val position = event.changes.first().position
-                                
-                                when (event.type) {
-                                    // Update hover state when the pointer moves or enters the canvas area.
-                                    PointerEventType.Move, PointerEventType.Enter -> {
-                                        hoverCell = cellCoordinatesAtOffset(position, tileSize, gridRow, gridColumn, offsetX, offsetY)
+                                val change = event.changes.first()
+
+                                if (event.changes.size == 1 && !isZoomingActive) {
+                                    when (event.type) {
+                                        PointerEventType.Press -> {
+                                            // DELAY LOGIC: Don't draw immediately.
+                                            // Launch a job that waits 100ms before toggling the first cell.
+                                            drawingJob = scope.launch {
+                                                delay(20) // The "Blocking Delay"
+                                                val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
+                                                if (cell != null) {
+                                                    onToggleCell(cell, null)
+                                                    lastToggledCell = cell
+                                                }
+                                            }
+                                        }
+                                        PointerEventType.Move -> {
+                                            // Only draw if the job finished (timer passed) OR we are already dragging
+                                            if (drawingJob?.isActive == false && change.pressed) {
+                                                val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
+                                                if (cell != null && cell != lastToggledCell) {
+                                                    interpolateCells(lastToggledCell ?: cell, cell).forEach { interpolatedCell ->
+                                                        if (interpolatedCell != lastToggledCell) {
+                                                            onToggleCell(interpolatedCell, null)
+                                                        }
+                                                    }
+                                                    lastToggledCell = cell
+                                                }
+                                            }
+                                        }
+                                        PointerEventType.Release -> {
+                                            drawingJob?.cancel()
+                                            lastToggledCell = null
+                                        }
                                     }
-                                    // Clear hover when the pointer leaves or is released.
-                                    PointerEventType.Exit, PointerEventType.Release -> {
-                                        hoverCell = null // Fix ghosting
-                                    }
+                                } else {
+                                    // More than one finger? Kill the drawing immediately
+                                    drawingJob?.cancel()
+                                    lastToggledCell = null
                                 }
                             }
                         }
                     }
+
+
+                    .then(
+                        if (isDesktop) {
+                            Modifier.pointerInput(tileSize, gridRow, gridColumn, offsetX, offsetY) {
+                                // awaitPointerEventScope provides a suspendable scope to listen for raw pointer events.
+                                // This is useful for events like Move or Enter/Exit that aren't covered by standard gesture detectors.
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        // Suspend until a pointer event (mouse move, touch, etc.) occurs.
+                                        val event = awaitPointerEvent()
+                                        val position = event.changes.first().position
+
+                                        when (event.type) {
+                                            // Update hover state when the pointer moves or enters the canvas area.
+                                            PointerEventType.Move, PointerEventType.Enter -> {
+                                                hoverCell = cellCoordinatesAtOffset(
+                                                    position,
+                                                    tileSize,
+                                                    gridRow,
+                                                    gridColumn,
+                                                    offsetX,
+                                                    offsetY
+                                                )
+                                            }
+                                            // Clear hover when the pointer leaves or is released.
+                                            PointerEventType.Exit, PointerEventType.Release -> {
+                                                hoverCell = null // Fix ghosting
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else Modifier
+                    )
             ) {
                 if (tileSize <= 0f) return@Canvas
                 
