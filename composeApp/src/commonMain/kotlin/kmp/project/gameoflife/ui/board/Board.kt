@@ -2,6 +2,7 @@ package kmp.project.gameoflife.ui.board
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
@@ -16,8 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -80,7 +83,7 @@ fun Board(
 
     var lastToggledCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var hoverCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-    
+
     val colorPrimary = MaterialTheme.colorScheme.primary
     val colorSurface = MaterialTheme.colorScheme.surface
     val colorOutline = MaterialTheme.colorScheme.outline
@@ -89,23 +92,23 @@ fun Board(
     BoxWithConstraints(modifier = modifier.fillMaxSize().background(colorSurface)) {
         val availableWidth = with(density) { maxWidth.toPx() }
         val availableHeight = with(density) { maxHeight.toPx() }
-        
+
         // Calculate the largest possible tile size that allows the entire grid to fit.
         // We use min() to ensure that the grid is constrained by the smaller dimension (width or height).
         val tileSize = min(availableWidth / gridColumn, availableHeight / gridRow)
-        
+
         // Compute total grid dimensions based on the calculated tile size.
         val gridWidth = tileSize * gridColumn
         val gridHeight = tileSize * gridRow
-        
+
         // Calculate offsets to center the grid within the available BoxWithConstraints area.
         // Subtracting grid size from available size and dividing by 2 gives the starting padding.
         val offsetX = (availableWidth - gridWidth) / 2
-        val offsetY = (availableHeight - gridHeight) / 2
+        val offsetY = (availableHeight - gridHeight) // "/2" TODO HERE TO CHANGE GRID POSITION
 
         CustomDropTarget(
             modifier = Modifier
-                .fillMaxSize()
+                .clipToBounds()
                 .onSizeChanged { gridChange(it.toSize()) },
             onDropPattern = { pattern, dropOffset ->
                 // Translate the drop screen offset to a position relative to the grid's top-left corner.
@@ -137,13 +140,14 @@ fun Board(
         ) {
             Canvas(
                 modifier = Modifier
+                    .fillMaxSize()
+                    .border(3.dp,Color.Blue)
                     .graphicsLayer {
                         scaleX = scale
                         scaleY = scale
                         translationX = offset.x
                         translationY = offset.y
                     }
-                    .fillMaxSize()
                     .pointerInput(Unit) {
                         awaitEachGesture {
                             while (true) {
@@ -156,19 +160,19 @@ fun Board(
                                     val zoomChange = event.calculateZoom()
                                     val panChange = event.calculatePan()
 
-                                    if (zoomChange != 1f || panChange != Offset.Zero) {
-                                        scale = (scale * zoomChange).coerceIn(1f, 5f)
-                                        val extraWidth = (scale - 1) * size.width
-                                        val extraHeight = (scale - 1) * size.height
-                                        val maxX = extraWidth / 2
-                                        val maxY = extraHeight / 2
 
-                                        offset = Offset(
-                                            x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                                            y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
-                                        )
-                                        event.changes.forEach { it.consume() }
-                                    }
+                                    scale = (scale * zoomChange).coerceIn(1f, 5f)
+                                    val extraWidth = (scale - 1) * constraints.maxWidth
+                                    val extraHeight = (scale - 1) * constraints.maxHeight
+                                    val maxX = extraWidth / 2
+                                    val maxY = extraHeight / 2
+
+                                    offset = Offset(
+                                        x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                                        y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                                    )
+                                    event.changes.forEach { it.consume() }
+
                                 }
 
                                 // Reset zooming flag only when ALL fingers are lifted
@@ -179,6 +183,7 @@ fun Board(
                             }
                         }
                     }
+
                     // GESTURE 2: Drawing Logic with Delay
                     .pointerInput(tileSize, gridRow, gridColumn, offsetX, offsetY) {
                         awaitPointerEventScope {
@@ -192,7 +197,7 @@ fun Board(
                                             // DELAY LOGIC: Don't draw immediately.
                                             // Launch a job that waits 100ms before toggling the first cell.
                                             drawingJob = scope.launch {
-                                                delay(20) // The "Blocking Delay"
+                                                delay(60) // The "Blocking Delay"
                                                 val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
                                                 if (cell != null) {
                                                     onToggleCell(cell, null)
@@ -264,13 +269,13 @@ fun Board(
                     )
             ) {
                 if (tileSize <= 0f) return@Canvas
-                
+
                 val strokeWidthPx = 0.5.dp.toPx()
 
                 // Draw alive cells: iterate over the set of active cells and render them as rectangles.
                 gameUIState.colored.forEach { (row, col) ->
                     if (row in 0 until gridRow && col in 0 until gridColumn) {
-                        // drawRect renders a filled rectangle. 
+                        // drawRect renders a filled rectangle.
                         // Math: topLeft = (startOffset + index * cellSize) converts grid index to pixel space.
                         drawRect(
                             color = colorPrimary,
@@ -336,10 +341,10 @@ fun cellCoordinatesAtOffset(
     offsetY: Float
 ): Pair<Int, Int>? {
     if (tileSize <= 0) return null
-    
+
     val relativeX = hitPoint.x - offsetX
     val relativeY = hitPoint.y - offsetY
-    
+
     val col = (relativeX / tileSize).toInt()
     val row = (relativeY / tileSize).toInt()
 
@@ -364,17 +369,17 @@ fun interpolateCells(start: Pair<Int, Int>, end: Pair<Int, Int>): List<Pair<Int,
     var y0 = start.first
     val x1 = end.second
     val y1 = end.first
-    
+
     val dx = abs(x1 - x0)
     val dy = abs(y1 - y0)
     val sx = if (x0 < x1) 1 else -1 // Direction step for X
     val sy = if (y0 < y1) 1 else -1 // Direction step for Y
     var err = dx - dy // Initial error value
-    
+
     while (true) {
         result.add(Pair(y0, x0))
         if (x0 == x1 && y0 == y1) break
-        
+
         val e2 = 2 * err
         // If error in X is within threshold, step in X and adjust error.
         if (e2 > -dy) {

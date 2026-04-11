@@ -14,12 +14,12 @@ data class GameUiState(
 
 @Composable
 fun getGridRow(): Int {
-    val gridRow = if (isDesktop) 20 else 15
+    val gridRow = if (isDesktop) 20 else 100
     return gridRow
 }
 
 @Composable
 fun getGridColumn(): Int {
-    val gridColumn = if (isDesktop) 80 else 15
+    val gridColumn = if (isDesktop) 80 else 100
     return gridColumn
 }
