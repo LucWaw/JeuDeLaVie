@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,8 +37,8 @@ fun App(isTablet: Boolean = false) {
 
     DragAndDropTheme(theme = theme) {
 
-        NavHost(navController, startDestination = Game) {
-            composable<Game> {
+        NavHost(navController, startDestination = Screens.Game.route) {
+            composable(Screens.Game.route) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -54,14 +55,24 @@ fun App(isTablet: Boolean = false) {
                             isTablet = isTablet, showOnboarding = {
                                 showOnboarding = true
                             }, modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-                            goToSettings = { navController.navigate(Settings) }
+                            goToSettings = { navController.navigate(Screens.Settings.route) }
                         )
                     }
                 }
             }
-            composable<Settings> {
-                Settings(goBack = { navController.popBackStack() })
+            composable(Screens.Settings.route) {
+                Settings(goBack = {
+                    popBackStack(navController, Screens.Settings) })
             }
+        }
+    }
+}
+
+
+fun popBackStack(navController: NavController, currentScreen: Screens) {
+    navController.currentBackStackEntry?.destination?.route?.let {
+        if (it == currentScreen.route) {
+            navController.popBackStack()
         }
     }
 }

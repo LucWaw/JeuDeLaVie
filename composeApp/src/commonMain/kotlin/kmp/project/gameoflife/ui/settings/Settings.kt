@@ -51,7 +51,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(
-    goBack: () -> Boolean,
+    goBack: () -> Unit,
     viewModel: ThemeViewModel = koinViewModel()
 ) {
     val currentTheme by viewModel.themeState.collectAsState()

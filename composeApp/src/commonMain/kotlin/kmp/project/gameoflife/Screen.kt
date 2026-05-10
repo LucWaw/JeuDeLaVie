@@ -1,8 +1,7 @@
 package kmp.project.gameoflife
 
-import kotlinx.serialization.Serializable
+sealed class Screens(val route : String = "Game"){
+    data object Game: Screens("Game")
+    data object Settings: Screens("Settings")
+}
 
-@Serializable
-object Game
-@kotlinx.serialization.Serializable
-object Settings
