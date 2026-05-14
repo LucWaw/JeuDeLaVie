@@ -6,11 +6,11 @@ Bienvenue dans notre application. La protection de votre vie privée est une pri
 
 Informations Collectées
 
-Notre application ne collecte aucune information personnelle ou sensible et ne transmet aucune donnée vers des serveurs externes. Les seules données enregistrées sont vos motifs personnalisés, stockés localement sur votre appareil (voir section ci-dessous).
+Notre application ne collecte aucune information personnelle ou sensible et ne transmet aucune donnée vers nos serveurs. Les seules données enregistrées sont vos motifs personnalisés (voir section ci-dessous).
 
 Données stockées localement
 
-Notre application enregistre localement sur votre appareil vos motifs personnalisés, à l'aide d'une base de données embarquée (Room). Ces données ne quittent jamais votre appareil, ne sont pas transmises à des serveurs externes et ne sont accessibles que par l'application. Vous pouvez les supprimer à tout moment depuis l'application ou en désinstallant celle-ci.
+Notre application enregistre vos motifs personnalisés à l'aide d'une base de données embarquée (Room). Ces données ne sont pas transmises à nos serveurs et ne sont accessibles que par l'application. Elles peuvent être incluses dans les sauvegardes Android (Google Drive) si cette fonctionnalité est activée sur votre appareil. Vous pouvez les supprimer à tout moment depuis l'application, ou en désactivant les sauvegardes Android dans les paramètres de votre appareil.
 
 Enfants de Moins de 13 Ans
 
