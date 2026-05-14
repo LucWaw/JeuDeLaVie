@@ -4,13 +4,13 @@ Introduction
 
 Bienvenue dans notre application. La protection de votre vie privée est une priorité pour nous. Cette politique de confidentialité explique comment nous utilisons et protégeons vos informations personnelles lorsque vous utilisez notre application, qui est destinée à un public âgé de 13 ans et plus.
 
-Données stockées localement
-
-Notre application enregistre localement sur votre appareil vos motifs personnalisés, à l'aide d'une base de données embarquée (Room). Ces données ne quittent jamais votre appareil, ne sont pas transmises à des serveurs externes et ne sont accessibles que par l'application. Vous pouvez les supprimer à tout moment depuis l'application ou en désinstallant celle-ci.
-
 Informations Collectées
 
 Notre application ne collecte aucune information personnelle ou sensible et ne transmet aucune donnée vers des serveurs externes. Les seules données enregistrées sont vos motifs personnalisés, stockés localement sur votre appareil (voir section ci-dessous).
+
+Données stockées localement
+
+Notre application enregistre localement sur votre appareil vos motifs personnalisés, à l'aide d'une base de données embarquée (Room). Ces données ne quittent jamais votre appareil, ne sont pas transmises à des serveurs externes et ne sont accessibles que par l'application. Vous pouvez les supprimer à tout moment depuis l'application ou en désinstallant celle-ci.
 
 Enfants de Moins de 13 Ans
 
