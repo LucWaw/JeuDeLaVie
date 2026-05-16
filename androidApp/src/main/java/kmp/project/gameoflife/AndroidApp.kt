@@ -1,4 +1,4 @@
-package com.lucwaw.androidapp
+package kmp.project.gameoflife
 
 import android.app.Application
 import kmp.project.gameoflife.di.initKoin

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:name=".AndroidApp"
+        android:name="kmp.project.gameoflife.AndroidApp"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
@@ -15,7 +15,7 @@
         <activity
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:name="com.lucwaw.androidapp.MainActivity">
+            android:name="kmp.project.gameoflife.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

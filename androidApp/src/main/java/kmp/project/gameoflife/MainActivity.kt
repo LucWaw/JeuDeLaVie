@@ -1,4 +1,4 @@
-package com.lucwaw.androidapp
+package kmp.project.gameoflife
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -9,7 +9,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import kmp.project.gameoflife.App
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")

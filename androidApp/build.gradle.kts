@@ -4,12 +4,14 @@ plugins {
 }
 
 android {
-    namespace = "com.lucwaw.androidapp"
+    namespace = "kmp.project.gameoflife"
     compileSdk = 36
 
     defaultConfig {
+        applicationId = "kmp.project.gameoflife"
         minSdk = 26
-
+        versionCode = 10
+        versionName = "10.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
