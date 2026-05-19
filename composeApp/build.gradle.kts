@@ -14,7 +14,7 @@ plugins {
 
 kotlin {
     androidLibrary {
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
         namespace = "kmp.project.gameoflife"
         androidResources.enable = true

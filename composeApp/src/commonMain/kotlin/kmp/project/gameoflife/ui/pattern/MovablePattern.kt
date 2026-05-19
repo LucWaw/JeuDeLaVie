@@ -158,7 +158,7 @@ fun PatternsUI(
         val rowHeight = 130.dp
 
         // Si l'écran est assez haut, autorise 2 lignes, sinon 1
-        val visibleRows = if (screenHeight > 400.dp && maxWidth < 600.dp) 2 else 1
+        val visibleRows = if (screenHeight > 600.dp && maxWidth < 600.dp) 2 else 1
         val gridHeight = rowHeight * visibleRows
 
         LazyHorizontalGrid(

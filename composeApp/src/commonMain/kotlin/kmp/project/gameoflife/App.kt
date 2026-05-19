@@ -2,7 +2,7 @@ package kmp.project.gameoflife
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,10 +18,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kmp.project.gameoflife.ui.GameOfLife
-import kmp.project.gameoflife.ui.theme.DragAndDropTheme
 import kmp.project.gameoflife.ui.onboard.OnboardingScreen
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.settings.Settings
+import kmp.project.gameoflife.ui.theme.DragAndDropTheme
 import kmp.project.gameoflife.ui.theme.ThemeViewModel
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,7 +54,7 @@ fun App(isTablet: Boolean = false) {
                         GameOfLife(
                             isTablet = isTablet, showOnboarding = {
                                 showOnboarding = true
-                            }, modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+                            }, modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
                             goToSettings = { navController.navigate(Screens.Settings.route) }
                         )
                     }

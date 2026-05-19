@@ -2,7 +2,6 @@ package kmp.project.gameoflife.ui.onboard
 
 
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,7 +24,7 @@ fun ButtonUi(
 ) {
 
     Button(
-        onClick = onClick, modifier = modifier.width(100.dp).height(50.dp), colors = ButtonDefaults.buttonColors(
+        onClick = onClick, modifier = modifier.height(50.dp), colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor, contentColor = textColor
         ), shape = RoundedCornerShape(10.dp)
     ) {
