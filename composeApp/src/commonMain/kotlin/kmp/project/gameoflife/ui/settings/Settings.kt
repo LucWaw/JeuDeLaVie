@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,15 +67,29 @@ fun Settings(
     val gridRows by viewModel.gridRows.collectAsState()
     val gridColumns by viewModel.gridColumns(isTablet).collectAsState()
 
+    val defaultRows = 20
+    val defaultCols = if (isTablet || getPlatform().name.startsWith("Java")) 80 else 20
+
+    var rowsText by remember { mutableStateOf(gridRows.toString()) }
+    var isRowsFocused by remember { mutableStateOf(false) }
+
+    var columnsText by remember { mutableStateOf(gridColumns.toString()) }
+    var isColsFocused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(gridRows) {
+        if (!isRowsFocused) rowsText = gridRows.toString()
+    }
+    LaunchedEffect(gridColumns) {
+        if (!isColsFocused) columnsText = gridColumns.toString()
+    }
+
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.settings)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        goBack()
-                    }) {
+                    IconButton(onClick = goBack) {
                         Icon(
                             painter = painterResource(Res.drawable.arrow_back_24px),
                             contentDescription = stringResource(Res.string.go_back)
@@ -184,26 +199,22 @@ fun Settings(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(stringResource(Res.string.grid_rows), modifier = Modifier.weight(1f))
-                var rowsText by remember(gridRows) { mutableStateOf(gridRows.toString()) }
                 OutlinedTextField(
                     value = rowsText,
                     onValueChange = { newValue ->
                         if (newValue.all { it.isDigit() }) {
                             rowsText = newValue
-                            newValue.toIntOrNull()?.let {
-                                if (it > 0) viewModel.updateGridRows(it)
-                            }
+                            val intValue = newValue.toIntOrNull() ?: 0
+                            viewModel.updateGridRows(if (intValue > 0) intValue else defaultRows)
                         }
                     },
                     modifier = Modifier
                         .width(100.dp)
                         .onFocusChanged { focusState ->
+                            isRowsFocused = focusState.isFocused
                             if (!focusState.isFocused) {
-                                if (rowsText.isEmpty() || (rowsText.toIntOrNull() ?: 0) == 0) {
-                                    val default = 20
-                                    viewModel.updateGridRows(default)
-                                    rowsText = default.toString()
-                                }
+                                val intValue = rowsText.toIntOrNull() ?: 0
+                                rowsText = if (intValue == 0) defaultRows.toString() else intValue.toString()
                             }
                         },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -217,26 +228,22 @@ fun Settings(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(stringResource(Res.string.grid_columns), modifier = Modifier.weight(1f))
-                var columnsText by remember(gridColumns) { mutableStateOf(gridColumns.toString()) }
                 OutlinedTextField(
                     value = columnsText,
                     onValueChange = { newValue ->
                         if (newValue.all { it.isDigit() }) {
                             columnsText = newValue
-                            newValue.toIntOrNull()?.let {
-                                if (it > 0) viewModel.updateGridColumns(it)
-                            }
+                            val intValue = newValue.toIntOrNull() ?: 0
+                            viewModel.updateGridColumns(if (intValue > 0) intValue else defaultCols)
                         }
                     },
                     modifier = Modifier
                         .width(100.dp)
                         .onFocusChanged { focusState ->
+                            isColsFocused = focusState.isFocused
                             if (!focusState.isFocused) {
-                                if (columnsText.isEmpty() || (columnsText.toIntOrNull() ?: 0) == 0) {
-                                    val default = if (isTablet || getPlatform().name.startsWith("Java")) 80 else 20
-                                    viewModel.updateGridColumns(default)
-                                    columnsText = default.toString()
-                                }
+                                val intValue = columnsText.toIntOrNull() ?: 0
+                                columnsText = if (intValue == 0) defaultCols.toString() else intValue.toString()
                             }
                         },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
