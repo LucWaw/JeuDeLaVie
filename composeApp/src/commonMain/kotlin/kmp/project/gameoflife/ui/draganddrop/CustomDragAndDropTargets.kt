@@ -41,14 +41,14 @@ fun CustomDragTarget(
     data: () -> PatternMovable?,
     modifier: Modifier = Modifier,
     gridSize: Int = 1,
-    tileSize: Size = Size(20f, 20f),
+    tileSide: Float = 20f,
     isEnabled: Boolean,
     visual: @Composable () -> Unit,
 ) {
 
 
-    val ghostSizePx = remember(gridSize, tileSize) {
-        Size(tileSize.width * gridSize * 2, tileSize.height * gridSize * 2)
+    val ghostSizePx = remember(gridSize, tileSide) {
+        Size(tileSide * gridSize * 2, tileSide * gridSize * 2)
     }
 
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
@@ -56,7 +56,7 @@ fun CustomDragTarget(
     val colorOfColoredCells = MaterialTheme.colorScheme.primary
     val outlineColor = MaterialTheme.colorScheme.outline
 
-    val dragSourceModifier = remember(data, tileSize, ghostSizePx, boxSize, isEnabled) {
+    val dragSourceModifier = remember(data, tileSide, ghostSizePx, boxSize, isEnabled) {
         if (!isEnabled) Modifier else {
             Modifier.dragAndDropSource(
                 drawDragDecoration = {
@@ -65,18 +65,16 @@ fun CustomDragTarget(
                         val patternGridSize = currentState.gridSize
 
                         // Appliquer la même réduction que dans le Modifier.layout
-                        val gWidth = ghostSizePx.width
-                        val gHeight = ghostSizePx.height
+                        val gSide = ghostSizePx.width
                         // 'size' est la taille de la zone allouée au drag
-                        val scale = min(size.width / gWidth, size.height / gHeight)
+                        val scale = min(size.width / gSide, size.height / gSide)
 
                         // La vraie taille d'une case, adaptée à l'écran
-                        val tileW = tileSize.width * scale
-                        val tileH = tileSize.width * scale
+                        val drawTileSide = tileSide * scale
 
                         // Calculer le point central de la case en bas à droite
-                        val bottomRightCenterX = (patternGridSize * tileW) - (tileW / 2)
-                        val bottomRightCenterY = (patternGridSize * tileH) - (tileH / 2)
+                        val bottomRightCenterX = (patternGridSize * drawTileSide) - (drawTileSide / 2)
+                        val bottomRightCenterY = (patternGridSize * drawTileSide) - (drawTileSide / 2)
 
                         // Calculer le décalage pour que ce point soit EXACTEMENT
                         //    au milieu de la zone de drag (là où se trouve le pointeur)
@@ -86,8 +84,8 @@ fun CustomDragTarget(
                         for (i in 0 until patternGridSize) {
                             for (j in 0 until patternGridSize) {
                                 // Plus de risque de négatif, on part de startX et startY !
-                                val topLeft = Offset(startX + j * tileW, startY + i * tileH)
-                                val rectSize = Size(tileW, tileH)
+                                val topLeft = Offset(startX + j * drawTileSide, startY + i * drawTileSide)
+                                val rectSize = Size(drawTileSide, drawTileSide)
 
                                 if (currentState.cells.contains(Pair(i, j))) {
                                     drawRect(
@@ -134,21 +132,20 @@ fun CustomDragTarget(
                 val width = constraints.maxWidth
                 val height = constraints.maxHeight
 
-                val gWidth = ghostSizePx.width.toInt().coerceAtLeast(1)
-                val gHeight = ghostSizePx.height.toInt().coerceAtLeast(1)
+                val gSide = ghostSizePx.width.toInt().coerceAtLeast(1)
 
                 val placeable = measurable.measure(
-                    Constraints.fixed(gWidth, gHeight)
+                    Constraints.fixed(gSide, gSide)
                 )
 
 
                 layout(width, height) {
                     placeable.placeWithLayer(
-                        (width - gWidth) / 2,
-                        (height - gHeight) / 2
+                        (width - gSide) / 2,
+                        (height - gSide) / 2
                     ) {
-                        scaleX = width.toFloat() / gWidth
-                        scaleY = height.toFloat() / gHeight
+                        scaleX = width.toFloat() / gSide
+                        scaleY = height.toFloat() / gSide
                     }
                 }
             }

@@ -94,18 +94,20 @@ fun Board(
                 val rawDropRow = (relativeY / tileSize).toInt()
                 val rawDropCol = (relativeX / tileSize).toInt()
 
-                // Calculate the pattern offset to handle centering or relative placement.
-                val patternOffset = pattern.gridSize - 1
+                // Calculate the pattern offset to handle placement where the finger is at the bottom right.
+                // We use pattern.gridSize - 1 to align the bottom-right cell with the touch point.
+                // To move it "up by 1" as requested, we increase the row offset.
+                val rowOffset = pattern.gridSize
+                val colOffset = pattern.gridSize - 1
 
                 // ADJUSTMENT: Constrain the drop coordinates to ensure the pattern remains within grid boundaries.
-                // Ensures top edge (dropRow - patternOffset) >= 0 and bottom edge <= gridRow.
-                val dropRow = rawDropRow.coerceIn(patternOffset, gridRow - 1)
-                val dropCol = rawDropCol.coerceIn(patternOffset, gridColumn - 1)
+                val dropRow = rawDropRow.coerceIn(rowOffset, gridRow)
+                val dropCol = rawDropCol.coerceIn(colOffset, gridColumn)
 
                 // Iterate through pattern cells and toggle the corresponding grid cells if they are within bounds.
                 pattern.cells.forEach { patternCell ->
-                    val targetRow = patternCell.first + dropRow - patternOffset
-                    val targetCol = patternCell.second + dropCol - patternOffset
+                    val targetRow = patternCell.first + dropRow - rowOffset
+                    val targetCol = patternCell.second + dropCol - colOffset
 
                     if (targetRow in 0 until gridRow && targetCol in 0 until gridColumn) {
                         onToggleCell(Pair(targetRow, targetCol), true)
@@ -137,7 +139,7 @@ fun Board(
                             onDrag = { change, _ ->
                                 val cell = cellCoordinatesAtOffset(change.position, tileSize, gridRow, gridColumn, offsetX, offsetY)
                                 if (cell != null && cell != lastToggledCell) {
-                                    // When dragging fast, some cells might be skipped. 
+                                    // When dragging fast, some cells might be skipped.
                                     // interpolateCells uses a line algorithm to find all cells between the last and current position.
                                     interpolateCells(lastToggledCell ?: cell, cell).forEach { interpolatedCell ->
                                         if (interpolatedCell != lastToggledCell) {
@@ -189,7 +191,7 @@ fun Board(
                 // Draw alive cells: iterate over the set of active cells and render them as rectangles.
                 gameUIState.colored.forEach { (row, col) ->
                     if (row in 0 until gridRow && col in 0 until gridColumn) {
-                        // drawRect renders a filled rectangle. 
+                        // drawRect renders a filled rectangle.
                         // Math: topLeft = (startOffset + index * cellSize) converts grid index to pixel space.
                         drawRect(
                             color = colorPrimary,
@@ -241,7 +243,7 @@ fun Board(
 
 /**
  * Translates a raw pixel [Offset] (from touch or mouse) into grid coordinates.
- * 
+ *
  * Goal: Determine which cell was hit.
  * Math: (hitPoint - offset) / tileSize. We subtract the centering offset, then divide
  * by the cell size to get the fractional index, which is then floored to Int.
@@ -271,10 +273,10 @@ fun cellCoordinatesAtOffset(
 
 /**
  * Implements Bresenham's line algorithm for grid cells.
- * 
+ *
  * Goal: Find all grid cells that lie on a straight line between two points.
  * Why it works: It uses integer arithmetic to determine the "error" from a perfect line.
- * It steps along the primary axis and decides whether to increment the secondary axis based on 
+ * It steps along the primary axis and decides whether to increment the secondary axis based on
  * an accumulated error term, ensuring we hit every cell the line passes through without floating point drift.
  */
 fun interpolateCells(start: Pair<Int, Int>, end: Pair<Int, Int>): List<Pair<Int, Int>> {

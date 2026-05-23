@@ -66,6 +66,7 @@ import kmp.project.gameoflife.ui.theme.Shapes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.math.min
 
 
 @Composable
@@ -89,10 +90,10 @@ fun PatternsUI(
     val gridRow = gridRows
     val gridColumn = gridCols
 
-    val tileSize = if (boardGridSize != Size.Zero && gridColumn > 0 && gridRow > 0) {
-        Size(boardGridSize.width / gridColumn, boardGridSize.height / gridRow)
+    val tileSide = if (boardGridSize != Size.Zero && gridColumn > 0 && gridRow > 0) {
+        min(boardGridSize.width / gridColumn, boardGridSize.height / gridRow)
     } else {
-        Size(20f, 20f) // Fallback
+        20f // Fallback
     }
 
     var showGridCustomPatternDialog by remember { mutableStateOf(false) }
@@ -208,7 +209,7 @@ fun PatternsUI(
                     pattern = pattern,
                     getPattern = { onGetPatternById(pattern.id) },
                     rotatePattern = { onRotatePattern(pattern.id) },
-                    tileSize = tileSize,
+                    tileSide = tileSide,
                     isEditingMode = isEditingMode,
                     isSelected = isSelected,
                     onSelect = { onTogglePatternSelection(pattern.id) }
@@ -326,7 +327,7 @@ fun Pattern(
     rotatePattern: () -> Unit,
     getPattern: () -> PatternMovable?,
     modifier: Modifier = Modifier,
-    tileSize: Size = Size(20f, 20f),
+    tileSide: Float = 20f,
     isEditingMode: Boolean = false,
     isSelected: Boolean = false,
     onSelect: () -> Unit = {}
@@ -388,7 +389,7 @@ fun Pattern(
                     data = getPattern,
                     modifier = Modifier,
                     gridSize = pattern.gridSize,
-                    tileSize = tileSize,
+                    tileSide = tileSide,
                     isEnabled = !isEditingMode,
                 ) {
                     LazyVerticalGrid(
