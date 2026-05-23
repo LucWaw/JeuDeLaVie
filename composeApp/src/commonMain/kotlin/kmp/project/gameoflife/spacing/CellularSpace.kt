@@ -1,8 +1,8 @@
 package kmp.project.gameoflife.spacing
 
 class CellularSpace private constructor(
-    private val tailleX: Int,
-    private val tailleY: Int,
+    val rows: Int,
+    val columns: Int,
     espace: MutableMap<Pair<Int, Int>, Cell>
 ) : MutableMap<Pair<Int, Int>, Cell> by espace {
 
@@ -11,18 +11,14 @@ class CellularSpace private constructor(
      * Exemple tailleX = 5 et tailleY = 5.
      * Les indices vont de 0 à 4.
      */
-    constructor(tailleX: Int, tailleY: Int) : this(
-        requirePositive(tailleX, "tailleX"),
-        requirePositive(tailleY, "tailleY"),
+    constructor(rows: Int, columns: Int) : this(
+        rows,
+        columns,
         mutableMapOf()
     )
 
-    private companion object {
-        fun requirePositive(value: Int, paramName: String): Int {
-            require(value > 0) { "$paramName doit être positif." }
-            return value - 1
-        }
-    }
+    private val tailleX = rows - 1
+    private val tailleY = columns - 1
 
     init {
         for (i in 0..tailleX) {

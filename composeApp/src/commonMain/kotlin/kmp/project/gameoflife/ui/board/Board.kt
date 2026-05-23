@@ -7,7 +7,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -20,8 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kmp.project.gameoflife.ui.GameUiState
 import kmp.project.gameoflife.ui.draganddrop.CustomDropTarget
-import kmp.project.gameoflife.ui.getGridColumn
-import kmp.project.gameoflife.ui.getGridRow
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -34,7 +36,6 @@ import kotlin.math.min
  * for placing predefined patterns.
  *
  * @param modifier The [Modifier] to be applied to the board container.
- * @param isTablet A boolean flag to determine if the grid should use a fixed tablet-optimized
  * dimensions or dynamically calculated ones.
  * @param gameUIState The current state of the game, containing the set of currently alive (colored) cells.
  * @param onCellClick Callback triggered when a cell is tapped. Returns the (row, column) coordinates.
@@ -45,14 +46,15 @@ import kotlin.math.min
 @Composable
 fun Board(
     modifier: Modifier = Modifier,
-    isTablet: Boolean = false,
+    rows: Int,
+    columns: Int,
     gameUIState: GameUiState,
     onCellClick: (Pair<Int, Int>) -> Unit,
     onToggleCell: (Pair<Int, Int>, Boolean?) -> Unit = { _, _ -> },
     gridChange: (Size) -> Unit,
 ) {
-    val gridRow = if (isTablet) 20 else getGridRow()
-    val gridColumn = if (isTablet) 80 else getGridColumn()
+    val gridRow = rows
+    val gridColumn = columns
 
     var lastToggledCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var hoverCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }

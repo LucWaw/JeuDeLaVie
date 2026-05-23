@@ -47,4 +47,7 @@
     <string name="dynamic_color_info">Dynamic colors automatically adapt to your device's wallpaper and system theme. Your device is compatible because it runs Android 12 or higher.</string>
     <string name="selectedColor">Selected Color</string>
 
+    <string name="grid_rows">Grid Rows</string>
+    <string name="grid_columns">Grid Columns</string>
+
 </resources>

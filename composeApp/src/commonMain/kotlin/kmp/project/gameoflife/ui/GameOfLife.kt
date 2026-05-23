@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import kmp.project.gameoflife.ui.game.ButtonsViewModel
 import kmp.project.gameoflife.ui.game.runGameLoop
 import kmp.project.gameoflife.ui.pattern.MovablePatternViewModel
 import kmp.project.gameoflife.ui.pattern.PatternsUI
+import kmp.project.gameoflife.ui.theme.ThemeViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -51,15 +53,12 @@ fun GameOfLife(
     val buttonsViewModel = koinViewModel<ButtonsViewModel>()
     val patternViewModel = koinViewModel<MovablePatternViewModel>()
 
-    val gridRow = getGridRow()
-    val gridColumn = getGridColumn()
+    val themeViewModel = koinViewModel<ThemeViewModel>()
+    val gridRows by themeViewModel.gridRows.collectAsState()
+    val gridCols by themeViewModel.gridColumns(isTablet).collectAsState()
 
-    LaunchedEffect(isTablet) {
-        if (isTablet) {
-            gameOfLifeViewModel.initCellularSpace(20, 80)
-        } else {
-            gameOfLifeViewModel.initCellularSpace(gridRow, gridColumn)
-        }
+    LaunchedEffect(gridRows, gridCols) {
+        gameOfLifeViewModel.initCellularSpace(gridRows, gridCols)
     }
 
     // Game Loop logic
@@ -84,7 +83,8 @@ fun GameOfLife(
 
         Board(
             modifier = Modifier.weight(1f),
-            isTablet = isTablet,
+            rows = gridRows,
+            columns = gridCols,
             gameUIState = gameUIState,
             onCellClick = gameOfLifeViewModel.onCellClick,
             onToggleCell = gameOfLifeViewModel::toggleCell,
@@ -97,6 +97,8 @@ fun GameOfLife(
         PatternsUI(
             modifier = Modifier.fillMaxWidth(),
             boardGridSize = boardGridSize,
+            gridRows = gridRows,
+            gridCols = gridCols,
             patterns = patterns,
             onAddCustomPattern = { cells, text ->
                 patternViewModel.addCustomPattern(
@@ -111,7 +113,6 @@ fun GameOfLife(
             selectedPatternIds = buttonsViewModel.selectedPatternIds,
             currentGrid = gameUIState.colored,
             previousGrid = gameOfLifeViewModel.previousGrid,
-            isTablet = isTablet,
             isGameRunning = buttonsViewModel.isRunning,
         )
 

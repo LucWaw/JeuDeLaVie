@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class GameOfLifeViewModel : ViewModel() {
+class GameOfLifeViewModel() : ViewModel() {
 
     private val _mutableGameUiState =
         MutableStateFlow(GameUiState())
@@ -16,7 +16,7 @@ class GameOfLifeViewModel : ViewModel() {
 
     val mutableGameUiState: StateFlow<GameUiState> = _mutableGameUiState.asStateFlow()
 
-    private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))
+    private val _cellularSpace = MutableStateFlow(CellularSpace(15, 15))//size of cellular space will be reinitialized
     val cellularSpace: StateFlow<CellularSpace> = _cellularSpace.asStateFlow()
 
     private var _previousGrid: Set<Pair<Int, Int>> = emptySet()
@@ -27,6 +27,9 @@ class GameOfLifeViewModel : ViewModel() {
 
 
     fun initCellularSpace(gridRow : Int, gridColumn : Int) {
+        if (_cellularSpace.value.rows == gridRow && _cellularSpace.value.columns == gridColumn) {
+            return
+        }
         _cellularSpace.update {
             CellularSpace(gridRow, gridColumn)
         }

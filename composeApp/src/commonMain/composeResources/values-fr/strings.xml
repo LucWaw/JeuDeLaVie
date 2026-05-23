@@ -47,4 +47,7 @@
     <string name="dynamic_color_info">Les couleurs dynamiques s'adaptent automatiquement au fond d'écran et au thème du système. Votre appareil est compatible car il fonctionne sous Android 12 ou une version ultérieure.</string>
     <string name="selectedColor">Thème sélectionné</string>
 
+    <string name="grid_rows">Lignes de la grille</string>
+    <string name="grid_columns">Colonnes de la grille</string>
+
 </resources>

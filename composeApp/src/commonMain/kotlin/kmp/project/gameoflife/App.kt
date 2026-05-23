@@ -61,8 +61,10 @@ fun App(isTablet: Boolean = false) {
                 }
             }
             composable(Screens.Settings.route) {
-                Settings(goBack = {
-                    popBackStack(navController, Screens.Settings) })
+                Settings(
+                    isTablet = isTablet,
+                    goBack = { popBackStack(navController, Screens.Settings) }
+                )
             }
         }
     }

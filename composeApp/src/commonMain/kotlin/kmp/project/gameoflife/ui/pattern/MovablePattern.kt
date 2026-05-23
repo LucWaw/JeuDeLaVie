@@ -62,8 +62,6 @@ import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.domain.modele.PatternMovable
 import kmp.project.gameoflife.domain.modele.PatternType
 import kmp.project.gameoflife.ui.draganddrop.CustomDragTarget
-import kmp.project.gameoflife.ui.getGridColumn
-import kmp.project.gameoflife.ui.getGridRow
 import kmp.project.gameoflife.ui.theme.Shapes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -74,6 +72,8 @@ import org.koin.compose.koinInject
 fun PatternsUI(
     modifier: Modifier = Modifier,
     boardGridSize: Size,
+    gridRows: Int,
+    gridCols: Int,
     patterns: List<PatternMovable>,
     onAddCustomPattern: (Set<Pair<Int, Int>>, String) -> Unit,
     onGetPatternById: (Long) -> PatternMovable?,
@@ -83,12 +83,11 @@ fun PatternsUI(
     selectedPatternIds: List<Long>,
     currentGrid: Set<Pair<Int, Int>> = emptySet(),
     previousGrid: Set<Pair<Int, Int>> = emptySet(),
-    isTablet: Boolean = false,
     isGameRunning: Boolean = false,
 ) {
     val toastManager: ToastManager = koinInject()
-    val gridRow = if (isTablet) 20 else getGridRow()
-    val gridColumn = if (isTablet) 80 else getGridColumn()
+    val gridRow = gridRows
+    val gridColumn = gridCols
 
     val tileSize = if (boardGridSize != Size.Zero && gridColumn > 0 && gridRow > 0) {
         Size(boardGridSize.width / gridColumn, boardGridSize.height / gridRow)

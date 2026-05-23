@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -27,11 +29,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.arrow_back_24px
 import gameoflife.composeapp.generated.resources.dynamic_color_info
 import gameoflife.composeapp.generated.resources.go_back
+import gameoflife.composeapp.generated.resources.grid_columns
+import gameoflife.composeapp.generated.resources.grid_rows
 import gameoflife.composeapp.generated.resources.info_24px
 import gameoflife.composeapp.generated.resources.selectedColor
 import gameoflife.composeapp.generated.resources.settings
@@ -51,10 +57,14 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(
+    isTablet: Boolean,
     goBack: () -> Unit,
     viewModel: ThemeViewModel = koinViewModel()
 ) {
     val currentTheme by viewModel.themeState.collectAsState()
+
+    val gridRows by viewModel.gridRows.collectAsState()
+    val gridColumns by viewModel.gridColumns(isTablet).collectAsState()
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
@@ -166,6 +176,74 @@ fun Settings(
                     )
                 }
             }
+
+            // Grid Rows Setting
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(stringResource(Res.string.grid_rows), modifier = Modifier.weight(1f))
+                var rowsText by remember(gridRows) { mutableStateOf(gridRows.toString()) }
+                OutlinedTextField(
+                    value = rowsText,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            rowsText = newValue
+                            newValue.toIntOrNull()?.let {
+                                if (it > 0) viewModel.updateGridRows(it)
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .width(100.dp)
+                        .onFocusChanged { focusState ->
+                            if (!focusState.isFocused) {
+                                if (rowsText.isEmpty() || (rowsText.toIntOrNull() ?: 0) == 0) {
+                                    val default = 20
+                                    viewModel.updateGridRows(default)
+                                    rowsText = default.toString()
+                                }
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            // Grid Columns Setting
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(stringResource(Res.string.grid_columns), modifier = Modifier.weight(1f))
+                var columnsText by remember(gridColumns) { mutableStateOf(gridColumns.toString()) }
+                OutlinedTextField(
+                    value = columnsText,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            columnsText = newValue
+                            newValue.toIntOrNull()?.let {
+                                if (it > 0) viewModel.updateGridColumns(it)
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .width(100.dp)
+                        .onFocusChanged { focusState ->
+                            if (!focusState.isFocused) {
+                                if (columnsText.isEmpty() || (columnsText.toIntOrNull() ?: 0) == 0) {
+                                    val default = if (isTablet || getPlatform().name.startsWith("Java")) 80 else 20
+                                    viewModel.updateGridColumns(default)
+                                    columnsText = default.toString()
+                                }
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
         }
+
+
     }
 }
