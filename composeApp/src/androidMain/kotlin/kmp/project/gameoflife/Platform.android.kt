@@ -23,6 +23,7 @@ import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -169,7 +170,8 @@ actual fun DragAndDropEvent.getText(): String? {
 
 actual fun DragAndDropEvent.getPositionIn(container: LayoutCoordinates): Offset {
     val event = this.toAndroidDragEvent()
-    return Offset(event.x, event.y)
+    val positionInRoot = container.positionInRoot()
+    return Offset(event.x - positionInRoot.x, event.y - positionInRoot.y)
 }
 
 class AndroidToastManager(private val context: Context) : ToastManager {
