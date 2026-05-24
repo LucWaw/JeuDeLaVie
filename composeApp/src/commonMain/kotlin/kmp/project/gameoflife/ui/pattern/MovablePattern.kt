@@ -87,11 +87,9 @@ fun PatternsUI(
     isGameRunning: Boolean = false,
 ) {
     val toastManager: ToastManager = koinInject()
-    val gridRow = gridRows
-    val gridColumn = gridCols
 
-    val tileSide = if (boardGridSize != Size.Zero && gridColumn > 0 && gridRow > 0) {
-        min(boardGridSize.width / gridColumn, boardGridSize.height / gridRow)
+    val tileSide = if (boardGridSize != Size.Zero && gridCols > 0 && gridRows > 0) {
+        min(boardGridSize.width / gridCols, boardGridSize.height / gridRows)
     } else {
         20f // Fallback
     }
@@ -111,42 +109,30 @@ fun PatternsUI(
         )
 
         when {
-            //Show simple save toast when previous and current are empty
+            // Case 1: Both grids are empty
             currentGrid.isEmpty() && previousGrid.isEmpty() -> {
-                onAddCustomPattern(
-                    emptySet(),
-                    customPatternEmptyError
-                )
+                onAddCustomPattern(emptySet(), customPatternEmptyError)
                 showGridCustomPatternDialog = false 
             }
-            //Show current grid save dialog
-            currentGrid.isNotEmpty() && previousGrid.isEmpty() -> {
+            // Case 2: Grids are identical or only current grid has cells
+            currentGrid == previousGrid || previousGrid.isEmpty() -> {
                 onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
                 showGridCustomPatternDialog = false
             }
-            //show previous grid save dialog
-            currentGrid.isEmpty() /*previousGrid.isNotEmpty() done with sequence  */ -> {
+            // Case 3: Only previous grid has cells
+            currentGrid.isEmpty() -> {
                 onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
                 showGridCustomPatternDialog = false
             }
-
+            // Case 4: Both grids have different cells, show choice dialog
             else -> {
-                // Tho grid with active cells, show choice dialog
                 SelectGridForCustomPatternDialogCustom(
-                    onDismissRequest = {
-                        showGridCustomPatternDialog = false 
-                    },
+                    onDismissRequest = { showGridCustomPatternDialog = false },
                     onConfirmCurrentGridPattern = {
-                        onAddCustomPattern(
-                            currentGrid,
-                            customPatternCurrentShortSaved
-                        )
+                        onAddCustomPattern(currentGrid, customPatternCurrentShortSaved)
                     },
                     onConfirmPreviousGridPattern = {
-                        onAddCustomPattern(
-                            previousGrid,
-                            customPatternPreviousShortSaved
-                        )
+                        onAddCustomPattern(previousGrid, customPatternPreviousShortSaved)
                     }
                 )
             }
