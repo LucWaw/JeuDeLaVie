@@ -15,8 +15,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,12 +38,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import gameoflife.composeapp.generated.resources.Res
 import gameoflife.composeapp.generated.resources.arrow_back_24px
+import gameoflife.composeapp.generated.resources.base_patterns_restored
 import gameoflife.composeapp.generated.resources.dynamic_color_info
 import gameoflife.composeapp.generated.resources.go_back
 import gameoflife.composeapp.generated.resources.grid_columns
 import gameoflife.composeapp.generated.resources.grid_rows
 import gameoflife.composeapp.generated.resources.grid_size_info
 import gameoflife.composeapp.generated.resources.info_24px
+import gameoflife.composeapp.generated.resources.restore_base_patterns
+import gameoflife.composeapp.generated.resources.restore_base_patterns_info
 import gameoflife.composeapp.generated.resources.selectedColor
 import gameoflife.composeapp.generated.resources.settings
 import gameoflife.composeapp.generated.resources.theme
@@ -183,12 +189,12 @@ fun Settings(
                     Icon(
                         painter = painterResource(Res.drawable.info_24px),
                         contentDescription = "Info dynamic color",
-                        tint = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = stringResource(Res.string.dynamic_color_info),
-                        style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -261,13 +267,38 @@ fun Settings(
                 Icon(
                     painter = painterResource(Res.drawable.info_24px),
                     contentDescription = "Info grid size",
-                    tint = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = stringResource(Res.string.grid_size_info),
-                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
+
+            // Restore Patterns Setting
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(Res.string.restore_base_patterns),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = stringResource(Res.string.restore_base_patterns_info),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                val restoredMessage = stringResource(Res.string.base_patterns_restored)
+                OutlinedButton(
+                    onClick = { viewModel.restoreBasePatterns(restoredMessage) },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text(stringResource(Res.string.restore_base_patterns))
+                }
             }
         }
 

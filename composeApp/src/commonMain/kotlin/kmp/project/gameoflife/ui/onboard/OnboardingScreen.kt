@@ -30,7 +30,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
     val pages = listOf(
         OnboardingModel.FirstPage, OnboardingModel.SecondPage, OnboardingModel.ThirdPage,
         OnboardingModel.FourthPage, OnboardingModel.FifthPage, OnboardingModel.SixthPage,
-        OnboardingModel.SeventhPage
+        OnboardingModel.SeventhPage, OnboardingModel.EighthPage
     )
 
     val pagerState = rememberPagerState(initialPage = 0) {
@@ -45,7 +45,8 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                 3 -> listOf("Back", "Next")
                 4 -> listOf("Back", "Next")
                 5 -> listOf("Back", "Next")
-                6 -> listOf("Back", "Start")
+                6 -> listOf("Back", "Next")
+                7 -> listOf("Back", "Start")
                 else -> listOf("", "")
             }
         }

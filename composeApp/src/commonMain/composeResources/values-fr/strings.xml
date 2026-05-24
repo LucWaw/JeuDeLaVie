@@ -23,8 +23,11 @@
     <string name="fifth_page_title">Lancer l'animation !</string>
     <string name="fifth_page_description">Lancez l'animation en cliquant sur le bouton démarrer en bas a droite.</string>
 
-    <string name="seventh_page_title">Personnalisez votre grille</string>
-    <string name="seventh_page_description">Besoin d\'espace ? Utilisez le bouton paramètres en bas de l\'écran pour changer la taille de la grille et personnaliser votre expérience ! Vous pouvez également modifier le thème de couleurs</string>
+    <string name="seventh_page_title">Supprimer des motifs</string>
+    <string name="seventh_page_description">Vous pouvez supprimer des motifs en laissant votre doigt appuyé sur l'un d'eux dans la bibliothèque et en sélectionnant ceux que vous souhaitez retirer.</string>
+
+    <string name="eighth_page_title">Personnalisez votre grille</string>
+    <string name="eighth_page_description">Besoin d'espace ? Utilisez le bouton paramètres en bas de l'écran pour changer la taille de la grille et personnaliser votre expérience ! Vous pouvez également modifier le thème de couleurs</string>
 
     <string name="yes">Oui</string>
     <string name="no">Non</string>

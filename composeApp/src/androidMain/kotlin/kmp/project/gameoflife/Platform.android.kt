@@ -49,6 +49,7 @@ import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
 import gameoflife.composeapp.generated.resources.page6_en
 import gameoflife.composeapp.generated.resources.page6_fr
+import gameoflife.composeapp.generated.resources.page7
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
@@ -94,6 +95,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
             if (LocalLocale.current.platformLocale.language == "fr") R.drawable.page6_fr_custom_pattern
             else R.drawable.page6_en_custom_pattern
         }
+        Res.drawable.page7 -> R.drawable.page7_delete_patterns
         else -> R.drawable.page1_presentation_demo
     }
 
@@ -158,6 +160,13 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
                 contentScale = ContentScale.FillHeight,
                 painter = painter,
                 contentDescription = "Save your patterns"
+            )
+        }
+        R.drawable.page7_delete_patterns -> {
+            Image(
+                modifier = modifier.width(350.dp).padding(top = 20.dp),
+                painter = painter,
+                contentDescription = "Delete patterns"
             )
         }
     }

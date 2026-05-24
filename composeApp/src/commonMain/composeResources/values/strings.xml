@@ -23,8 +23,11 @@
     <string name="fifth_page_title">Start the animation!</string>
     <string name="fifth_page_description">Start the animation by clicking on the start button at the bottom right.</string>
 
-    <string name="seventh_page_title">Customize your Grid</string>
-    <string name="seventh_page_description">Want more space? Use the settings button at the bottom of the screen to change the grid size and customize your experience! You can also change the color scheme</string>
+    <string name="seventh_page_title">Delete patterns</string>
+    <string name="seventh_page_description">You can delete patterns by long-pressing them in the library and selecting the ones you want to remove.</string>
+
+    <string name="eighth_page_title">Customize your Grid</string>
+    <string name="eighth_page_description">Want more space? Use the settings button at the bottom of the screen to change the grid size and customize your experience! You can also change the color scheme</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -60,6 +63,10 @@
     <string name="grid_columns">Grid Columns</string>
 
     <string name="grid_size_info">Should be between 10 and 100.</string>
+
+    <string name="restore_base_patterns">Restore base patterns</string>
+    <string name="restore_base_patterns_info">If you deleted some of the original patterns, you can restore them here.</string>
+    <string name="base_patterns_restored">Base patterns restored!</string>
 
     <string name="sixth_page_title">Save your patterns</string>
     <string name="sixth_page_description">You can save your favorite patterns to reuse them later! Select the current or previous grid state to save it as a new pattern.</string>

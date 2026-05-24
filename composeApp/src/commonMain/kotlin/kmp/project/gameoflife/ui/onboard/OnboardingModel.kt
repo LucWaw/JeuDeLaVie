@@ -1,6 +1,8 @@
 package kmp.project.gameoflife.ui.onboard
 
 import gameoflife.composeapp.generated.resources.Res
+import gameoflife.composeapp.generated.resources.eighth_page_description
+import gameoflife.composeapp.generated.resources.eighth_page_title
 import gameoflife.composeapp.generated.resources.fifth_page_description
 import gameoflife.composeapp.generated.resources.fifth_page_title
 import gameoflife.composeapp.generated.resources.first_page_description
@@ -13,6 +15,7 @@ import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
 import gameoflife.composeapp.generated.resources.page6_en
+import gameoflife.composeapp.generated.resources.page7
 import gameoflife.composeapp.generated.resources.second_page_description
 import gameoflife.composeapp.generated.resources.second_page_title
 import gameoflife.composeapp.generated.resources.settings_24px
@@ -69,9 +72,15 @@ sealed class OnboardingModel(
     )
 
     data object SeventhPage : OnboardingModel(
-        image = Res.drawable.settings_24px,
+        image = Res.drawable.page7,
         title = Res.string.seventh_page_title,
         description = Res.string.seventh_page_description
+    )
+
+    data object EighthPage : OnboardingModel(
+        image = Res.drawable.settings_24px,
+        title = Res.string.eighth_page_title,
+        description = Res.string.eighth_page_description
     )
 }
 
