@@ -23,6 +23,7 @@ sealed class OnboardingModel(
     val image: DrawableResource,
     val title: StringResource,
     val description: StringResource,
+    val showColorExplanation: Boolean = false
 ) {
     data object FirstPage : OnboardingModel(
         image = Res.drawable.page1,
@@ -33,7 +34,8 @@ sealed class OnboardingModel(
     data object SecondPage : OnboardingModel(
         image = Res.drawable.page2,
         title = Res.string.second_page_title,
-        description = Res.string.second_page_description
+        description = Res.string.second_page_description,
+        showColorExplanation = true
     )
 
     data object ThirdPage : OnboardingModel(

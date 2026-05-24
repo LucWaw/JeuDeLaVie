@@ -102,7 +102,6 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
             painter = painter,
             contentDescription = "Presentation of the app"
             )
-
         }
         R.drawable.page2_drag_and_drop -> {
             Image(

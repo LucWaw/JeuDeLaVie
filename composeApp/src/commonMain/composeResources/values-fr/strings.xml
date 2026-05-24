@@ -8,6 +8,12 @@
     <string name="second_page_title">Glisser-déposer des motifs</string>
     <string name="second_page_description">Vous pouvez glisser-déposer des motifs en laissant le doigt appuyé sur l'un d'eux avant de le déposer dans la grille.</string>
 
+    <string name="onboarding_color_explanation_prefix">Les motifs sont colorés par type : </string>
+    <string name="onboarding_color_custom">personnalisés</string>
+    <string name="onboarding_color_moving">mobiles</string>
+    <string name="onboarding_color_fixed">fixes</string>
+    <string name="onboarding_color_and"> et </string>
+
     <string name="third_page_title">Dessiner sur la grille</string>
     <string name="third_page_description">Dessinez sur la grille en maintenant votre doigt ou en tapotant les cases à colorer !</string>
 

@@ -8,6 +8,12 @@
     <string name="second_page_title">Drag and drop patterns</string>
     <string name="second_page_description">You can drag and drop patterns by holding your finger on one, then dropping it onto the grid.</string>
 
+    <string name="onboarding_color_explanation_prefix">Patterns are color-coded by type: </string>
+    <string name="onboarding_color_custom">custom</string>
+    <string name="onboarding_color_moving">moving</string>
+    <string name="onboarding_color_fixed">fixed</string>
+    <string name="onboarding_color_and"> and </string>
+
     <string name="third_page_title">Draw on the grid</string>
     <string name="third_page_description">Draw on the grid by holding your finger down or tapping the cells you want to color!</string>
 
