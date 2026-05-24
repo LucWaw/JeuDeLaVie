@@ -68,12 +68,12 @@ actual fun getPlatform(): Platform = AndroidPlatform()
 @Composable
 actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     val ressource = when (ressources) {
-        Res.drawable.page1 -> R.drawable.page1
-        Res.drawable.page2 -> R.drawable.page2
-        Res.drawable.page3 -> R.drawable.page3
-        Res.drawable.page4 -> R.drawable.page4
-        Res.drawable.page5 -> R.drawable.page5
-        else -> R.drawable.page1
+        Res.drawable.page1 -> R.drawable.page1_presentation_demo
+        Res.drawable.page2 -> R.drawable.page2_drag_and_drop
+        Res.drawable.page3 -> R.drawable.page3_drawing
+        Res.drawable.page4 -> R.drawable.page4_speed
+        Res.drawable.page5 -> R.drawable.page5_launch
+        else -> R.drawable.page1_presentation_demo
     }
 
     val context = LocalContext.current
@@ -96,7 +96,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     )
 
     when (ressource) {
-        R.drawable.page1 -> {
+        R.drawable.page1_presentation_demo -> {
             Image(
                 modifier = modifier.width(350.dp).padding(top = 20.dp),
             painter = painter,
@@ -104,7 +104,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
             )
 
         }
-        R.drawable.page2 -> {
+        R.drawable.page2_drag_and_drop -> {
             Image(
                 modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
@@ -112,14 +112,14 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
                 contentDescription = "You can drag and drops patterns"
             )
         }
-        R.drawable.page3 -> {
+        R.drawable.page3_drawing -> {
             Image(
                 modifier = modifier.width(350.dp).padding(top = 20.dp),
                 painter = painter,
                 contentDescription = "You can draw on the grid"
             )
         }
-        R.drawable.page4 -> {
+        R.drawable.page4_speed -> {
             Image(
                 modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
@@ -127,7 +127,7 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
                 contentDescription = "You can change the speed of the game"
             )
         }
-        R.drawable.page5 -> {
+        R.drawable.page5_launch -> {
             Image(
                 modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
                 contentScale = ContentScale.FillHeight,
