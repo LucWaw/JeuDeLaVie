@@ -11,10 +11,10 @@ class AndroidOnboardingUtils(private val context: Context) : OnboardingUtils {
     }
 
     override fun isOnboardingCompleted(): Boolean {
-        return prefs.getBoolean("completed", false)
+        return prefs.getBoolean("completed_v2", false)
     }
 
     override fun setOnboardingCompleted() {
-        prefs.edit() { putBoolean("completed", true) }
+        prefs.edit() { putBoolean("completed_v2", true) }
     }
 }

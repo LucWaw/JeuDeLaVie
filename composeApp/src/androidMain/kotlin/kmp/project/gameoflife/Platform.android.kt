@@ -45,6 +45,8 @@ import gameoflife.composeapp.generated.resources.page2
 import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
+import gameoflife.composeapp.generated.resources.page6_en
+import gameoflife.composeapp.generated.resources.page6_fr
 import kmp.project.gameoflife.data.GameOfLifeDatabase
 import kmp.project.gameoflife.di.ToastManager
 import kmp.project.gameoflife.ui.onboard.OnboardingUtils
@@ -52,6 +54,7 @@ import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.koin.dsl.module
+import androidx.compose.ui.platform.LocalLocale
 
 private val IS_DYNAMIC_COLOR_SUPPORTED = SDK_INT >= Build.VERSION_CODES.S
 
@@ -73,6 +76,10 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
         Res.drawable.page3 -> R.drawable.page3_drawing
         Res.drawable.page4 -> R.drawable.page4_speed
         Res.drawable.page5 -> R.drawable.page5_launch
+        Res.drawable.page6_en, Res.drawable.page6_fr -> {
+            if (LocalLocale.current.platformLocale.language == "fr") R.drawable.page6_fr_custom_pattern
+            else R.drawable.page6_en_custom_pattern
+        }
         else -> R.drawable.page1_presentation_demo
     }
 
@@ -132,6 +139,14 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
                 contentScale = ContentScale.FillHeight,
                 painter = painter,
                 contentDescription = "Launch with the bottom right button"
+            )
+        }
+        R.drawable.page6_fr_custom_pattern, R.drawable.page6_en_custom_pattern -> {
+            Image(
+                modifier = modifier.size(width = 350.dp, height = 420.dp).padding(top = 20.dp),
+                contentScale = ContentScale.FillHeight,
+                painter = painter,
+                contentDescription = "Save your patterns"
             )
         }
 

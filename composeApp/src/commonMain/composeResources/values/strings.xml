@@ -58,5 +58,8 @@
 
     <string name="grid_size_info">Should be between 10 and 100.</string>
 
+    <string name="sixth_page_title">Save your patterns</string>
+    <string name="sixth_page_description">You can save your favorite patterns to reuse them later! Select the current or previous grid state to save it as a new pattern.</string>
+
 
 </resources>

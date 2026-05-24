@@ -58,5 +58,8 @@
 
     <string name="grid_size_info">Doit être entre 10 and 100.</string>
 
+    <string name="sixth_page_title">Enregistrez vos motifs</string>
+    <string name="sixth_page_description">Vous pouvez enregistrer vos motifs préférés pour les réutiliser plus tard ! Sélectionnez l'état de la grille actuelle ou précédente pour l'enregistrer en tant que nouveau motif.</string>
+
 
 </resources>

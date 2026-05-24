@@ -12,8 +12,11 @@ import gameoflife.composeapp.generated.resources.page2
 import gameoflife.composeapp.generated.resources.page3
 import gameoflife.composeapp.generated.resources.page4
 import gameoflife.composeapp.generated.resources.page5
+import gameoflife.composeapp.generated.resources.page6_en
 import gameoflife.composeapp.generated.resources.second_page_description
 import gameoflife.composeapp.generated.resources.second_page_title
+import gameoflife.composeapp.generated.resources.sixth_page_description
+import gameoflife.composeapp.generated.resources.sixth_page_title
 import gameoflife.composeapp.generated.resources.third_page_description
 import gameoflife.composeapp.generated.resources.third_page_title
 import org.jetbrains.compose.resources.DrawableResource
@@ -54,6 +57,12 @@ sealed class OnboardingModel(
         image = Res.drawable.page5,
         title = Res.string.fifth_page_title,
         description = Res.string.fifth_page_description
+    )
+
+    data object SixthPage : OnboardingModel(
+        image = Res.drawable.page6_en, // Placeholder, will be handled in Platform.android.kt
+        title = Res.string.sixth_page_title,
+        description = Res.string.sixth_page_description
     )
 }
 
