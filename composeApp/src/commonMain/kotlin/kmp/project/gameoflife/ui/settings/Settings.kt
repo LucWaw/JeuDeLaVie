@@ -39,6 +39,7 @@ import gameoflife.composeapp.generated.resources.dynamic_color_info
 import gameoflife.composeapp.generated.resources.go_back
 import gameoflife.composeapp.generated.resources.grid_columns
 import gameoflife.composeapp.generated.resources.grid_rows
+import gameoflife.composeapp.generated.resources.grid_size_info
 import gameoflife.composeapp.generated.resources.info_24px
 import gameoflife.composeapp.generated.resources.selectedColor
 import gameoflife.composeapp.generated.resources.settings
@@ -205,7 +206,7 @@ fun Settings(
                         if (newValue.all { it.isDigit() }) {
                             rowsText = newValue
                             val intValue = newValue.toIntOrNull() ?: 0
-                            viewModel.updateGridRows(if (intValue > 0) intValue else defaultRows)
+                            viewModel.updateGridRows(if (intValue in 10..100) intValue else defaultRows)
                         }
                     },
                     modifier = Modifier
@@ -214,7 +215,7 @@ fun Settings(
                             isRowsFocused = focusState.isFocused
                             if (!focusState.isFocused) {
                                 val intValue = rowsText.toIntOrNull() ?: 0
-                                rowsText = if (intValue == 0) defaultRows.toString() else intValue.toString()
+                                rowsText = if (intValue !in 10..100) defaultRows.toString() else intValue.toString()
                             }
                         },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -234,7 +235,7 @@ fun Settings(
                         if (newValue.all { it.isDigit() }) {
                             columnsText = newValue
                             val intValue = newValue.toIntOrNull() ?: 0
-                            viewModel.updateGridColumns(if (intValue > 0) intValue else defaultCols)
+                            viewModel.updateGridColumns(if (intValue in 10..100) intValue else defaultCols)
                         }
                     },
                     modifier = Modifier
@@ -243,10 +244,29 @@ fun Settings(
                             isColsFocused = focusState.isFocused
                             if (!focusState.isFocused) {
                                 val intValue = columnsText.toIntOrNull() ?: 0
-                                columnsText = if (intValue == 0) defaultCols.toString() else intValue.toString()
+                                columnsText = if (intValue !in 10..100) defaultCols.toString() else intValue.toString()
                             }
                         },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.info_24px),
+                    contentDescription = "Info grid size",
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = stringResource(Res.string.grid_size_info),
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
