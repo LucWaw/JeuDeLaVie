@@ -64,7 +64,7 @@ fun Board(
     val colorOutline = MaterialTheme.colorScheme.outline
     val density = LocalDensity.current
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize().background(colorSurface), contentAlignment = Alignment.TopCenter) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize().background(colorSurface), contentAlignment = Alignment.Center) {
         val widthPx = constraints.maxWidth
         val heightPx = constraints.maxHeight
 
