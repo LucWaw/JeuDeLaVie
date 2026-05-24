@@ -13,7 +13,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         compileSdk = 37
         minSdk = 26
         namespace = "kmp.project.gameoflife"

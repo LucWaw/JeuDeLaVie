@@ -50,7 +50,7 @@
     <string name="grid_rows">Grid Rows</string>
     <string name="grid_columns">Grid Columns</string>
 
-    <string name="grid_size_info">Should be between 1 and 100.</string>
+    <string name="grid_size_info">Should be between 10 and 100.</string>
 
 
 </resources>
