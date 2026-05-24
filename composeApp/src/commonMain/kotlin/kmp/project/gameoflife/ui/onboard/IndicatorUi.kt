@@ -6,7 +6,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -86,10 +86,11 @@ fun PageIndicator(
     space: Dp = 30.dp,
     animationDurationInMillis: Int = 300,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(space),
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(space, Alignment.CenterHorizontally),
+        verticalArrangement = Arrangement.spacedBy(space),
         modifier = modifier,
+        maxItemsInEachRow = 4
     ) {
         for (i in 0 until numberOfPages) {
             val isSelected = i == selectedPage

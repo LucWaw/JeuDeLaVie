@@ -23,6 +23,9 @@
     <string name="fifth_page_title">Start the animation!</string>
     <string name="fifth_page_description">Start the animation by clicking on the start button at the bottom right.</string>
 
+    <string name="seventh_page_title">Customize your Grid</string>
+    <string name="seventh_page_description">Want more space? Use the settings button at the bottom of the screen to change the grid size and customize your experience! You can also change the color scheme</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

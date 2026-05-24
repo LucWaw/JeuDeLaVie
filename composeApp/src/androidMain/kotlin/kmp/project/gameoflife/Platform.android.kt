@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -53,8 +55,10 @@ import kmp.project.gameoflife.ui.onboard.OnboardingUtils
 import kmp.project.gameoflife.ui.theme.DarkColorScheme
 import kmp.project.gameoflife.ui.theme.LightColorScheme
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.koin.dsl.module
 import androidx.compose.ui.platform.LocalLocale
+import gameoflife.composeapp.generated.resources.settings_24px
 
 private val IS_DYNAMIC_COLOR_SUPPORTED = SDK_INT >= Build.VERSION_CODES.S
 
@@ -70,7 +74,17 @@ actual fun getPlatform(): Platform = AndroidPlatform()
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
-    val ressource = when (ressources) {
+    if (ressources == Res.drawable.settings_24px) {
+        Icon(
+            painter = painterResource(Res.drawable.settings_24px),
+            contentDescription = "Settings",
+            modifier = modifier.size(100.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        return
+    }
+
+    val resId = when (ressources) {
         Res.drawable.page1 -> R.drawable.page1_presentation_demo
         Res.drawable.page2 -> R.drawable.page2_drag_and_drop
         Res.drawable.page3 -> R.drawable.page3_drawing
@@ -86,28 +100,25 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .components {
-            if (SDK_INT >= 28) {
-                add(AnimatedImageDecoder.Factory())
-            } else {
-                add(GifDecoder.Factory())
-            }
+            if (SDK_INT >= 28) add(AnimatedImageDecoder.Factory())
+            else add(GifDecoder.Factory())
         }
         .build()
 
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(context)
-            .data(ressource)
+            .data(resId)
             .size(Size.ORIGINAL)
             .build(),
         imageLoader = imageLoader
     )
 
-    when (ressource) {
+    when (resId) {
         R.drawable.page1_presentation_demo -> {
             Image(
                 modifier = modifier.width(350.dp).padding(top = 20.dp),
-            painter = painter,
-            contentDescription = "Presentation of the app"
+                painter = painter,
+                contentDescription = "Presentation of the app"
             )
         }
         R.drawable.page2_drag_and_drop -> {
@@ -149,7 +160,6 @@ actual fun GifImage(ressources: DrawableResource, modifier: Modifier) {
                 contentDescription = "Save your patterns"
             )
         }
-
     }
 }
 
