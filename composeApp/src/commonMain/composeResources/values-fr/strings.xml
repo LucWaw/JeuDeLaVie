@@ -23,8 +23,11 @@
     <string name="fifth_page_title">Lancer l'animation !</string>
     <string name="fifth_page_description">Lancez l'animation en cliquant sur le bouton démarrer en bas a droite.</string>
 
+    <string name="sixth_page_title">Enregistrez vos motifs</string>
+    <string name="sixth_page_description">Vous pouvez enregistrer vos motifs préférés pour les réutiliser plus tard ! Cliquez sur le bouton « + » et sélectionnez la disposition actuelle ou précédente de la grille pour l'enregistrer en tant que nouveau motif.</string>
+
     <string name="seventh_page_title">Supprimer des motifs</string>
-    <string name="seventh_page_description">Vous pouvez supprimer des motifs en laissant votre doigt appuyé sur l'un d'eux dans la bibliothèque et en sélectionnant ceux que vous souhaitez retirer.</string>
+    <string name="seventh_page_description">Vous pouvez supprimer des motifs en cliquant sur le bouton modifier et en sélectionnant ceux que vous souhaitez supprimer.</string>
 
     <string name="eighth_page_title">Personnalisez votre grille</string>
     <string name="eighth_page_description">Besoin d'espace ? Utilisez le bouton paramètres en bas de l'écran pour changer la taille de la grille et personnaliser votre expérience ! Vous pouvez également modifier le thème de couleurs</string>
@@ -64,8 +67,8 @@
 
     <string name="grid_size_info">Doit être entre 10 and 100.</string>
 
-    <string name="sixth_page_title">Enregistrez vos motifs</string>
-    <string name="sixth_page_description">Vous pouvez enregistrer vos motifs préférés pour les réutiliser plus tard ! Sélectionnez l'état de la grille actuelle ou précédente pour l'enregistrer en tant que nouveau motif.</string>
-
+    <string name="restore_base_patterns">Restaurer les motifs de base</string>
+    <string name="restore_base_patterns_info">Si vous avez supprimé certains des motifs d'origine, vous pouvez les restaurer ici.</string>
+    <string name="base_patterns_restored">Motifs de base restaurés !</string>
 
 </resources>
